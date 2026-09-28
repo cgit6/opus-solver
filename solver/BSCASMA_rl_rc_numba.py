@@ -1,6 +1,6 @@
 """BRLSMASCA RL/Q-learning Numba solver with LP reduced-cost item evaluation.
 
-This file is intentionally independent from ``BSCASMA_test_numba.py``. Shared
+This file is intentionally independent from removed legacy hybrid solver files. Shared
 Numba kernels are duplicated so the RL and test-policy variants can evolve
 without cross-file coupling.
 """
@@ -20,8 +20,7 @@ from ..engine.models import SolveResult
 from ..problem import ProblemModel
 from ..tools.continuous_to_binary import parse_ctf_kind
 from ..tools.ctf_numba import ctf_flip_probability
-from .BSMA import _argsort_pop_fit_desc_deterministic
-from .BSMA_numba import _expect_mkp_problem_tensors
+from .BSMA_numba import _argsort_pop_fit_desc_deterministic, _expect_mkp_problem_tensors
 
 
 def _cp_list_cache_key(

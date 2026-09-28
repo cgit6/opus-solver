@@ -26,7 +26,22 @@ from ..engine.models import SolveResult
 from ..problem import ProblemModel
 from ..tools.continuous_to_binary import parse_ctf_kind
 from ..tools.ctf_numba import ctf_flip_probability
-from .BSMA import _argsort_pop_fit_desc_deterministic
+
+
+def _argsort_pop_fit_desc_deterministic(pop_fit: np.ndarray, pop_size: int) -> np.ndarray:
+    """Return deterministic descending-fitness indices (lower index wins ties)."""
+    idx = np.arange(pop_size, dtype=np.int64)
+    for i in range(pop_size):
+        best = i
+        for j in range(i + 1, pop_size):
+            candidate = int(idx[j])
+            current = int(idx[best])
+            if float(pop_fit[candidate]) > float(pop_fit[current]) or (
+                float(pop_fit[candidate]) == float(pop_fit[current]) and candidate < current
+            ):
+                best = j
+        idx[i], idx[best] = idx[best], idx[i]
+    return idx
 
 
 def _cp_list_cache_key(

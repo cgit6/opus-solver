@@ -8,7 +8,7 @@ The repository is research and portfolio software. It is not presented as a prod
 ## What is included
 
 - A `Problem`／`Solver` contract and registries for assembling compatible experiments.
-- SMA, SCA, hybrid, reinforcement-learning, reduced-cost, and Numba-enabled solver variants.
+- Numba-accelerated SMA, SCA, hybrid reinforcement-learning, and reduced-cost solver variants.
 - YAML problem and solver configuration with pre-run capability validation.
 - Sequential and multiprocessing execution, shared-memory problem data, deterministic seeds, and seed-bank replay.
 - Structured run results covering objective value, feasibility, evaluation count, runtime, stop reason, and errors.
@@ -41,7 +41,7 @@ Run one repeat of the bundled `weish01` problem with the first BSMA parameter se
   --type mkp \
   --dataset WEISH \
   --problems weish01 \
-  --solver bsma \
+  --solver bsma_numba \
   --set 0 \
   --repeat 1 \
   --seed 42 \

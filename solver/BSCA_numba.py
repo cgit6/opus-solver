@@ -22,8 +22,11 @@ from ..engine.models import SolveResult
 from ..problem import ProblemModel
 from ..tools.continuous_to_binary import parse_ctf_kind
 from ..tools.ctf_numba import ctf_flip_probability
-from .BSMA import _argsort_pop_fit_desc_deterministic
-from .BSMA_numba import _expect_mkp_problem_tensors, _sort_pop_desc_deterministic_inplace
+from .BSMA_numba import (
+    _argsort_pop_fit_desc_deterministic,
+    _expect_mkp_problem_tensors,
+    _sort_pop_desc_deterministic_inplace,
+)
 
 
 def _cp_list_cache_key(

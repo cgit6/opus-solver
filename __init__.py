@@ -18,9 +18,12 @@ from .machine import Machine, MachinePool, MachinePoolSession, MachineResult
 from .engine.repository import ProblemRepository
 from .problem import Problem, MKPProblem, ProblemModel, ProblemRegistry, ProblemTypeSpec, TSPProblem, ValidationReport
 from .simulator import Simulator, SimulatorResult, SimulatorRunRow
-from .solver.BSCA import BSCACore, BSCASolver
-from .solver.BSCASMA import BRLSMASCATestCore, BRLSMASCATestSolver
-from .solver.BSMA import BSMACore, BSMASolver
+from .solver.BSCA_numba import BSCANumbaCore, BSCANumbaSolver
+from .solver.BSCA_rc_numba import BSCARCNumbaCore, BSCARCNumbaSolver
+from .solver.BSCASMA_rl_numba import BRLSMASCARLNumbaSolver
+from .solver.BSCASMA_rl_rc_numba import BRLSMASCARLRCNumbaSolver
+from .solver.BSMA_numba import BSMANumbaCore, BSMANumbaSolver
+from .solver.BSMA_rc_numba import BSMARCNumbaCore, BSMARCNumbaSolver
 from .solver.registry import SolverRegistry, StubMaxIterationsSolver
 from .tools.show import write_simulator_result
 from .tools.solver_config_loader import SolverConfigLoader
@@ -45,12 +48,16 @@ __all__ = [
     "SolverConfigsSnapshot",
     "build",
     "executeSimulator",
-    "BSCACore",
-    "BSCASolver",
-    "BRLSMASCATestCore",
-    "BRLSMASCATestSolver",
-    "BSMACore",
-    "BSMASolver",
+    "BSCANumbaCore",
+    "BSCANumbaSolver",
+    "BSCARCNumbaCore",
+    "BSCARCNumbaSolver",
+    "BRLSMASCARLNumbaSolver",
+    "BRLSMASCARLRCNumbaSolver",
+    "BSMANumbaCore",
+    "BSMANumbaSolver",
+    "BSMARCNumbaCore",
+    "BSMARCNumbaSolver",
     "main",
     "Machine",
     "MachinePool",
