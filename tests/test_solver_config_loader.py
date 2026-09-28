@@ -299,6 +299,174 @@ params:
         loader.load("stub_solver", param_set_index=1)
 
 
+def test_load_group_selects_stable_key_and_exposes_resolved_index(tmp_path: Path) -> None:
+    root = tmp_path / "solvers"
+    _write_solver_yaml(
+        root / "stub_solver.yaml",
+        """
+solver_id: stub_solver
+solver_class: StubMaxIterationsSolver
+capabilities:
+  problem_types: [mkp]
+  encodings: [binary]
+  directions: [max]
+stop_condition:
+  type: max_iterations
+  max_iterations: 10
+parameter_groups:
+  - key: baseline
+    params: {pop_size: 20, z: 0.08}
+  - key: exploratory
+    params: {pop_size: 30, z: 0.03}
+""".strip(),
+    )
+    loader = SolverConfigLoader(config_root=root)
+
+    config = loader.load_group("stub_solver", group_key="exploratory")
+
+    assert config["group_key"] == "exploratory"
+    assert config["param_set_index"] == 1
+    assert config["params"] == {"pop_size": 30, "z": 0.03}
+    assert "parameter_groups" not in config
+
+
+def test_load_group_reference_is_stable_when_groups_are_reordered(tmp_path: Path) -> None:
+    root = tmp_path / "solvers"
+    path = root / "stub_solver.yaml"
+    prefix = """
+solver_id: stub_solver
+solver_class: StubMaxIterationsSolver
+capabilities:
+  problem_types: [mkp]
+  encodings: [binary]
+  directions: [max]
+stop_condition:
+  type: max_iterations
+  max_iterations: 10
+parameter_groups:
+""".strip()
+    baseline = "  - key: baseline\n    params: {pop_size: 20, z: 0.08}"
+    exploratory = "  - key: exploratory\n    params: {pop_size: 30, z: 0.03}"
+    _write_solver_yaml(path, f"{prefix}\n{baseline}\n{exploratory}")
+    loader = SolverConfigLoader(config_root=root)
+    before = loader.load_group("stub_solver", group_key="baseline")
+
+    _write_solver_yaml(path, f"{prefix}\n{exploratory}\n{baseline}")
+    after = loader.load_group("stub_solver", group_key="baseline")
+
+    assert before["params"] == after["params"] == {"pop_size": 20, "z": 0.08}
+    assert before["group_key"] == after["group_key"] == "baseline"
+    assert before["param_set_index"] == 0
+    assert after["param_set_index"] == 1
+
+
+@pytest.mark.parametrize(
+    "groups, error_match",
+    [
+        (
+            """
+  - key: baseline
+    params: {}
+  - key: baseline
+    params: {z: 0.1}
+""",
+            "duplicate parameter group key",
+        ),
+        (
+            """
+  - key: ""
+    params: {}
+""",
+            "parameter_groups\\[0\\].key",
+        ),
+        (
+            """
+  - key: baseline
+    params: 123
+""",
+            "parameter_groups\\[0\\].params",
+        ),
+    ],
+)
+def test_parameter_group_schema_validation(
+    tmp_path: Path,
+    groups: str,
+    error_match: str,
+) -> None:
+    root = tmp_path / "solvers"
+    _write_solver_yaml(
+        root / "stub_solver.yaml",
+        f"""
+solver_id: stub_solver
+solver_class: StubMaxIterationsSolver
+capabilities:
+  problem_types: [mkp]
+  encodings: [binary]
+  directions: [max]
+stop_condition:
+  type: max_iterations
+  max_iterations: 10
+parameter_groups:
+{groups.rstrip()}
+""".strip(),
+    )
+    loader = SolverConfigLoader(config_root=root)
+
+    with pytest.raises(ValueError, match=error_match):
+        loader.load_all("stub_solver")
+
+
+def test_solver_config_rejects_params_and_parameter_groups_together(tmp_path: Path) -> None:
+    root = tmp_path / "solvers"
+    _write_solver_yaml(
+        root / "stub_solver.yaml",
+        """
+solver_id: stub_solver
+solver_class: StubMaxIterationsSolver
+capabilities:
+  problem_types: [mkp]
+  encodings: [binary]
+  directions: [max]
+stop_condition:
+  type: max_iterations
+  max_iterations: 10
+params:
+  - {}
+parameter_groups:
+  - key: baseline
+    params: {}
+""".strip(),
+    )
+    loader = SolverConfigLoader(config_root=root)
+
+    with pytest.raises(ValueError, match="exactly one of params or parameter_groups"):
+        loader.load_all("stub_solver")
+
+
+def test_load_group_rejects_legacy_params_schema(tmp_path: Path) -> None:
+    root = tmp_path / "solvers"
+    _write_solver_yaml(
+        root / "stub_solver.yaml",
+        """
+solver_id: stub_solver
+solver_class: StubMaxIterationsSolver
+capabilities:
+  problem_types: [mkp]
+  encodings: [binary]
+  directions: [max]
+stop_condition:
+  type: max_iterations
+  max_iterations: 10
+params:
+  - {pop_size: 20}
+""".strip(),
+    )
+    loader = SolverConfigLoader(config_root=root)
+
+    with pytest.raises(ValueError, match="managed group lookup requires parameter_groups"):
+        loader.load_group("stub_solver", group_key="baseline")
+
+
 def test_load_bscasma_rl_rc_numba_param_20_from_default_configs() -> None:
     loader = SolverConfigLoader()
 
