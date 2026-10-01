@@ -1,0 +1,19 @@
+solver_id: scvrp_legacy_sa
+solver_class: SCVRPLegacySASolver
+capabilities:
+  problem_types: [scvrp]
+  encodings: [scvrp_route_transfer]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  # Legacy report generation 1 is the initial population; 11,220 transitions
+  # therefore reproduce the archived final generation 11,221.
+  max_iterations: 11220
+params:
+  - compatibility_profile: vs2019_v142_archive
+    de_technique: rand_1_exp
+    termination_mode: fixed_iterations
+    start_temperature: 1.0
+    cooling_rate: 0.95
+    iterations_per_temperature: 110
+    timeout_seconds: 120.0

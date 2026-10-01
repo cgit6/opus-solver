@@ -8,6 +8,7 @@ from ..solver.BSCASMA_rl_rc_numba import BRLSMASCARLRCNumbaSolver
 from ..solver.BSCASMA_rl_numba import BRLSMASCARLNumbaSolver
 from ..solver.BSMA_numba import BSMANumbaSolver
 from ..solver.BSMA_rc_numba import BSMARCNumbaSolver
+from ..solver.scvrp_legacy_sa import SCVRPLegacySASolver
 from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
 
 
@@ -21,4 +22,5 @@ def solverBuilders() -> dict[str, SolverBuilder]:
         "bsca_rc_numba": lambda: BSCARCNumbaSolver(),
         "brlsmasca_rl_numba": lambda: BRLSMASCARLNumbaSolver(),
         "brlsmasca_rl_rc_numba": lambda: BRLSMASCARLRCNumbaSolver(),
+        "scvrp_legacy_sa": lambda: SCVRPLegacySASolver(),
     }

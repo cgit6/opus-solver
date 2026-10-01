@@ -1,0 +1,15 @@
+filename: ,P-n16-k8_RouteCap_2.txt_WithSpareCapacity_MaxTransfer_1(SA),random seed=,1,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 350
+Vehicle #1: 13 8 10 9
+Vehicle #2: 5
+Vehicle #3: 15 4 2
+Vehicle #4: 6
+Vehicle #5: 3 12
+Vehicle #6:
+Vehicle #7: 1
+Vehicle #8: 14 7 11
+Transfer Customers:   1   2   5   9   10   11   13   15
+Transfer_Car_Number: 3
+Total_Time :, 5316, ms,Total_Time :, 5.316000, s,Total_generation :, 11221,avg once generation=, 0.000474, s

@@ -41,3 +41,14 @@ packages = [
     "mkp.tools",
     "mkp.valid",
 ]
+
+[tool.setuptools.package-data]
+"mkp.solver" = [
+    "native/scvrp_legacy/*.cpp",
+    "native/scvrp_legacy/*.h",
+    "native/scvrp_legacy/*.md",
+    "native/scvrp_legacy/common/*.cpp",
+    "native/scvrp_legacy/common/*.h",
+    "native/scvrp_legacy/metaheuristic/*.cpp",
+    "native/scvrp_legacy/metaheuristic/*.h",
+]

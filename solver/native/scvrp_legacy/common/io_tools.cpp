@@ -1,0 +1,508 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "dependences.h"
+#include "../metaheuristic/differential_evolution.h"
+
+//命令指令
+//TODO: update all io strategy to arguments...
+enum DETechnique terminal_command_choose_de_technique(int input) {
+    int chosen_id = input;
+    //printf("chosen_id= %d\n", chosen_id);
+    enum DETechnique de_technique = RAND_1_EXP;
+    switch (chosen_id) {
+    case 1:
+        de_technique = RAND_1_BIN;
+        break;
+
+    case 2:
+        de_technique = RAND_1_EXP;
+        break;
+
+    case 3:
+        de_technique = BEST_1_BIN;
+        break;
+
+    case 4:
+        de_technique = BEST_1_EXP;
+        break;
+
+    default:
+        printf("[ERROR]: Bad DE technique.\n");
+        exit(1);
+    }
+
+    return de_technique;
+
+}
+
+//自行cmd
+//TODO: update all io strategy to arguments...
+enum DETechnique terminal_choose_de_technique() {
+    int chosen_id = 0;
+
+    printf( "=================================================================== \n"
+            "                           CDELS for CVRP\n"
+            "===================================================================\n\n"
+    
+            "DE technique:\n" 
+            "    1 - DE/rand/1/bin\n" 
+            "    2 - DE/rand/1/exp\n" 
+            "    3 - DE/best/1/bin\n" 
+            "    4 - DE/best/1/exp\n");
+    
+    do {
+        printf("\nTechnique: ");
+        if (1 != scanf("%d", &chosen_id)) {
+            printf("[ERROR]: IO error.\n"); 
+            exit(1); 
+        }
+
+        if (chosen_id < 1 || chosen_id > 4) {
+            printf("Wrong option!\n");
+            chosen_id = -1;
+        }
+    } while (chosen_id == -1);
+    
+    enum DETechnique de_technique = RAND_1_BIN;
+    switch (chosen_id) {
+        case 1:
+            de_technique = RAND_1_BIN;
+            break;
+
+        case 2:
+            de_technique = RAND_1_EXP;
+            break;
+
+        case 3:
+            de_technique = BEST_1_BIN;
+            break;
+
+        case 4:
+            de_technique = BEST_1_EXP;
+            break;
+
+        default:
+            printf("[ERROR]: Bad DE technique.\n");
+            exit(1);
+    }
+
+    return de_technique;
+}
+
+
+void file_read_header(FILE* file, Header* header) {
+    char line[100];
+
+    /* Using instance A-n32-k5 as example in comments */
+    
+    if (fgets(line, 100, file) == NULL) { /* NAME : A-n32-k5 */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    } 
+
+
+    if (fgets(line, 100, file) == NULL) { /* COMMENT : (Augerat et al, No of trucks: 5, Optimal value: 784) */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    } 
+    //sscanf(line, "%*[^:]: %*[^:]: %d%*[^:]: %d", &(header->vehicles_num), &(header->best_solution_value));//跳過直到':'的所有字符，然後讀取一個整數
+    //下面是修正後的(正確)
+    int parsed_items = sscanf(line,"COMMENT : (%*[^,], %*[^:]: %d, %*[^:]: %d)", &(header->vehicles_num), &(header->best_solution_value));
+    printf("Parsed %d items.\n", parsed_items);
+    printf("header->vehicles_num=%d\n", header->vehicles_num);
+    printf("header->best_solution_value=%d\n", header->best_solution_value);
+
+    if (fgets(line, 100, file) == NULL) { /* TYPE : CVRP */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    } 
+    char problem_type[81];
+    sscanf(line, "%*[^:]: %s", problem_type);
+    if (strcmp(problem_type, "CVRP") != 0) {
+        printf("[ERROR]: The instance is not for the CVRP problem.\n"); 
+        exit(1); 
+    }
+
+
+    if (fgets(line, 100, file) == NULL) { /* DIMENSION : 32 */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    } 
+    sscanf(line, "%*[^:]: %d", &(header->customers_num));
+    printf("header->customers_num=%d\n", header->customers_num);
+
+    if (fgets(line, 100, file) == NULL) { /* EDGE_WEIGHT_TYPE : EUC_2D */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    } 
+    char edge_type[81];
+    sscanf(line, "%*[^:]: %s", edge_type);
+    if (strcmp(edge_type, "EUC_2D") != 0) {
+        printf("[ERROR]: Only instances using EUC_2D are supported.\n"); 
+        exit(1); 
+    }
+
+
+    if (fgets(line, 100, file) == NULL) {  /* CAPACITY : 100 */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    }
+    sscanf(line, "%*[^:]: %d", &(header->capacity_max));
+
+
+    if (fgets(line, 100, file) == NULL) { /* NODE_COORD_SECTION  */
+        printf("[ERROR]: Bad instance.\n"); 
+        exit(1); 
+    } 
+
+    return;
+}
+
+
+void file_update_customer_demand(Customer* customers, FILE* file, int customers_num) {
+    int id = 0,
+        demand = 0;
+
+    for (int i = 0; i < customers_num; i++) {
+
+        if (fscanf(file, "%d %d", &id, &demand) != 2) {
+            printf("[ERROR]: IO error.\n"); 
+            exit(1); 
+        }
+
+        customers[i].demand = demand;
+    }
+    
+    return;
+}
+
+
+//TODO: read the standard file header
+void file_customers_init(Customer* customers, FILE* file, int customers_num) {
+    Customer* customer = NULL;
+    
+    int id = 0;
+    double x = 0., y = 0.;
+
+    for (int i = 0; i < customers_num; i++) {
+        //fscanf 的返回值是它成功讀取和轉換的項目數。所以，如果成功讀取這三個數值，它會返回 3
+        if(3 != fscanf(file, "%d %lf %lf", &id, &x, &y)) {
+            printf("[ERROR]: IO error.\n"); 
+            exit(1); 
+        } 
+
+        customer = &customers[i];
+        customer->id = id;
+        customer->x = x;
+        customer->y = y;
+        //printf("id=%d , x=%f , y=%f\n",id,x,y);
+    }
+    /*跳過DEMAND_SECTION 這行(因為上一最後和這句最後有換行，所以跳過兩個\n)*/
+    int lines_num = 2; //TODO: check
+    char c = 0;
+    while (lines_num > 0) {
+        c = fgetc(file);
+        if (c == '\n') {
+            lines_num--;
+        }
+       
+    }
+    file_update_customer_demand(customers, file, customers_num);
+
+    return;
+}
+
+Individual* fixedroutefile_read(FILE* file, Customer* customers,Header* header) {
+    char line[256];
+    int* values=(int*)malloc(header->customers_num*sizeof(int));//宣告
+    fgets(line, sizeof(line), file);//讀一行
+    int k = 0;
+    sscanf(line,"%d",&k);//固定路線有幾台車
+    Individual *individual = Fixed_Route_individual_init(header->customers_num, k);//宣告大小
+  //抓車輛數 / 路線
+    for (int k =0 ;k< individual->vehicles_num_K;k++) {
+        fgets(line,sizeof(line),file);
+        /*移除末尾可能有換行符號*/
+        char* newline = strchr(line, '\n');//strchr返回指向該字符的指標第一個出現的 \n 字符，否則返回 NULL
+        if (newline) {
+            *newline = '\0';//strchr返回記憶體位置，直接改內容，所以*newline只是一個臨時的指標，用來找到和替換 \n，之後就不再需要它了
+        }
+        /*移除末尾可能有換行符號*/
+        char* token = strtok(line, " ");//拆開空格
+        int count = 0;
+        while (token != NULL) {
+            sscanf(token,"%d",&values[count]);
+            count++;
+            token= strtok(NULL, " ");//將原始字符串設置為 NULL，這是為了繼續從上一次分割的位置開始分割
+        }
+        //將讀取的資料輸入固定路線個體變數
+        for (int i = 1; i < count - 1;i++) {
+            individual->routes[k][i - 1] = values[i];//解路線矩陣            
+            if(values[i]){
+                individual->positions[0][(values[i])] = k;  //所在路線
+                individual->positions[1][(values[i])] = i - 1;  //路線中index
+            }
+        }
+        individual->routes_end[k] = count-2;//每台車有多少顧客(減二因為從0開始數)
+    }
+  //抓車輛數 / 路線
+  //抓空閒空間
+    for (int i = 0; i < individual->vehicles_num_K;i++) {
+        fgets(line,sizeof(line),file);//逐行讀取
+        sscanf(line,"%d",&individual->capacities_free[i]);
+    }
+  //抓空閒空間
+
+   /*test routes_end 結論要減二*/
+    /*for (int k = 0; k < individual->vehicles_num_K; k++) {
+        printf("individual->routes_end[%d]=%d\n",k, individual->routes_end[k]);
+    }*/
+   /*test routes_end*/
+   /*test routes*/
+    /*for (int i = 0; i < individual->vehicles_num_K;i++) {
+        for (int j = 0; j < individual->routes_end[i];j++) {
+            printf("individual->routes[%d][%d]=%d\n",i,j,individual->routes[i][j]);
+        }
+    }*/
+   /*test routes*/
+   /*test position*/
+    /*for (int i = 0; i < header->customers_num;i++) {
+        printf("position[0][%d]=%d\n",i,individual->positions[0][i]);
+        printf("position[1][%d]=%d\n",i,individual->positions[1][i]);
+    }*/
+   /*test position*/
+   /*test capacity_free*/
+    /*for (int i = 0; i < individual->vehicles_num_K;i++) {
+        printf("individual->capacities_free[%d]=%d\n",i, individual->capacities_free[i]);
+    }*/
+   /*test capacity_free*/
+    //getchar();
+    return individual;
+}
+
+void individual_print(Individual* individual, int vehicles_num, int customers_num) {
+
+    if (individual->feasible) {
+        printf("Feasible solution\n");
+    } else {
+        printf("Infeasible solution\n");
+    }
+    
+    printf("Cost: %d\n\n", individual->cost);
+    
+    int *route = NULL,
+         route_end = -1;
+    
+    for (int i = 0; i < vehicles_num; i++) {
+        printf("Vehicle #%d: ", i+1);
+        route_end = individual->routes_end[i];
+        route = individual->routes[i];
+        
+        for (int j = 0; j < route_end; j++) {
+            printf("%d ", route[j]);
+        }
+        
+        printf("\n");
+    }
+    printf("Transfer Customers:   ");
+    for (int i = 1; i < customers_num; i++) {
+        if (individual->Customer_Transfer[i] == 1) {
+            printf("%d   ", i);
+        }
+    }
+    printf("\n");
+    printf("Transfer_Car_Number: %d\n", individual->Transfer_Car_Number);
+    return;
+}
+
+
+void individual_print_in_file(FILE* file, Individual* individual, int vehicles_num, int customers_num) {
+
+    if (individual->feasible) {
+        fprintf(file, "Feasible solution\n");
+    } else {
+        fprintf(file, "Infeasible solution\n");
+    }
+    
+    //fprintf(file, "Cost: %d\n\n", individual->cost);
+    fprintf(file, "Cost: %d\n", individual->cost);
+    
+    int *route = NULL,
+         route_end = -1;
+
+    for (int i = 0; i < vehicles_num; i++) {
+        fprintf(file, "Vehicle #%d: ", i+1);
+        route_end = individual->routes_end[i];
+        route = individual->routes[i];
+        
+        for (int j = 0; j < route_end; j++) {
+            fprintf(file, "%d ", route[j]);
+        }
+        
+        fprintf(file, "\n");
+    }
+    fprintf(file,"Transfer Customers:   ");
+    for (int i = 1; i < customers_num;i++) {
+        if (individual->Customer_Transfer[i]==1) {
+            fprintf(file, "%d   ", i);
+        }
+    }
+    fprintf(file, "\n");
+    fprintf(file, "Transfer_Car_Number: %d\n",individual->Transfer_Car_Number);
+    return;
+}
+
+
+void generation_print_report(Generation* generation) {
+    printf("Generation: %d\n", generation->id);
+
+    if (generation->best_solution != NULL) {
+        printf("Best solution: %d\n", generation->best_solution->cost);
+    } else {
+        printf("Best solution: None\n");
+    }
+    
+    printf("Number of feasible solutions: %d.\n", generation->feasible_solutions_num);
+
+    return;
+}
+
+
+void generation_print_report_in_file(FILE* file, Generation* generation) {
+    fprintf(file, "Generation: %d\n", generation->id);
+
+    if (generation->best_solution != NULL) {
+        fprintf(file, "Best solution: %d\n", generation->best_solution->cost);
+    } else {
+        fprintf(file, "Best solution: None\n");
+    }
+    
+    //fprintf(file, "Number of feasible solutions: %d.\n", generation->feasible_solutions_num);
+
+    return;
+}
+
+
+void terminal_print_parameters(enum DETechnique de_technique, int NP, int seed) {
+    printf("\nCDELS Parameters:\n");
+
+    printf("- Technique: ");
+    switch (de_technique) {
+        case RAND_1_BIN:
+            printf("DE/rand/1/bin\n");
+            break;
+
+        case RAND_1_EXP:
+            printf("DE/rand/1/exp\n");
+            break;
+
+        case BEST_1_BIN:
+            printf("DE/best/1/bin\n");
+            break;
+        
+        case BEST_1_EXP:
+            printf("DE/best/1/exp\n");
+            break;
+
+        default:
+            printf("[ERROR]: Bad DE technique.\n");
+            exit(1);
+    }
+
+    printf("- NP: %d\n"
+           "- F: %.1f\n"
+           "- CR: %.1f\n"
+           "- Penalty: %.2f\n"
+           "- Seed: %d\n\n", NP, F, CR, PENALTY, seed);
+
+    return;
+}
+
+//TODO: check all
+void terminal_individual_test(Individual* individual, Customer* customers, int customers_num, int vehicles_num) {
+    individual_print(individual, vehicles_num,customers_num);
+    printf("\n");
+        
+    int* customers_visited = new int[customers_num];
+    
+    printf("Indexes: ");
+    
+    int i = 1;
+    while (i < customers_num +1) {
+        customers_visited[i] = 0;
+        i++;
+        
+        printf("%d ", (i-2)%10 );
+    }
+    
+    printf("\n\n");
+    
+    int j = 0;
+    printf("Routes:   ");
+    for (i = 0; i < customers_num; i++) {
+            printf("%d ", individual->positions[0][i]);
+    } 
+    
+    printf("\nCustomers: ");
+    for (i = 0; i < customers_num; i++) {
+        printf("%d ", individual->positions[1][i]);
+    } 
+    
+    printf("\n\n");
+    
+    for (i = 0; i < vehicles_num; i++) {
+        printf("End of route %d: %d\n", i+1, individual->routes_end[i]);
+    }
+    
+    printf("\n");
+    
+    int  load;
+    for (i = 0; i < vehicles_num; i++) {
+        load = 0;
+        for (j = 0; j < individual->routes_end[i]; j++)
+            load += customers[individual->routes[i][j]].demand;
+            
+        printf("Route load %d: %d\n", i, load);
+    }
+    
+    
+    for (i = 0; i < vehicles_num; i++) {
+        for (j = 0; j < individual->routes_end[i]; j++) {
+            customers_visited[ individual->routes[i][j] ]++;
+        }
+    }
+    
+    int count = 0;
+    for (i = 1; i < customers_num; i++) {
+        if ( !customers_visited[i]) {
+            printf("[ERROR]: Customer %d is missing.\n", i+1);
+        }
+        
+        if (customers_visited[i] > 1) {
+            printf("[ERROR]: Copy of customer %d, %d times\n", i+1, customers_visited[i]);
+            
+        }
+        
+        if (customers_visited[i]) {
+            count++;
+        }
+    }
+    
+    printf("Number of customers %d\n\n", count);
+    
+    for (i = 0; i < vehicles_num; i++) {    
+        if (individual->routes_end[i] == 0) {
+            printf("[ERROR]: Route %d is empty!\n", i);
+        }
+    }
+    
+    for (i = 1; i < customers_num; i++) {
+        if ( individual->routes[ individual->positions[0][i] ][ individual->positions[1][i] ] != i) {
+                printf("[ERROR]: Position of customer %d is wrong!\n", i+1);
+        }
+    } 
+    delete customers_visited;
+    return;
+}

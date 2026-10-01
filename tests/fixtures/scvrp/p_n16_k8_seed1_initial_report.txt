@@ -1,0 +1,5 @@
+filename: ,P-n16-k8_RouteCap_2.txt_WithSpareCapacity_MaxTransfer_1(SA),
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Generation: 1
+Best solution: 493
+Number of feasible solutions: 32.

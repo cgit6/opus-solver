@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from .mkp import mkpProblemSpec
 from .registry import ProblemRegistry, ProblemTypeSpec
+from .scvrp import scvrpProblemSpec
 from .tsp import tspProblemSpec
 
 
@@ -9,6 +10,7 @@ def problemBuilders() -> dict[str, ProblemTypeSpec]:
     """Built-in optimization problem definitions."""
     return {
         "mkp": mkpProblemSpec(),
+        "scvrp": scvrpProblemSpec(),
         "tsp": tspProblemSpec(),
     }
 

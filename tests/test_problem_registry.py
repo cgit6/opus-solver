@@ -7,12 +7,13 @@ from mkp.problem import MKPProblem, TSPProblem, buildProblemRegistry, problemBui
 from mkp.problem.registry import ProblemRegistry, ProblemTypeSpec
 
 
-def test_problem_builders_registry_lists_mkp_and_tsp() -> None:
+def test_problem_builders_registry_lists_builtin_problem_types() -> None:
     registry = buildProblemRegistry(problemBuilders())
 
     assert registry.get("mkp").encoding == "binary"
+    assert registry.get("scvrp").encoding == "scvrp_route_transfer"
     assert registry.get("tsp").direction == "min"
-    assert registry.list_problem_types() == ("mkp", "tsp")
+    assert registry.list_problem_types() == ("mkp", "scvrp", "tsp")
 
 
 def test_problem_registry_rejects_duplicate_problem_type() -> None:

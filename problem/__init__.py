@@ -6,6 +6,7 @@ from .builders import buildProblemRegistry, problemBuilders
 from .interface import Direction, Problem
 from .mkp import MKPProblem
 from .registry import ProblemRegistry, ProblemTypeSpec
+from .scvrp import SCVRPEvaluation, SCVRPProblem
 from .tsp import TSPProblem
 from .validation import DirectionSpec, ObjectiveValue, ScalarObjective, ValidationReport
 
@@ -19,6 +20,8 @@ __all__ = [
     "Problem",
     "ProblemModel",
     "MKPProblem",
+    "SCVRPEvaluation",
+    "SCVRPProblem",
     "TSPProblem",
     "ProblemRegistry",
     "ProblemTypeSpec",

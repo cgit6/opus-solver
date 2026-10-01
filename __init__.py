@@ -16,7 +16,16 @@ from .engine import Engine, SimulationBundle, SolverConfigsSnapshot, build
 from .engine.models import ExperimentSpec, SolveResult, RunTask
 from .machine import Machine, MachinePool, MachinePoolSession, MachineResult
 from .engine.repository import ProblemRepository
-from .problem import Problem, MKPProblem, ProblemModel, ProblemRegistry, ProblemTypeSpec, TSPProblem, ValidationReport
+from .problem import (
+    MKPProblem,
+    Problem,
+    ProblemModel,
+    ProblemRegistry,
+    ProblemTypeSpec,
+    SCVRPProblem,
+    TSPProblem,
+    ValidationReport,
+)
 from .simulator import Simulator, SimulatorResult, SimulatorRunRow
 from .solver.BSCA_numba import BSCANumbaCore, BSCANumbaSolver
 from .solver.BSCA_rc_numba import BSCARCNumbaCore, BSCARCNumbaSolver
@@ -66,6 +75,7 @@ __all__ = [
     "ProblemModel",
     "Problem",
     "MKPProblem",
+    "SCVRPProblem",
     "TSPProblem",
     "ProblemRegistry",
     "ProblemTypeSpec",

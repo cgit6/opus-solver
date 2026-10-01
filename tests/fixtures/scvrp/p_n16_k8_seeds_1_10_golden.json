@@ -1,0 +1,126 @@
+{
+  "schema": "optiforge.scvrp-legacy-golden/v1",
+  "source": {
+    "solution_sha256": "9391fd96c6ddec3d1cb140b06c746083bbc8fcd72e4875e4b36f4c947c168507",
+    "report_sha256": "2df25f4ed2a7d8341c8d2bfeba8243d5af41a460b944a56be6e9393f8d6490aa"
+  },
+  "parameters": {
+    "de_technique": "rand_1_exp",
+    "start_temperature": 1.0,
+    "cooling_rate": 0.95,
+    "iterations_per_temperature": 110,
+    "max_temperature_stagnation": 100
+  },
+  "common_result": {
+    "generation_count": 11221,
+    "objective": 350,
+    "route_cost": 272,
+    "transfer_cost": 78,
+    "transferred_demand": 100,
+    "transferred_customers": [1, 2, 5, 9, 10, 11, 13, 15],
+    "transfer_vehicle_count": 3,
+    "feasible": true
+  },
+  "seeds": [
+    {
+      "seed": 1,
+      "initial_best": 493,
+      "initial_feasible": 32,
+      "first_optimum_generation": 15,
+      "routes": [[13, 8, 10, 9], [5], [15, 4, 2], [6], [3, 12], [], [1], [14, 7, 11]],
+      "best_trace_sha256": "b365a8336c4da22005c814cd002c9745e6c0270a560978dca56ee8a79aa1813f",
+      "objective_feasible_trace_sha256": "29b7f7872afe7e8cf4f82b69f4e6ef068b9745b4572a5d4ea31911715ab8004c",
+      "semantic_trace_sha256": "392dd2512ecee65ddb4a3f7ecc24486355fae3281a4dfe254276c64eed0c3895"
+    },
+    {
+      "seed": 2,
+      "initial_best": 476,
+      "initial_feasible": 34,
+      "first_optimum_generation": 22,
+      "routes": [[10, 11], [6], [8], [4, 2], [13, 15], [], [7, 14, 1, 9], [12, 3, 5]],
+      "best_trace_sha256": "56d547c8882a809a0bc4de8fdea413d1bed739d14f6dfe33c64dc22651972211",
+      "objective_feasible_trace_sha256": "c932db5631f2a096b113f5c3438b4bb28f6acf71f214515d395ee4d692d4c979",
+      "semantic_trace_sha256": "63c66f0def65b8e225c5359242a136960a6dfcb5080c18595d6908dc6c53b595"
+    },
+    {
+      "seed": 3,
+      "initial_best": 482,
+      "initial_feasible": 30,
+      "first_optimum_generation": 17,
+      "routes": [[9], [13], [7, 11, 14], [6, 15], [2, 10, 5], [8, 1], [4], [3, 12]],
+      "best_trace_sha256": "15e12f303ff82669479e729034925a1c735c45ea87c2d7d1a4ddc5f3f922775e",
+      "objective_feasible_trace_sha256": "b75ad3ee8553d976fd11b9bbc75f2b228da7786c2e58ff6b01e224a0b6a7544a",
+      "semantic_trace_sha256": "01bca54c0077db0b668be98fab80694a4d4e75c98744f15622e2c81b4c0072d7"
+    },
+    {
+      "seed": 4,
+      "initial_best": 475,
+      "initial_feasible": 36,
+      "first_optimum_generation": 12,
+      "routes": [[6], [2, 5], [13], [11, 1], [4, 15, 10], [12, 3], [8, 9], [7, 14]],
+      "best_trace_sha256": "2115600773f9114f835a14d7a4e10709fd1c70bc68661e15e606f7c290c557a7",
+      "objective_feasible_trace_sha256": "eff1f4be4ea5178603889c715d0f866a48fb9ebc116fc9fa935d15a0eefa0d00",
+      "semantic_trace_sha256": "65765af9c9432084d53c37e1bd072895adcdcfad7bd4cc3148597be78d436f00"
+    },
+    {
+      "seed": 5,
+      "initial_best": 487,
+      "initial_feasible": 33,
+      "first_optimum_generation": 14,
+      "routes": [[4], [11, 10], [7, 14], [13, 15], [12, 3, 9], [5], [1, 8], [2, 6]],
+      "best_trace_sha256": "33c6790dffef1f9013355cf210cf991f6db9f8b0900ef6ae8d63b31a49f435ff",
+      "objective_feasible_trace_sha256": "d386c6b973b14771973463b8b02a0509862ec228191d811c59f37854156d2c4f",
+      "semantic_trace_sha256": "15d91b6190b0bc1d7bdb9b9695d81894a1baab40aabaada0236427347aee11f3"
+    },
+    {
+      "seed": 6,
+      "initial_best": 479,
+      "initial_feasible": 35,
+      "first_optimum_generation": 16,
+      "routes": [[2, 11, 9], [8], [12, 10, 3], [5], [4], [15, 13], [6], [14, 7, 1]],
+      "best_trace_sha256": "bb95b8ec059e98b2b8db928785c303b02bf1ac748b85acbf131b4d6cec16ac31",
+      "objective_feasible_trace_sha256": "ad83fa56e006dc3909419f32a5839cc0b7f7b93cc42ceb819520ad02a213d35a",
+      "semantic_trace_sha256": "4ab3c67d9d86ef472feb8b7cb39e810dd4f2a86e595e3968ad2ee772daea0faf"
+    },
+    {
+      "seed": 7,
+      "initial_best": 484,
+      "initial_feasible": 31,
+      "first_optimum_generation": 10,
+      "routes": [[2], [1, 13, 15], [9, 11], [5, 4], [6], [8], [12, 3], [14, 7, 10]],
+      "best_trace_sha256": "9a3939b5115b11ebde6de29457ba77269fc01b50fcf4b5aa223681a832e32952",
+      "objective_feasible_trace_sha256": "f5c80e0bc605d024980fde4b743e90a9c60bf2a45fbe886524593ef7e20b2f36",
+      "semantic_trace_sha256": "7c5f7c50cd7a140f0b182ee1717cfab3d4a497446aeaccd0549c06ec432747c4"
+    },
+    {
+      "seed": 8,
+      "initial_best": 468,
+      "initial_feasible": 26,
+      "first_optimum_generation": 15,
+      "routes": [[6], [13, 4], [14, 7], [9], [8, 10], [5, 2], [1, 15], [3, 11, 12]],
+      "best_trace_sha256": "ff1c3850b11653e0ea773b7e59537f85332bd4013c8287cf3165527fa3ef5faa",
+      "objective_feasible_trace_sha256": "18371852cd7bb4ea4fad7a1909541aed529c65499c6721d00da1d0ffba669457",
+      "semantic_trace_sha256": "ab18b0deeb548f84e7dc09dc7e8e213b9abcae26505bfbe928bd66b3a511c8e6"
+    },
+    {
+      "seed": 9,
+      "initial_best": 486,
+      "initial_feasible": 30,
+      "first_optimum_generation": 7,
+      "routes": [[10, 15], [6], [9, 13, 1], [8], [14, 2, 7], [3, 12], [4, 5, 11], []],
+      "best_trace_sha256": "5d6c6d357475657736f26f955294a5db296b166041b2efbfd7d6ad7841530f00",
+      "objective_feasible_trace_sha256": "acb9f8b3eb30f9d10992c7dd3b53a75c105c3e1032a2d93549eb60d7cfbd0ee7",
+      "semantic_trace_sha256": "24e8685501a3f8534fe325270d3c8b57b2b2bf5611bdcc660d1654e898d47d37"
+    },
+    {
+      "seed": 10,
+      "initial_best": 491,
+      "initial_feasible": 35,
+      "first_optimum_generation": 10,
+      "routes": [[11, 13], [1], [7, 14], [5], [8, 15], [2, 6, 10], [9, 4], [12, 3]],
+      "best_trace_sha256": "081deab8f2a118fbc923893cc3cc9167f082262213291c18ceacd01070b967bd",
+      "objective_feasible_trace_sha256": "5794da09feceff3d54e3e2774d1d2338f23d20f45fec9376243a8546165e4b19",
+      "semantic_trace_sha256": "5d952f45f9ae0280f250944579cdd2accb7761aa1bbde2856c7bb76453a1b8cd"
+    }
+  ]
+}
