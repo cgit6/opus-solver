@@ -11,7 +11,7 @@ from ...engine.models import ExperimentSpec
 from ...engine.repository import ProblemRepository
 from ...problem import buildProblemRegistry, problemBuilders
 from ...problem.validation import DirectionSpec
-from ...rng import SeedStrategy
+from ...rng import DerivedPerProblemSeedStrategy, SeedStrategy, SharedRepeatSeedListStrategy
 from ...simulator import SimulatorResult
 from ...tools.show import write_simulator_result
 from ...tools.solver_config_loader import SolverConfigLoader
@@ -30,6 +30,44 @@ def _splitSolverIds(raw: str) -> tuple[str, ...]:
     if not values:
         raise ValueError("--solver must contain at least one solver id.")
     return values
+
+
+def _splitRunSeeds(raw: str) -> tuple[int, ...]:
+    """Strictly parse the optional comma-separated per-repeat seed list."""
+
+    if not raw.strip():
+        raise ValueError("--run-seeds cannot be empty.")
+
+    parts = tuple(part.strip() for part in raw.split(","))
+    if any(not part for part in parts):
+        raise ValueError("--run-seeds cannot contain an empty value.")
+
+    seeds: list[int] = []
+    for part in parts:
+        try:
+            seed = int(part)
+        except ValueError:
+            raise ValueError(f"--run-seeds values must be integers: {part!r}.") from None
+        if seed < 0:
+            raise ValueError(f"--run-seeds values must be >= 0: {seed}.")
+        seeds.append(seed)
+    return tuple(seeds)
+
+
+def _resolveSeedStrategy(*, raw_run_seeds: str | None, repeat: int) -> SeedStrategy:
+    """Select derived seeds by default or an explicitly supplied repeat seed list."""
+
+    if raw_run_seeds is None:
+        return DerivedPerProblemSeedStrategy()
+
+    seeds = _splitRunSeeds(raw_run_seeds)
+    if len(seeds) != repeat:
+        raise ValueError(
+            "--run-seeds count must equal --repeat: "
+            f"received {len(seeds)} seeds for --repeat {repeat}."
+        )
+    return SharedRepeatSeedListStrategy(seeds=seeds)
+
 
 def validate_execute_args(
     spec: ExperimentSpec,
@@ -100,6 +138,14 @@ def parser() -> argparse.ArgumentParser:
     parser.add_argument("--set", required=True, type=int, dest="param_set_index", help="0-based solver params index")
     parser.add_argument("--repeat", default=20, type=int)
     parser.add_argument("--seed", default=55688, type=int)
+    parser.add_argument(
+        "--run-seeds",
+        help=(
+            "Optional comma-separated exact seeds. The count must equal --repeat; "
+            "the same ordered list is used for every problem, and duplicates are allowed."
+            " When supplied, these replace normal task-seed derivation from --seed."
+        ),
+    )
     parser.add_argument("--worker", default=1, type=int, dest="worker_count")
     # 2. 返回 parser 物件
     return parser

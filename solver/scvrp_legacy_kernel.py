@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import errno
 from hashlib import sha256
 import json
 import math
 import os
 from pathlib import Path
 import platform
+import signal
 import shutil
 import subprocess
 import tempfile
+import time
 from typing import Any, Literal
 
 from ..problem.scvrp import SCVRPProblem
@@ -19,6 +22,7 @@ from ..problem.scvrp import SCVRPProblem
 
 PROTOCOL = "SCVRP_LEGACY_RESULT_V1"
 _SELF_TEST_OUTPUT = "SCVRP_LEGACY_RUNNER_SELF_TEST_V1"
+_SELF_TEST_TIMEOUT_SECONDS = 10.0
 _COMPILE_FLAGS = ("-std=c++14", "-O2")
 _INT32_MAX = 0x7FFF_FFFF
 _UINT32_MAX = 0xFFFF_FFFF
@@ -121,15 +125,31 @@ def build_scvrp_legacy_kernel(
     *,
     cache_root: Path | None = None,
     compiler: str = "g++",
+    build_timeout: float = 300.0,
 ) -> Path:
     """Build once into a content-addressed cache and return the executable."""
+    started_at = time.monotonic()
+    if (
+        isinstance(build_timeout, bool)
+        or not isinstance(build_timeout, (int, float))
+        or not math.isfinite(float(build_timeout))
+        or build_timeout <= 0
+    ):
+        raise ValueError("build_timeout must be a finite number > 0")
+    deadline = started_at + float(build_timeout)
+
     source_root = native_source_root()
     verify_legacy_source_hashes(source_root)
     compiler_path = shutil.which(compiler)
     if compiler_path is None:
         raise SCVRPLegacyKernelError(f"C++ compiler was not found: {compiler}")
-    compiler_version = _run_checked([compiler_path, "--version"]).stdout
+    compiler_version = _run_checked(
+        [compiler_path, "--version"],
+        deadline=deadline,
+        phase="compiler version probe",
+    ).stdout
     fingerprint = _kernel_fingerprint(source_root, compiler_version)
+    _remaining_build_time(deadline, phase="kernel fingerprinting")
     root = (
         Path(tempfile.gettempdir()) / "mkp-scvrp-legacy-kernel"
         if cache_root is None
@@ -139,14 +159,25 @@ def build_scvrp_legacy_kernel(
     executable = artifact_dir / "scvrp_legacy_runner"
     artifact_dir.mkdir(parents=True, exist_ok=True)
 
+    if _passes_self_test(
+        executable,
+        deadline=deadline,
+        phase="cached executable self-test",
+    ):
+        return executable
+
     lock_path = artifact_dir / ".build.lock"
     with lock_path.open("a+b") as lock_file:
         try:
             import fcntl
         except ImportError as exc:  # pragma: no cover - the compatibility target is Linux
             raise SCVRPLegacyKernelError("native kernel build requires POSIX file locking") from exc
-        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
-        if _passes_self_test(executable):
+        _acquire_build_lock(lock_file, deadline=deadline)
+        if _passes_self_test(
+            executable,
+            deadline=deadline,
+            phase="locked cached executable self-test",
+        ):
             return executable
 
         with tempfile.TemporaryDirectory(prefix="build-", dir=artifact_dir) as temp_dir_text:
@@ -160,6 +191,7 @@ def build_scvrp_legacy_kernel(
                 compat_object,
                 extra_flags=(),
                 source_root=source_root,
+                deadline=deadline,
             )
             objects.append(compat_object)
 
@@ -178,6 +210,7 @@ def build_scvrp_legacy_kernel(
                     object_path,
                     extra_flags=("-include", str(source_root / "compat_rng.h")),
                     source_root=source_root,
+                    deadline=deadline,
                 )
                 objects.append(object_path)
 
@@ -190,10 +223,20 @@ def build_scvrp_legacy_kernel(
                     "-lm",
                     "-o",
                     str(candidate),
-                ]
+                ],
+                deadline=deadline,
+                phase="native kernel link",
             )
-            if not _passes_self_test(candidate):
+            if not _passes_self_test(
+                candidate,
+                deadline=deadline,
+                phase="compiled executable self-test",
+            ):
                 raise SCVRPLegacyKernelError("compiled SCVRP kernel failed its RNG self-test")
+            _remaining_build_time(
+                deadline,
+                phase="publishing compiled executable",
+            )
             os.replace(candidate, executable)
         return executable
 
@@ -293,6 +336,7 @@ def _compile(
     *,
     extra_flags: tuple[str, ...],
     source_root: Path,
+    deadline: float,
 ) -> None:
     _run_checked(
         [
@@ -304,39 +348,159 @@ def _compile(
             str(source),
             "-o",
             str(output),
-        ]
+        ],
+        deadline=deadline,
+        phase=f"compiling {source.name}",
     )
 
 
-def _passes_self_test(executable: Path) -> bool:
+def _acquire_build_lock(lock_file: Any, *, deadline: float) -> None:
+    import fcntl
+
+    while True:
+        remaining = _remaining_build_time(deadline, phase="build lock")
+        try:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            if exc.errno == errno.EINTR:
+                continue
+            if exc.errno not in {errno.EACCES, errno.EAGAIN}:
+                raise
+            time.sleep(min(0.01, remaining))
+            continue
+        if time.monotonic() >= deadline:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            raise SCVRPLegacyKernelError(
+                "native kernel build timed out waiting for build lock"
+            )
+        return
+
+
+def _passes_self_test(
+    executable: Path,
+    *,
+    deadline: float,
+    phase: str,
+) -> bool:
     if not executable.is_file():
         return False
+    global_remaining = _remaining_build_time(deadline, phase=phase)
+    phase_cap_is_limiting = _SELF_TEST_TIMEOUT_SECONDS < global_remaining
     try:
-        completed = subprocess.run(
+        completed = _run_build_process(
             [str(executable), "--self-test"],
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            timeout=10,
-            check=False,
+            deadline=deadline,
+            phase=phase,
+            timeout_cap=_SELF_TEST_TIMEOUT_SECONDS,
         )
-    except (OSError, subprocess.TimeoutExpired):
+    except subprocess.TimeoutExpired as exc:
+        if not phase_cap_is_limiting or time.monotonic() >= deadline:
+            raise SCVRPLegacyKernelError(
+                f"native kernel build timed out during {phase}"
+            ) from exc
+        return False
+    except OSError:
         return False
     return completed.returncode == 0 and completed.stdout.strip() == _SELF_TEST_OUTPUT
 
 
-def _run_checked(command: list[str]) -> subprocess.CompletedProcess[str]:
+def _remaining_build_time(deadline: float, *, phase: str) -> float:
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise SCVRPLegacyKernelError(f"native kernel build timed out during {phase}")
+    return remaining
+
+
+def _kill_process_group_and_reap(process: subprocess.Popen[str]) -> None:
     try:
-        return subprocess.run(
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    except OSError:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
+    process.communicate()
+
+
+def _cleanup_process_after_exception(
+    process: subprocess.Popen[str],
+    primary_error: BaseException,
+) -> None:
+    try:
+        _kill_process_group_and_reap(process)
+    except BaseException as cleanup_error:
+        try:
+            primary_error.add_note(
+                f"native build process cleanup also failed: {cleanup_error!r}"
+            )
+        except BaseException:
+            pass
+
+
+def _run_build_process(
+    command: list[str],
+    *,
+    deadline: float,
+    phase: str,
+    timeout_cap: float | None = None,
+) -> subprocess.CompletedProcess[str]:
+    started_at = time.monotonic()
+    _remaining_build_time(deadline, phase=phase)
+    process_deadline = deadline
+    if timeout_cap is not None:
+        process_deadline = min(process_deadline, started_at + timeout_cap)
+    process = subprocess.Popen(
+        command,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        start_new_session=True,
+    )
+    remaining = process_deadline - time.monotonic()
+    if remaining <= 0:
+        timeout_error = subprocess.TimeoutExpired(
             command,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=True,
+            max(0.0, process_deadline - started_at),
         )
-    except (OSError, subprocess.CalledProcessError) as exc:
-        if isinstance(exc, subprocess.CalledProcessError):
-            detail = exc.stderr.strip() or exc.stdout.strip()
-        else:
-            detail = str(exc)
+        _cleanup_process_after_exception(process, timeout_error)
+        raise timeout_error
+    try:
+        stdout, stderr = process.communicate(timeout=remaining)
+    except BaseException as exc:
+        _cleanup_process_after_exception(process, exc)
+        raise
+    if time.monotonic() >= process_deadline:
+        raise subprocess.TimeoutExpired(
+            command,
+            max(0.0, process_deadline - started_at),
+            output=stdout,
+            stderr=stderr,
+        )
+    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+
+
+def _run_checked(
+    command: list[str],
+    *,
+    deadline: float,
+    phase: str,
+) -> subprocess.CompletedProcess[str]:
+    try:
+        completed = _run_build_process(
+            command,
+            deadline=deadline,
+            phase=phase,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise SCVRPLegacyKernelError(
+            f"native kernel build timed out during {phase}"
+        ) from exc
+    except OSError as exc:
+        detail = str(exc)
         raise SCVRPLegacyKernelError(f"native build command failed: {detail}") from exc
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip()
+        raise SCVRPLegacyKernelError(f"native build command failed: {detail}")
+    return completed

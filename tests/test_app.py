@@ -5,6 +5,7 @@ from pathlib import Path
 
 from mkp.cli.run import createExperimentSpec, main, parser, validate_execute_args
 from mkp.engine.models import ExperimentSpec
+from mkp.rng.seeding import stable_task_seed
 
 
 def _write_problem_yaml(path: Path) -> None:
@@ -167,6 +168,163 @@ def test_app_cli_worker_runs_batch(tmp_path: Path):
     assert len(result.iter_rows()) == 1
     assert (output_root / "exp_cli_worker" / "stub_solver" / "param_0" / "runs.csv").exists()
     assert (output_root / "exp_cli_worker" / "stub_solver" / "param_0" / "runs.json").exists()
+
+
+def test_app_cli_run_seeds_use_exact_values_in_repeat_order(tmp_path: Path) -> None:
+    problem_root = tmp_path / "problems"
+    solver_root = tmp_path / "solvers"
+    output_root = tmp_path / "output"
+    _write_problem_yaml(problem_root / "mkp" / "WEISH" / "weish01.yaml")
+    _write_solver_yaml(solver_root / "stub_solver.yaml")
+
+    result = main(
+        [
+            "--experiment-name",
+            "exp_cli_exact_seeds",
+            "--type",
+            "mkp",
+            "--dataset",
+            "WEISH",
+            "--problems",
+            "weish01",
+            "--solver",
+            "stub_solver",
+            "--set",
+            "0",
+            "--repeat",
+            "3",
+            "--seed",
+            "9876",
+            "--run-seeds",
+            "17,3,17",
+        ],
+        problem_root=problem_root,
+        solver_root=solver_root,
+        output_root=output_root,
+    )
+
+    assert [
+        (row.task.repeat_index, row.task.task_seed, row.solve_result.run_seed)
+        for row in result.iter_rows()
+    ] == [
+        (0, 17, 17),
+        (1, 3, 3),
+        (2, 17, 17),
+    ]
+
+
+def test_app_cli_without_run_seeds_keeps_derived_per_problem_seeds(tmp_path: Path) -> None:
+    problem_root = tmp_path / "problems"
+    solver_root = tmp_path / "solvers"
+    output_root = tmp_path / "output"
+    _write_problem_yaml(problem_root / "mkp" / "WEISH" / "weish01.yaml")
+    _write_solver_yaml(solver_root / "stub_solver.yaml")
+
+    base_seed = 9876
+    result = main(
+        [
+            "--experiment-name",
+            "exp_cli_derived_seeds",
+            "--type",
+            "mkp",
+            "--dataset",
+            "WEISH",
+            "--problems",
+            "weish01",
+            "--solver",
+            "stub_solver",
+            "--set",
+            "0",
+            "--repeat",
+            "3",
+            "--seed",
+            str(base_seed),
+        ],
+        problem_root=problem_root,
+        solver_root=solver_root,
+        output_root=output_root,
+    )
+    expected = [
+        stable_task_seed(
+            base_seed=base_seed,
+            problem_type="mkp",
+            dataset="WEISH",
+            problem_id="weish01",
+            repeat_index=repeat_index,
+        )
+        for repeat_index in range(3)
+    ]
+
+    assert [(row.task.task_seed, row.solve_result.run_seed) for row in result.iter_rows()] == [
+        (seed, seed) for seed in expected
+    ]
+
+
+def test_app_cli_run_seeds_count_must_equal_repeat(tmp_path: Path) -> None:
+    output_root = tmp_path / "output"
+
+    with pytest.raises(ValueError, match=r"--run-seeds.*--repeat"):
+        main(
+            [
+                "--experiment-name",
+                "exp_cli_bad_seed_count",
+                "--type",
+                "mkp",
+                "--dataset",
+                "WEISH",
+                "--problems",
+                "weish01",
+                "--solver",
+                "stub_solver",
+                "--set",
+                "0",
+                "--repeat",
+                "3",
+                "--run-seeds",
+                "1,2",
+            ],
+            problem_root=tmp_path / "missing-problems",
+            solver_root=tmp_path / "missing-solvers",
+            output_root=output_root,
+        )
+
+    assert not output_root.exists()
+
+
+@pytest.mark.parametrize(
+    "argument",
+    (
+        "--run-seeds=",
+        "--run-seeds=1,,2",
+        "--run-seeds=1,not-an-int",
+        "--run-seeds=1,-2",
+    ),
+    ids=("empty", "empty-token", "non-integer", "negative"),
+)
+def test_app_cli_rejects_invalid_run_seed_lists(tmp_path: Path, argument: str) -> None:
+    with pytest.raises(ValueError, match="--run-seeds"):
+        main(
+            [
+                "--experiment-name",
+                "exp_cli_bad_seed_list",
+                "--type",
+                "mkp",
+                "--dataset",
+                "WEISH",
+                "--problems",
+                "weish01",
+                "--solver",
+                "stub_solver",
+                "--set",
+                "0",
+                "--repeat",
+                "2",
+                argument,
+            ],
+            problem_root=tmp_path / "missing-problems",
+            solver_root=tmp_path / "missing-solvers",
+            output_root=tmp_path / "output",
+        )
 
 
 def test_app_cli_fail_fast_when_problem_yaml_missing(tmp_path: Path):

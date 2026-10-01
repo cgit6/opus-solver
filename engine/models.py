@@ -118,3 +118,9 @@ class SolveResult:
         best_solution.setflags(write=False)
         object.__setattr__(self, "best_solution", best_solution)
         object.__setattr__(self, "metadata", dict(self.metadata))
+
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        """Restore constructor invariants after multiprocessing unpickles the result."""
+        for field_name, value in state.items():
+            object.__setattr__(self, field_name, value)
+        self.__post_init__()

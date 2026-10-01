@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+from concurrent.futures import Future
 from pathlib import Path
+from typing import Any, Callable
 
 import numpy as np
 import pytest
 
+import mkp.machine.core as machine_core
 from mkp.engine.bank import ProblemBank
 from mkp.engine.configs import SolverConfigsSnapshot
-from mkp.engine.models import ExperimentSpec, SolveResult
+from mkp.engine.models import ExperimentSpec, RunTask, SolveResult
 from mkp.engine.repository import ProblemRepository
 from mkp.machine import Machine, MachinePool
 from mkp.problem import buildProblemRegistry, problemBuilders
@@ -28,6 +31,92 @@ class RecordingSolver:
             stop_reason="max_iterations_reached",
             runtime=0.1,
         )
+
+
+class _FakeProcessPoolExecutor:
+    """Small deterministic executor double for process-pool lifecycle tests."""
+
+    def __init__(
+        self,
+        *,
+        submit_result: Callable[[RunTask, int], tuple[RunTask, SolveResult] | BaseException | None],
+        submit_exception: tuple[int, BaseException] | None = None,
+        shutdown_error: BaseException | None = None,
+        future_factory: Callable[[int], Future[tuple[RunTask, SolveResult]]] | None = None,
+    ) -> None:
+        self._submit_result = submit_result
+        self._submit_exception = submit_exception
+        self._shutdown_error = shutdown_error
+        self._future_factory = future_factory
+        self.futures: list[Future[tuple[RunTask, SolveResult]]] = []
+        self.shutdown_calls: list[tuple[bool, bool]] = []
+
+    def __enter__(self) -> _FakeProcessPoolExecutor:
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        # Match Executor.__exit__: an ordinary context-manager exit waits, but
+        # does not request cancellation of queued futures.
+        self.shutdown(wait=True)
+
+    def submit(self, fn: Callable[..., Any], task: RunTask) -> Future:
+        del fn
+        index = len(self.futures)
+        if self._submit_exception is not None and index == self._submit_exception[0]:
+            raise self._submit_exception[1]
+        future = Future() if self._future_factory is None else self._future_factory(index)
+        outcome = self._submit_result(task, index)
+        if isinstance(outcome, BaseException):
+            future.set_exception(outcome)
+        elif outcome is not None:
+            future.set_result(outcome)
+        self.futures.append(future)
+        return future
+
+    def shutdown(self, wait: bool = True, *, cancel_futures: bool = False) -> None:
+        self.shutdown_calls.append((wait, cancel_futures))
+        if self._shutdown_error is not None:
+            raise self._shutdown_error
+
+
+class _AddNoteFailsError(ValueError):
+    def add_note(self, note: str) -> None:
+        del note
+        raise RuntimeError("add_note failed")
+
+
+class _CancelFailsFuture(Future[tuple[RunTask, SolveResult]]):
+    def cancel(self) -> bool:
+        raise RuntimeError("cancel failed")
+
+
+def _fake_solve_result(task: RunTask) -> SolveResult:
+    return SolveResult(
+        problem_id=task.problem_id,
+        solver_id=task.solver_id,
+        run_seed=task.task_seed,
+        best_solution=np.array([1, 1, 1]),
+        best_objective=60,
+        feasible=True,
+        evaluation_count=10,
+        stop_reason="max_iterations_reached",
+        runtime=0.1,
+    )
+
+
+def _assert_task_context_note(exc: BaseException, task: RunTask) -> None:
+    notes = "\n".join(getattr(exc, "__notes__", ()))
+    for field_name, expected_value in (
+        ("problem_type", task.problem_type),
+        ("dataset", task.dataset),
+        ("solver_id", task.solver_id),
+        ("problem_id", task.problem_id),
+        ("param_set_index", task.param_set_index),
+        ("repeat_index", task.repeat_index),
+        ("task_seed", task.task_seed),
+    ):
+        assert field_name in notes
+        assert str(expected_value) in notes
 
 
 def _write_problem_yaml(path: Path, *, problem_id: str) -> None:
@@ -320,4 +409,244 @@ def test_machine_pool_process_requires_builder_registered_solver(tmp_path: Path)
         assert "solverBuilders" in str(exc_info.value)
         assert "stub_solver_custom" in str(exc_info.value)
     finally:
+        bank.close()
+
+
+def test_machine_pool_failure_cancels_queued_futures_and_requests_canceling_shutdown(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = ValueError("worker failed")
+    executors: list[_FakeProcessPoolExecutor] = []
+
+    def executor_factory(**kwargs: Any) -> _FakeProcessPoolExecutor:
+        del kwargs
+        executor = _FakeProcessPoolExecutor(
+            submit_result=lambda task, index: failure if index == 0 else None,
+        )
+        executors.append(executor)
+        return executor
+
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", executor_factory)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    try:
+        with pytest.raises(ValueError, match="worker failed"):
+            MachinePool((machine,), worker_count=2).run_tasks(tasks)
+
+        assert len(executors) == 1
+        executor = executors[0]
+        assert executor.futures[1].cancelled()
+        assert executor.shutdown_calls == [(True, True)]
+    finally:
+        bank.close()
+
+
+def test_machine_pool_failure_preserves_exception_and_adds_task_context_note(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = ValueError("worker failed")
+    executor = _FakeProcessPoolExecutor(
+        submit_result=lambda task, index: failure if index == 0 else None,
+        shutdown_error=RuntimeError("shutdown failed"),
+    )
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", lambda **kwargs: executor)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    try:
+        with pytest.raises(ValueError, match="worker failed") as exc_info:
+            MachinePool((machine,), worker_count=2).run_tasks(tasks)
+
+        assert exc_info.type is ValueError
+        assert exc_info.value is failure
+        _assert_task_context_note(exc_info.value, tasks[0])
+        assert "process pool shutdown also failed" in "\n".join(exc_info.value.__notes__)
+        assert "shutdown failed" in "\n".join(exc_info.value.__notes__)
+    finally:
+        bank.close()
+
+
+def test_machine_pool_session_failure_closes_pool_then_can_rebuild_and_run(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = ValueError("session worker failed")
+    executors: list[_FakeProcessPoolExecutor] = []
+
+    def executor_factory(**kwargs: Any) -> _FakeProcessPoolExecutor:
+        del kwargs
+        should_fail = not executors
+        executor = _FakeProcessPoolExecutor(
+            submit_result=(
+                (lambda task, index: failure if index == 0 else None)
+                if should_fail
+                else (lambda task, index: (task, _fake_solve_result(task)))
+            ),
+        )
+        executors.append(executor)
+        return executor
+
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", executor_factory)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    session = MachinePool((machine,), worker_count=2).session()
+    try:
+        with pytest.raises(ValueError, match="session worker failed") as exc_info:
+            session.run_tasks(tasks)
+
+        first_executor = executors[0]
+        assert first_executor.futures[1].cancelled()
+        assert first_executor.shutdown_calls == [(True, True)]
+        assert session._pool is None
+        assert exc_info.value is failure
+        _assert_task_context_note(exc_info.value, tasks[0])
+
+        results = session.run_tasks(tasks[:1])
+
+        assert len(executors) == 2
+        assert len(results) == 1
+        assert [row.task for row in results[0].rows] == tasks[:1]
+    finally:
+        session.close(cancel_futures=True)
+        bank.close()
+
+
+def test_machine_pool_submit_failure_cancels_already_submitted_future(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = RuntimeError("second submit failed")
+    executor = _FakeProcessPoolExecutor(
+        submit_result=lambda task, index: None,
+        submit_exception=(1, failure),
+    )
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", lambda **kwargs: executor)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    try:
+        with pytest.raises(RuntimeError, match="second submit failed") as exc_info:
+            MachinePool((machine,), worker_count=2).run_tasks(tasks)
+
+        assert exc_info.value is failure
+        assert executor.futures[0].cancelled()
+        assert executor.shutdown_calls == [(True, True)]
+        _assert_task_context_note(exc_info.value, tasks[1])
+    finally:
+        bank.close()
+
+
+def test_machine_pool_session_submit_failure_closes_pool_and_adds_task_context(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = RuntimeError("second session submit failed")
+    executor = _FakeProcessPoolExecutor(
+        submit_result=lambda task, index: None,
+        submit_exception=(1, failure),
+    )
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", lambda **kwargs: executor)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    session = MachinePool((machine,), worker_count=2).session()
+    try:
+        with pytest.raises(RuntimeError, match="second session submit failed") as exc_info:
+            session.run_tasks(tasks)
+
+        assert exc_info.value is failure
+        assert executor.futures[0].cancelled()
+        assert executor.shutdown_calls == [(True, True)]
+        assert session._pool is None
+        _assert_task_context_note(exc_info.value, tasks[1])
+    finally:
+        session.close(cancel_futures=True)
+        bank.close()
+
+
+def test_machine_pool_preserves_worker_exception_when_add_note_and_cleanup_fail(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = _AddNoteFailsError("worker failure rejects notes")
+    executor = _FakeProcessPoolExecutor(
+        submit_result=lambda task, index: failure if index == 0 else None,
+        shutdown_error=RuntimeError("shutdown failed"),
+        future_factory=lambda index: Future() if index == 0 else _CancelFailsFuture(),
+    )
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", lambda **kwargs: executor)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    try:
+        with pytest.raises(_AddNoteFailsError, match="rejects notes") as exc_info:
+            MachinePool((machine,), worker_count=2).run_tasks(tasks)
+
+        assert exc_info.value is failure
+        assert executor.shutdown_calls == [(True, True)]
+    finally:
+        bank.close()
+
+
+def test_machine_pool_progress_callback_failure_cleans_up_without_task_context(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = LookupError("progress callback failed")
+    executor = _FakeProcessPoolExecutor(
+        submit_result=(
+            lambda task, index: (task, _fake_solve_result(task)) if index == 0 else None
+        ),
+    )
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", lambda **kwargs: executor)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+
+    def fail_progress(increment: int) -> None:
+        assert increment == 1
+        raise failure
+
+    try:
+        with pytest.raises(LookupError, match="progress callback failed") as exc_info:
+            MachinePool((machine,), worker_count=2).run_tasks(
+                tasks,
+                progress_callback=fail_progress,
+            )
+
+        assert exc_info.value is failure
+        assert executor.futures[1].cancelled()
+        assert executor.shutdown_calls == [(True, True)]
+        assert "RunTask context:" not in "\n".join(getattr(failure, "__notes__", ()))
+    finally:
+        bank.close()
+
+
+def test_machine_pool_session_progress_callback_failure_resets_pool_without_task_context(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    machine, bank = _machine(tmp_path, param_set_index=0)
+    failure = LookupError("session progress callback failed")
+    executor = _FakeProcessPoolExecutor(
+        submit_result=(
+            lambda task, index: (task, _fake_solve_result(task)) if index == 0 else None
+        ),
+    )
+    monkeypatch.setattr(machine_core, "ProcessPoolExecutor", lambda **kwargs: executor)
+    tasks = machine.expand_tasks(base_seed=123)[:2]
+    session = MachinePool((machine,), worker_count=2).session()
+
+    def fail_progress(increment: int) -> None:
+        assert increment == 1
+        raise failure
+
+    try:
+        with pytest.raises(LookupError, match="session progress callback failed") as exc_info:
+            session.run_tasks(tasks, progress_callback=fail_progress)
+
+        assert exc_info.value is failure
+        assert executor.futures[1].cancelled()
+        assert executor.shutdown_calls == [(True, True)]
+        assert session._pool is None
+        assert "RunTask context:" not in "\n".join(getattr(failure, "__notes__", ()))
+    finally:
+        session.close(cancel_futures=True)
         bank.close()

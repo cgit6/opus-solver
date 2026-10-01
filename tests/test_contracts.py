@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 import pytest
 
@@ -132,6 +134,25 @@ def test_run_result_valid_and_readonly_solution():
     assert result.best_objective == 123
     assert result.linprog_runtime == 0.01
     assert result.best_solution.flags.writeable is False
+
+
+def test_run_result_pickle_round_trip_restores_readonly_solution():
+    result = SolveResult(
+        problem_id="weish01",
+        solver_id="solver_a",
+        run_seed=7,
+        best_solution=np.array([1, 0, 1]),
+        best_objective=123,
+        feasible=True,
+        evaluation_count=50,
+        stop_reason="max_iterations_reached",
+        runtime=0.25,
+    )
+
+    restored = pickle.loads(pickle.dumps(result))
+
+    assert np.array_equal(restored.best_solution, result.best_solution)
+    assert restored.best_solution.flags.writeable is False
 
 
 def test_run_result_accepts_vector_objective():

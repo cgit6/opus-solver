@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
+from concurrent.futures import FIRST_COMPLETED, Future, ProcessPoolExecutor, wait
 from dataclasses import dataclass
 from multiprocessing import get_context
 from typing import Any, Callable
@@ -288,24 +288,44 @@ class MachinePool:
         mp_context = get_context("spawn")
 
         by_task_key: dict[tuple[str, str, str, str, int, int], SolveResult] = {}
-        with ProcessPoolExecutor(
+        pool = ProcessPoolExecutor(
             max_workers=max_workers,
             mp_context=mp_context,
             initializer=_configure_process_worker,
             initargs=(packs, problem_specs, worker_cfgs, rng_factory),
-        ) as pool:
-            future_to_task = {
-                pool.submit(_run_task_process, task): task
-                for task in tasks
-            }
+        )
+        future_to_task: dict[Future[tuple[RunTask, SolveResult]], RunTask] = {}
+        try:
+            for task in tasks:
+                try:
+                    future = pool.submit(_run_task_process, task)
+                except BaseException as exc:
+                    _add_task_context_note(exc, task)
+                    raise
+                future_to_task[future] = task
             pending = set(future_to_task)
             while pending:
                 done, pending = wait(pending, return_when=FIRST_COMPLETED)
                 for future in done:
-                    task, solve_result = future.result()
+                    submitted_task = future_to_task[future]
+                    try:
+                        task, solve_result = future.result()
+                    except BaseException as exc:
+                        _add_task_context_note(exc, submitted_task)
+                        raise
                     by_task_key[_task_key(task)] = solve_result
                     if progress_callback is not None:
                         progress_callback(1)
+        except BaseException as exc:
+            _cancel_unfinished_futures(future_to_task, exc)
+            _shutdown_preserving_exception(
+                pool,
+                exc,
+                cancel_futures=True,
+            )
+            raise
+        else:
+            pool.shutdown(wait=True)
         return by_task_key
 
     def _build_machine_results(
@@ -342,8 +362,9 @@ class MachinePoolSession:
     def close(self, *, cancel_futures: bool = False) -> None:
         if self._pool is None:
             return
-        self._pool.shutdown(wait=True, cancel_futures=cancel_futures)
+        pool = self._pool
         self._pool = None
+        pool.shutdown(wait=True, cancel_futures=cancel_futures)
 
     def run_tasks(
         self,
@@ -368,20 +389,39 @@ class MachinePoolSession:
     ) -> dict[tuple[str, str, str, str, int, int], SolveResult]:
         pool = self._ensure_pool()
         by_task_key: dict[tuple[str, str, str, str, int, int], SolveResult] = {}
-        future_to_task = {pool.submit(_run_task_process, task): task for task in tasks}
-        pending = set(future_to_task)
-        while pending:
-            done, pending = wait(pending, return_when=FIRST_COMPLETED)
-            for future in done:
+        future_to_task: dict[Future[tuple[RunTask, SolveResult]], RunTask] = {}
+        try:
+            for task in tasks:
                 try:
-                    task, solve_result = future.result()
-                except Exception:
-                    for pending_future in pending:
-                        pending_future.cancel()
+                    future = pool.submit(_run_task_process, task)
+                except BaseException as exc:
+                    _add_task_context_note(exc, task)
                     raise
-                by_task_key[_task_key(task)] = solve_result
-                if progress_callback is not None:
-                    progress_callback(1)
+                future_to_task[future] = task
+            pending = set(future_to_task)
+            while pending:
+                done, pending = wait(pending, return_when=FIRST_COMPLETED)
+                for future in done:
+                    submitted_task = future_to_task[future]
+                    try:
+                        task, solve_result = future.result()
+                    except BaseException as exc:
+                        _add_task_context_note(exc, submitted_task)
+                        raise
+                    by_task_key[_task_key(task)] = solve_result
+                    if progress_callback is not None:
+                        progress_callback(1)
+        except BaseException as exc:
+            _cancel_unfinished_futures(future_to_task, exc)
+            try:
+                self.close(cancel_futures=True)
+            except BaseException as shutdown_exc:
+                _safe_add_note(
+                    exc,
+                    "process pool shutdown also failed: "
+                    f"{type(shutdown_exc).__name__}: {shutdown_exc}",
+                )
+            raise
         return by_task_key
 
     def _ensure_pool(self) -> ProcessPoolExecutor:
@@ -403,6 +443,59 @@ class MachinePoolSession:
             ),
         )
         return self._pool
+
+
+def _add_task_context_note(exc: BaseException, task: RunTask) -> None:
+    _safe_add_note(
+        exc,
+        "RunTask context: "
+        f"problem_type={task.problem_type!r}, "
+        f"dataset={task.dataset!r}, "
+        f"problem_id={task.problem_id!r}, "
+        f"solver_id={task.solver_id!r}, "
+        f"param_set_index={task.param_set_index!r}, "
+        f"repeat_index={task.repeat_index!r}, "
+        f"task_seed={task.task_seed!r}",
+    )
+
+
+def _safe_add_note(exc: BaseException, note: str) -> None:
+    try:
+        exc.add_note(note)
+    except BaseException:
+        pass
+
+
+def _cancel_unfinished_futures(
+    future_to_task: dict[Future[tuple[RunTask, SolveResult]], RunTask],
+    original_exc: BaseException,
+) -> None:
+    for future in future_to_task:
+        try:
+            if not future.done():
+                future.cancel()
+        except BaseException as cancel_exc:
+            _safe_add_note(
+                original_exc,
+                "canceling an unfinished process-pool future also failed: "
+                f"{type(cancel_exc).__name__}: {cancel_exc}",
+            )
+
+
+def _shutdown_preserving_exception(
+    pool: ProcessPoolExecutor,
+    original_exc: BaseException,
+    *,
+    cancel_futures: bool,
+) -> None:
+    try:
+        pool.shutdown(wait=True, cancel_futures=cancel_futures)
+    except BaseException as shutdown_exc:
+        _safe_add_note(
+            original_exc,
+            "process pool shutdown also failed: "
+            f"{type(shutdown_exc).__name__}: {shutdown_exc}",
+        )
 
 
 def _group_tasks_by_machine(

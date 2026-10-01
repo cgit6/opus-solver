@@ -32,4 +32,41 @@ full oracle suite.
 
 The Python adapter compiles this runner into a content-addressed temporary cache
 on first use. A C++14-capable `g++` must therefore be available at runtime; a
-missing compiler is reported before the timed optimization run begins.
+missing compiler is reported before the timed optimization run begins. Native
+build discovery, locking, compilation, linking, and self-test share one 300
+second deadline by default. The solver's `timeout_seconds` separately bounds the
+optimization process after a usable executable is available.
+
+## Reproduce the archived seeds through the current CLI
+
+Run the production problem and solver configuration with the archived seed
+sequence as follows:
+
+```bash
+python -m mkp.cli.run \
+  --experiment-name scvrp_legacy_archive_seeds_1_10 \
+  --type scvrp \
+  --dataset P \
+  --problems P-n16-k8-routecap2-transfer1 \
+  --solver scvrp_legacy_sa \
+  --set 0 \
+  --repeat 10 \
+  --run-seeds 1,2,3,4,5,6,7,8,9,10 \
+  --worker 2
+```
+
+`--run-seeds` is an opt-in override for the normal seed derivation from
+`--seed`. Its item count must equal `--repeat`; order and duplicate values are
+preserved, and the same ordered list is used for every selected problem.
+
+The complete recovered SCVRP state is written to
+`output/scvrp_legacy_archive_seeds_1_10/scvrp_legacy_sa/param_0/runs.json` under
+`metadata.validation.scvrp_state`. It includes ordered routes (including empty
+routes), transferred customers, route and transfer costs, remaining capacities,
+and strict-feasibility diagnostics. Those fields can reconstruct the canonical
+`best_solution` without loss.
+
+Do not compare the entire `runs.json` byte-for-byte: it intentionally contains
+wall-clock `runtime`, which changes between executions. The archive regression
+tests compare the deterministic seed, objective, route/transfer state, RNG
+fingerprints, and generation traces instead.

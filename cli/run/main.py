@@ -2,8 +2,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ...rng import DerivedPerProblemSeedStrategy
-from .support import buildSimulationBundle, parser, createExperimentSpec, executeSimulator
+from .support import (
+    _resolveSeedStrategy,
+    buildSimulationBundle,
+    createExperimentSpec,
+    executeSimulator,
+    parser,
+)
 
 
 def main(
@@ -18,10 +23,11 @@ def main(
     arg_parser = parser() # 獲取命令行參數，並解析&驗證
     args = arg_parser.parse_args(argv) # 獲取命令行參數
     spec = createExperimentSpec(args) # 實驗規格物件
+    seed_strategy = _resolveSeedStrategy(raw_run_seeds=args.run_seeds, repeat=spec.repeat)
     bundle = buildSimulationBundle(
         spec,
         param_set_index=args.param_set_index,
-        seed_strategy=DerivedPerProblemSeedStrategy(),
+        seed_strategy=seed_strategy,
         problem_root=Path(problem_root),
         solver_root=Path(solver_root),
     )
