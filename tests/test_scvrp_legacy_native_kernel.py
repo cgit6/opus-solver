@@ -13,12 +13,14 @@ from typing import Any
 import pytest
 
 from mkp.problem.scvrp import load_legacy_scvrp_problem
+from mkp.solver.scvrp_legacy import LegacySCVRPCore
 import mkp.solver.scvrp_legacy_kernel as legacy_kernel_module
 from mkp.solver.scvrp_legacy_kernel import (
     SCVRPLegacyKernelError,
     SCVRPLegacyKernelRequest,
     build_scvrp_legacy_kernel,
     run_scvrp_legacy_kernel,
+    run_scvrp_legacy_probe,
     verify_legacy_source_hashes,
 )
 
@@ -748,6 +750,44 @@ def test_native_kernel_matches_first_two_archived_generations(native_kernel: Pat
         "routes": [[9, 7], [2], [8, 13], [10, 12, 15], [1, 3], [14, 5], [11, 4], [6]],
         "transferred_customers": [2],
     }
+
+
+def test_python_mutation_and_crossover_match_native_stage_oracle(
+    native_kernel: Path,
+) -> None:
+    problem = _problem()
+    native = run_scvrp_legacy_probe(
+        problem,
+        SCVRPLegacyKernelRequest(
+            seed=1,
+            termination_mode="fixed_iterations",
+            limit=0,
+            probe_target=0,
+        ),
+        executable=native_kernel,
+    )
+    core = LegacySCVRPCore(problem, seed=1)
+    generation = core.initialize_population()
+
+    assert native["rng_after_initial"] == {
+        "state": core.rng.state,
+        "draw_count": core.rng.draw_count,
+    }
+    assert native["target"] == generation.individuals[0].genome_dict()
+
+    mutant = core._mutation(generation, 0)
+    assert native["rng_after_mutation"] == {
+        "state": core.rng.state,
+        "draw_count": core.rng.draw_count,
+    }
+    assert native["mutant"] == mutant.genome_dict()
+
+    trial = core._crossover(generation.individuals[0], mutant)
+    assert native["rng_after_crossover"] == {
+        "state": core.rng.state,
+        "draw_count": core.rng.draw_count,
+    }
+    assert native["trial"] == trial.genome_dict()
 
 
 def test_native_kernel_reports_transition_safety_limit(native_kernel: Path) -> None:

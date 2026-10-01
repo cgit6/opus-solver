@@ -29,6 +29,7 @@ struct Input {
     int limit = 0;
     int max_transitions = 0;
     bool trace = false;
+    int probe_target = -1;
     std::vector<int> demands;
     std::vector<std::vector<int>> distances;
     std::vector<std::vector<int>> fixed_routes;
@@ -85,6 +86,8 @@ Input read_input() {
     expect("trace");
     std::cin >> trace;
     input.trace = trace != 0;
+    expect("probe_target");
+    std::cin >> input.probe_target;
 
     if (!std::cin || input.customers <= 1 || input.vehicles <= 0 || input.capacity <= 0) {
         throw std::runtime_error("invalid SCVRP dimensions");
@@ -98,7 +101,7 @@ Input read_input() {
     }
     if ((input.termination != "fixed_iterations" &&
          input.termination != "legacy_temperature_stagnation") || input.limit < 0 ||
-        input.max_transitions <= 0) {
+        input.max_transitions <= 0 || input.probe_target < -1) {
         throw std::runtime_error("invalid termination mode or limit");
     }
 
@@ -280,6 +283,44 @@ void write_snapshot(const Snapshot& value) {
     std::cout << '}';
 }
 
+void write_individual_genome(const Individual* individual, int customers) {
+    std::vector<std::vector<int>> routes(individual->vehicles_num_K);
+    for (int route_index = 0; route_index < individual->vehicles_num_K; ++route_index) {
+        routes[route_index].assign(
+            individual->routes[route_index],
+            individual->routes[route_index] + individual->routes_end[route_index]
+        );
+    }
+    std::cout << "{\"routes\":";
+    write_routes(routes);
+    std::cout << ",\"positions\":[";
+    for (int axis = 0; axis < 2; ++axis) {
+        if (axis != 0) {
+            std::cout << ',';
+        }
+        std::cout << '[';
+        for (int customer = 0; customer < customers; ++customer) {
+            if (customer != 0) {
+                std::cout << ',';
+            }
+            std::cout << individual->positions[axis][customer];
+        }
+        std::cout << ']';
+    }
+    std::cout << "],\"transfer_mask\":[";
+    for (int customer = 0; customer < customers; ++customer) {
+        if (customer != 0) {
+            std::cout << ',';
+        }
+        std::cout << individual->Customer_Transfer[customer];
+    }
+    std::cout << "]}";
+}
+
+void write_rng_fingerprint(uint32_t state, uint64_t draw_count) {
+    std::cout << "{\"state\":" << state << ",\"draw_count\":" << draw_count << '}';
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -317,6 +358,61 @@ int main(int argc, char** argv) {
             fixed_routes,
             transfer_cost_once
         );
+        if (input.probe_target >= 0) {
+            if (input.probe_target >= NP) {
+                throw std::runtime_error("probe_target is outside the population");
+            }
+            const uint32_t initial_rng_state = scvrp_msvc_rand_state();
+            const uint64_t initial_rng_draw_count = scvrp_msvc_rand_draw_count();
+            Individual* mutant = mutation(
+                generation,
+                input.probe_target,
+                input.customers,
+                input.vehicles,
+                MUTATION_RAND,
+                fixed_routes
+            );
+            const uint32_t mutation_rng_state = scvrp_msvc_rand_state();
+            const uint64_t mutation_rng_draw_count = scvrp_msvc_rand_draw_count();
+            Individual* trial = crossover(
+                generation->individuals[input.probe_target],
+                mutant,
+                input.customers,
+                input.vehicles,
+                CROSSOVER_EXP,
+                fixed_routes
+            );
+            const uint32_t crossover_rng_state = scvrp_msvc_rand_state();
+            const uint64_t crossover_rng_draw_count = scvrp_msvc_rand_draw_count();
+
+            std::cout << "{\"protocol\":\"SCVRP_LEGACY_PROBE_V1\""
+                      << ",\"seed\":" << input.seed
+                      << ",\"target_index\":" << input.probe_target
+                      << ",\"rng_after_initial\":";
+            write_rng_fingerprint(initial_rng_state, initial_rng_draw_count);
+            std::cout << ",\"target\":";
+            write_individual_genome(
+                generation->individuals[input.probe_target],
+                input.customers
+            );
+            std::cout << ",\"rng_after_mutation\":";
+            write_rng_fingerprint(mutation_rng_state, mutation_rng_draw_count);
+            std::cout << ",\"mutant\":";
+            write_individual_genome(mutant, input.customers);
+            std::cout << ",\"rng_after_crossover\":";
+            write_rng_fingerprint(crossover_rng_state, crossover_rng_draw_count);
+            std::cout << ",\"trial\":";
+            write_individual_genome(trial, input.customers);
+            std::cout << "}\n";
+
+            mutant = individual_free(mutant, input.vehicles);
+            trial = individual_free(trial, input.vehicles);
+            generation = generation_free(generation, input.vehicles);
+            distances = distances_matrix_free(distances, input.customers);
+            free_fixed_routes(fixed_routes);
+            delete[] customers;
+            return 0;
+        }
         std::vector<Snapshot> trace;
         if (input.trace) {
             trace.push_back(snapshot(generation, input.customers));

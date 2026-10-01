@@ -21,6 +21,7 @@ from ..problem.scvrp import SCVRPProblem
 
 
 PROTOCOL = "SCVRP_LEGACY_RESULT_V1"
+PROBE_PROTOCOL = "SCVRP_LEGACY_PROBE_V1"
 _SELF_TEST_OUTPUT = "SCVRP_LEGACY_RUNNER_SELF_TEST_V1"
 _SELF_TEST_TIMEOUT_SECONDS = 10.0
 _COMPILE_FLAGS = ("-std=c++14", "-O2")
@@ -52,6 +53,7 @@ class SCVRPLegacyKernelRequest:
     iterations_per_temperature: int = 110
     max_transitions: int = 500_000
     trace: bool = False
+    probe_target: int | None = None
 
     def __post_init__(self) -> None:
         _require_request_int(self.seed, name="seed")
@@ -95,6 +97,10 @@ class SCVRPLegacyKernelRequest:
             raise ValueError("max_transitions must be < INT32_MAX")
         if not isinstance(self.trace, bool):
             raise ValueError("trace must be a boolean")
+        if self.probe_target is not None:
+            _require_request_int(self.probe_target, name="probe_target")
+            if self.probe_target < 0:
+                raise ValueError("probe_target must be >= 0")
         if self.termination_mode == "fixed_iterations" and self.limit > self.max_transitions:
             raise ValueError("fixed iteration limit cannot exceed max_transitions")
 
@@ -263,6 +269,7 @@ def serialize_scvrp_legacy_request(
         f"limit {request.limit}",
         f"max_transitions {request.max_transitions}",
         f"trace {int(request.trace)}",
+        f"probe_target {-1 if request.probe_target is None else request.probe_target}",
         "demands " + " ".join(str(int(value)) for value in problem.demands.tolist()),
         "distance_matrix "
         + " ".join(str(int(value)) for value in problem.distance_matrix.reshape(-1).tolist()),
@@ -312,6 +319,45 @@ def run_scvrp_legacy_kernel(
         raise SCVRPLegacyKernelError("SCVRP legacy kernel returned invalid JSON") from exc
     if not isinstance(result, dict) or result.get("protocol") != PROTOCOL:
         raise SCVRPLegacyKernelError("SCVRP legacy kernel returned an unsupported protocol")
+    return result
+
+
+def run_scvrp_legacy_probe(
+    problem: SCVRPProblem,
+    request: SCVRPLegacyKernelRequest,
+    *,
+    executable: Path | None = None,
+    cache_root: Path | None = None,
+    timeout: float = 120.0,
+) -> dict[str, Any]:
+    """Run the test-only mutation/crossover oracle for one population target."""
+    if request.probe_target is None:
+        raise ValueError("probe_target is required for an SCVRP legacy probe")
+    binary = build_scvrp_legacy_kernel(cache_root=cache_root) if executable is None else Path(executable)
+    payload = serialize_scvrp_legacy_request(problem, request)
+    try:
+        completed = subprocess.run(
+            [str(binary)],
+            input=payload,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise SCVRPLegacyKernelError(f"SCVRP legacy probe execution failed: {exc}") from exc
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip() or "no diagnostic output"
+        raise SCVRPLegacyKernelError(
+            f"SCVRP legacy probe exited with {completed.returncode}: {detail}"
+        )
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise SCVRPLegacyKernelError("SCVRP legacy probe returned invalid JSON") from exc
+    if not isinstance(result, dict) or result.get("protocol") != PROBE_PROTOCOL:
+        raise SCVRPLegacyKernelError("SCVRP legacy probe returned an unsupported protocol")
     return result
 
 
