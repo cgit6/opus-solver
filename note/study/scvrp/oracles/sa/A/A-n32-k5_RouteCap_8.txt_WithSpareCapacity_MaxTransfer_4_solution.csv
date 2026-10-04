@@ -1,0 +1,140 @@
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,1,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 680
+Vehicle #1: 6 2 9 28 4 11 14 24 23 
+Vehicle #2: 27 29 15 3 10 25 5 20 18 
+Vehicle #3: 12 21 31 19 13 1 7 26 
+Vehicle #4: 30 17 16 22 
+Vehicle #5: 8 
+Transfer Customers:   1   2   3   8   9   17   18   22   23   
+Transfer_Car_Number: 1
+Total_Time :, 43880, ms,Total_Time :, 43.880001, s,Total_generation :, 11221,avg once generation=, 0.003911, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,2,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 690
+Vehicle #1: 20 5 14 25 9 10 15 8 29 27 18 23 
+Vehicle #2: 16 2 
+Vehicle #3: 26 6 28 4 22 11 13 24 3 
+Vehicle #4: 30 12 
+Vehicle #5: 1 21 31 19 17 7 
+Transfer Customers:   2   3   8   9   13   14   16   18   22   23   
+Transfer_Car_Number: 1
+Total_Time :, 44878, ms,Total_Time :, 44.877998, s,Total_generation :, 11221,avg once generation=, 0.003999, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,3,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 690
+Vehicle #1: 7 17 22 19 31 21 1 
+Vehicle #2: 18 8 4 14 28 23 3 2 6 26 11 
+Vehicle #3: 30 16 
+Vehicle #4: 20 12 5 25 13 10 15 29 27 9 
+Vehicle #5: 24 
+Transfer Customers:   9   11   12   13   14   22   24   26   
+Transfer_Car_Number: 1
+Total_Time :, 43332, ms,Total_Time :, 43.332001, s,Total_generation :, 11221,avg once generation=, 0.003862, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,4,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 692
+Vehicle #1: 14 22 9 2 18 11 4 28 6 26 23 30 1 12 
+Vehicle #2: 7 17 19 21 3 13 16 
+Vehicle #3: 29 15 10 31 25 24 5 20 
+Vehicle #4: 27 
+Vehicle #5: 8 
+Transfer Customers:   1   2   3   8   9   12   13   18   22   23   24   27   31   
+Transfer_Car_Number: 2
+Total_Time :, 48852, ms,Total_Time :, 48.852001, s,Total_generation :, 11881,avg once generation=, 0.004112, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,5,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 691
+Vehicle #1: 20 5 25 10 15 9 29 27 12 
+Vehicle #2: 7 17 11 19 26 31 21 16 1 18 
+Vehicle #3: 22 
+Vehicle #4: 13 14 
+Vehicle #5: 30 6 3 2 23 4 28 24 8 
+Transfer Customers:   1   2   8   9   11   12   13   14   18   22   24   26   27   
+Transfer_Car_Number: 2
+Total_Time :, 44991, ms,Total_Time :, 44.991001, s,Total_generation :, 11331,avg once generation=, 0.003971, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,6,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 694
+Vehicle #1: 6 28 4 22 9 11 8 18 14 
+Vehicle #2: 20 5 25 10 15 29 27 
+Vehicle #3: 12 16 2 3 23 30 
+Vehicle #4: 1 13 21 31 19 17 7 26 
+Vehicle #5: 24 
+Transfer Customers:   2   3   9   13   22   23   24   26   
+Transfer_Car_Number: 1
+Total_Time :, 45310, ms,Total_Time :, 45.310001, s,Total_generation :, 11221,avg once generation=, 0.004038, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,7,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 693
+Vehicle #1: 7 22 12 9 17 19 31 21 1 
+Vehicle #2: 
+Vehicle #3: 28 4 11 23 2 3 30 24 6 26 
+Vehicle #4: 27 16 29 14 15 10 8 25 5 20 13 
+Vehicle #5: 18 
+Transfer Customers:   8   9   11   12   13   14   16   18   22   24   26   27   30   
+Transfer_Car_Number: 2
+Total_Time :, 78179, ms,Total_Time :, 78.179001, s,Total_generation :, 19471,avg once generation=, 0.004015, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,8,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 691
+Vehicle #1: 7 17 19 31 11 1 18 21 16 12 
+Vehicle #2: 27 24 29 15 9 10 25 13 5 20 
+Vehicle #3: 28 4 2 23 8 3 6 26 30 22 14 
+Vehicle #4: 
+Vehicle #5: 
+Transfer Customers:   1   2   8   9   11   12   13   14   18   22   24   27   
+Transfer_Car_Number: 2
+Total_Time :, 44166, ms,Total_Time :, 44.166000, s,Total_generation :, 11441,avg once generation=, 0.003860, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,9,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 690
+Vehicle #1: 6 3 23 28 11 8 2 9 18 14 24 
+Vehicle #2: 27 29 15 4 10 25 5 20 
+Vehicle #3: 1 21 31 19 17 13 7 26 
+Vehicle #4: 22 
+Vehicle #5: 12 16 30 
+Transfer Customers:   2   4   9   12   17   22   
+Transfer_Car_Number: 1
+Total_Time :, 44772, ms,Total_Time :, 44.771999, s,Total_generation :, 11221,avg once generation=, 0.003990, s
+
+
+filename: ,A-n32-k5_RouteCap_8.txt_WithSpareCapacity_MaxTransfer_4(SA),random seed=,10,
+start_temperature= 1.000000,coolingRate= 0.950000,maxIterations= 110,Temperature No Updatae= 100
+Feasible solution
+Cost: 692
+Vehicle #1: 24 8 11 4 22 18 28 6 30 21 9 2 3 
+Vehicle #2: 
+Vehicle #3: 29 15 31 10 25 5 20 12 16 
+Vehicle #4: 14 
+Vehicle #5: 1 26 19 17 27 23 13 7 
+Transfer Customers:   2   3   8   9   12   14   16   18   21   22   23   24   26   27   31   
+Transfer_Car_Number: 2
+Total_Time :, 52599, ms,Total_Time :, 52.598999, s,Total_generation :, 12871,avg once generation=, 0.004087, s
+

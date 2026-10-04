@@ -25,6 +25,30 @@ def test_parse_archived_p_n16_k8_instance() -> None:
     assert instance.demands.tolist() == [0, 19, 30, 16, 23, 11, 31, 15, 28, 8, 8, 7, 14, 6, 19, 11]
 
 
+def test_parse_legacy_instance_accepts_archive_section_marker_whitespace(
+    tmp_path: Path,
+) -> None:
+    source = (FIXTURES / "p_n16_k8.vrp").read_text(encoding="ascii")
+    archived_format = source.replace(
+        "NODE_COORD_SECTION\n",
+        "NODE_COORD_SECTION \r\n",
+    ).replace(
+        "DEMAND_SECTION\n",
+        "DEMAND_SECTION \r\n",
+    ).replace(
+        "DEPOT_SECTION\n",
+        "DEPOT_SECTION \r\n",
+    )
+    path = tmp_path / "p_n16_k8_archive_spacing.vrp"
+    path.write_text(archived_format, encoding="ascii", newline="")
+
+    instance = parse_legacy_cvrp_instance(path)
+
+    assert instance.name == "P-n16-k8"
+    assert instance.n_customers == 16
+    assert instance.demands.tolist()[-1] == 11
+
+
 def test_parse_archived_fixed_routes_and_seed_one_solution() -> None:
     plan = parse_legacy_fixed_route_plan(
         FIXTURES / "p_n16_k8_routecap2_transfer1.txt",

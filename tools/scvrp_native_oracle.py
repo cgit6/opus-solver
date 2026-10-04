@@ -1,0 +1,772 @@
+"""建置並呼叫封存的 SCVRP C++ oracle；只供測試，不是正式 solver。"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+import errno
+from hashlib import sha256
+import json
+import math
+import os
+from pathlib import Path
+import platform
+import signal
+import shutil
+import subprocess
+import tempfile
+import time
+from typing import Any, Literal
+
+from ..problem.scvrp import SCVRPProblem
+
+
+PROTOCOL = "SCVRP_LEGACY_RESULT_V1"
+DEEP_TRACE_PROTOCOL = "SCVRP_LEGACY_DEEP_TRACE_V1"
+PROBE_PROTOCOL = "SCVRP_LEGACY_PROBE_V8"
+GENERATION_PROBE_PROTOCOL = "SCVRP_LEGACY_GENERATION_PROBE_V2"
+_SELF_TEST_OUTPUT = "SCVRP_LEGACY_RUNNER_SELF_TEST_V1"
+_SELF_TEST_TIMEOUT_SECONDS = 10.0
+_COMPILE_FLAGS = ("-std=c++14", "-O2")
+_INT32_MAX = 0x7FFF_FFFF
+_UINT32_MAX = 0xFFFF_FFFF
+_MAX_SA_PROBE_CASES = 16
+_MAX_GENERATION_PROBE_TRANSITIONS = 111
+_LEGACY_SOURCE_HASHES = {
+    "common/dependences.cpp": "ad7fde1a75ad1b51cb1d6b32cf7d562a38bdf88b492e7e98a5ba57dcba3d5194",
+    "common/dependences.h": "142de5061173deb217c6c57ee5697c31018baaa479a7a4743f10a0cba274d453",
+    "common/io_tools.cpp": "b390cd3df3f0cf6dbab408fa976b415fae5fea01db159fa4d2b539392bd2aae5",
+    "common/io_tools.h": "ef650bd8d68514e3baf05d66fe464d80ec60abc5cd3ebb721ffb7ff8d28f083a",
+    "common/local_search.cpp": "c4240d1877fdc08d314cec8dcc9557dd1b2f9f561f1a6587fc5e9cb436ede6bb",
+    "common/local_search.h": "ec4ece6a59fd136a184cc42056437d3e4201e5289edd2bfb05d4f552fd151952",
+    "metaheuristic/differential_evolution.cpp": "7d244e97675779a17a5f2405d6665de6016a65b65cbd2cf059951f63960dbf1a",
+    "metaheuristic/differential_evolution.h": "de5853644fa476453248dc5104d364ac64ad0d6a02266533d4d17606a01595f1",
+}
+
+
+class SCVRPLegacyKernelError(RuntimeError):
+    """Raised when the compatibility kernel cannot be built or executed."""
+
+
+@dataclass(frozen=True)
+class SCVRPLegacySAAcceptanceCase:
+    rng_seed: int
+    target_cost: int
+    trial_cost: int
+    temperature: float
+
+    def __post_init__(self) -> None:
+        _require_request_int(self.rng_seed, name="rng_seed")
+        if not 0 <= self.rng_seed <= _UINT32_MAX:
+            raise ValueError("rng_seed must fit in an unsigned 32-bit integer")
+        for name, value in (
+            ("target_cost", self.target_cost),
+            ("trial_cost", self.trial_cost),
+        ):
+            _require_request_int(value, name=name)
+            if not 0 <= value <= _INT32_MAX:
+                raise ValueError(f"{name} must be in signed 32-bit non-negative range")
+        if (
+            isinstance(self.temperature, bool)
+            or not isinstance(self.temperature, (int, float))
+            or not math.isfinite(float(self.temperature))
+            or self.temperature <= 0
+        ):
+            raise ValueError("temperature must be a finite number > 0")
+
+
+@dataclass(frozen=True)
+class SCVRPLegacyKernelRequest:
+    seed: int
+    termination_mode: Literal["fixed_iterations", "legacy_temperature_stagnation"]
+    limit: int
+    start_temperature: float = 1.0
+    cooling_rate: float = 0.95
+    iterations_per_temperature: int = 110
+    max_transitions: int = 500_000
+    trace: bool = False
+    process_trace: bool = False
+    probe_target: int | None = None
+    probe_reinsert_customer: int | None = None
+    probe_reinsert_new_route: int | None = None
+    probe_two_swap_transfer_customer: int | None = None
+    probe_strong_drop_transfer_customer: int | None = None
+    probe_local_search: bool = False
+    probe_sa_cases: tuple[SCVRPLegacySAAcceptanceCase, ...] = ()
+    probe_new_generation: bool = False
+
+    def __post_init__(self) -> None:
+        _require_request_int(self.seed, name="seed")
+        if self.seed <= 0:
+            raise ValueError("seed must be > 0 for the legacy compatibility profile")
+        if self.seed > _UINT32_MAX:
+            raise ValueError("seed must fit in an unsigned 32-bit integer")
+        if self.termination_mode not in {
+            "fixed_iterations",
+            "legacy_temperature_stagnation",
+        }:
+            raise ValueError("unsupported termination_mode")
+        _require_request_int(self.limit, name="limit")
+        if self.limit < 0:
+            raise ValueError("limit must be >= 0")
+        if self.limit > _INT32_MAX:
+            raise ValueError("limit must fit in a signed 32-bit integer")
+        if (
+            isinstance(self.start_temperature, bool)
+            or not isinstance(self.start_temperature, (int, float))
+            or not math.isfinite(float(self.start_temperature))
+            or self.start_temperature <= 0
+        ):
+            raise ValueError("start_temperature must be > 0")
+        if (
+            isinstance(self.cooling_rate, bool)
+            or not isinstance(self.cooling_rate, (int, float))
+            or not math.isfinite(float(self.cooling_rate))
+            or not 0 < self.cooling_rate <= 1
+        ):
+            raise ValueError("cooling_rate must be in (0, 1]")
+        _require_request_int(self.iterations_per_temperature, name="iterations_per_temperature")
+        if self.iterations_per_temperature <= 0:
+            raise ValueError("iterations_per_temperature must be > 0")
+        if self.iterations_per_temperature > _INT32_MAX:
+            raise ValueError("iterations_per_temperature must fit in a signed 32-bit integer")
+        _require_request_int(self.max_transitions, name="max_transitions")
+        if self.max_transitions <= 0:
+            raise ValueError("max_transitions must be > 0")
+        if self.max_transitions >= _INT32_MAX:
+            raise ValueError("max_transitions must be < INT32_MAX")
+        if not isinstance(self.trace, bool):
+            raise ValueError("trace must be a boolean")
+        if not isinstance(self.process_trace, bool):
+            raise ValueError("process_trace must be a boolean")
+        if self.process_trace and (
+            self.probe_target is not None or self.probe_new_generation
+        ):
+            raise ValueError("process_trace is only available for a complete loop run")
+        if self.probe_target is not None:
+            _require_request_int(self.probe_target, name="probe_target")
+            if self.probe_target < 0:
+                raise ValueError("probe_target must be >= 0")
+        reinsert_values = (
+            self.probe_reinsert_customer,
+            self.probe_reinsert_new_route,
+        )
+        if any(value is not None for value in reinsert_values):
+            if any(value is None for value in reinsert_values):
+                raise ValueError(
+                    "probe_reinsert_customer and probe_reinsert_new_route "
+                    "must be provided together"
+                )
+            if self.probe_target is None:
+                raise ValueError("probe_target is required for a reinsertion probe")
+            assert self.probe_reinsert_customer is not None
+            assert self.probe_reinsert_new_route is not None
+            _require_request_int(
+                self.probe_reinsert_customer,
+                name="probe_reinsert_customer",
+            )
+            _require_request_int(
+                self.probe_reinsert_new_route,
+                name="probe_reinsert_new_route",
+            )
+            if self.probe_reinsert_customer <= 0:
+                raise ValueError("probe_reinsert_customer must be > 0")
+            if self.probe_reinsert_customer > _INT32_MAX:
+                raise ValueError(
+                    "probe_reinsert_customer must fit in a signed 32-bit integer"
+                )
+            if self.probe_reinsert_new_route < 0:
+                raise ValueError("probe_reinsert_new_route must be >= 0")
+            if self.probe_reinsert_new_route > _INT32_MAX:
+                raise ValueError(
+                    "probe_reinsert_new_route must fit in a signed 32-bit integer"
+                )
+        if self.probe_two_swap_transfer_customer is not None:
+            if self.probe_target is None:
+                raise ValueError("probe_target is required for a two-swap transfer probe")
+            _require_request_int(
+                self.probe_two_swap_transfer_customer,
+                name="probe_two_swap_transfer_customer",
+            )
+            if self.probe_two_swap_transfer_customer <= 0:
+                raise ValueError("probe_two_swap_transfer_customer must be > 0")
+            if self.probe_two_swap_transfer_customer > _INT32_MAX:
+                raise ValueError(
+                    "probe_two_swap_transfer_customer must fit in a signed 32-bit integer"
+                )
+        if self.probe_strong_drop_transfer_customer is not None:
+            if self.probe_target is None:
+                raise ValueError(
+                    "probe_target is required for a strong-drop transfer probe"
+                )
+            _require_request_int(
+                self.probe_strong_drop_transfer_customer,
+                name="probe_strong_drop_transfer_customer",
+            )
+            if self.probe_strong_drop_transfer_customer <= 0:
+                raise ValueError("probe_strong_drop_transfer_customer must be > 0")
+            if self.probe_strong_drop_transfer_customer > _INT32_MAX:
+                raise ValueError(
+                    "probe_strong_drop_transfer_customer must fit in a signed 32-bit integer"
+                )
+        if not isinstance(self.probe_local_search, bool):
+            raise ValueError("probe_local_search must be a boolean")
+        if self.probe_local_search and self.probe_target is None:
+            raise ValueError("probe_target is required for a local-search probe")
+        if not isinstance(self.probe_new_generation, bool):
+            raise ValueError("probe_new_generation must be a boolean")
+        if self.probe_new_generation:
+            if self.probe_target is not None:
+                raise ValueError(
+                    "probe_new_generation cannot be combined with a target probe"
+                )
+            if (
+                self.termination_mode != "fixed_iterations"
+                or not 1 <= self.limit <= _MAX_GENERATION_PROBE_TRANSITIONS
+            ):
+                raise ValueError(
+                    "probe_new_generation requires fixed_iterations with "
+                    f"limit in [1, {_MAX_GENERATION_PROBE_TRANSITIONS}]"
+                )
+            if self.trace:
+                raise ValueError("probe_new_generation owns its isolated trace")
+        if not isinstance(self.probe_sa_cases, tuple):
+            raise ValueError("probe_sa_cases must be a tuple")
+        if len(self.probe_sa_cases) > _MAX_SA_PROBE_CASES:
+            raise ValueError(
+                f"probe_sa_cases must contain at most {_MAX_SA_PROBE_CASES} cases"
+            )
+        for index, case in enumerate(self.probe_sa_cases):
+            if not isinstance(case, SCVRPLegacySAAcceptanceCase):
+                raise ValueError(
+                    f"probe_sa_cases[{index}] must be an SCVRPLegacySAAcceptanceCase"
+                )
+        if self.probe_sa_cases and self.probe_target is None:
+            raise ValueError("probe_target is required for an SA acceptance probe")
+        if self.termination_mode == "fixed_iterations" and self.limit > self.max_transitions:
+            raise ValueError("fixed iteration limit cannot exceed max_transitions")
+
+
+def _require_request_int(value: Any, *, name: str) -> None:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(f"{name} must be an integer")
+
+
+def native_source_root() -> Path:
+    return (
+        Path(__file__).resolve().parents[1]
+        / "solver/native/scvrp_legacy"
+    )
+
+
+def verify_legacy_source_hashes(source_root: Path | None = None) -> None:
+    root = native_source_root() if source_root is None else Path(source_root)
+    for relative, expected in _LEGACY_SOURCE_HASHES.items():
+        path = root / relative
+        if not path.is_file():
+            raise SCVRPLegacyKernelError(f"missing archived SCVRP source: {path}")
+        actual = sha256(path.read_bytes()).hexdigest()
+        if actual != expected:
+            raise SCVRPLegacyKernelError(
+                f"archived SCVRP source hash mismatch for {relative}: {actual} != {expected}"
+            )
+
+
+def build_scvrp_legacy_kernel(
+    *,
+    cache_root: Path | None = None,
+    compiler: str = "g++",
+    build_timeout: float = 300.0,
+) -> Path:
+    """Build once into a content-addressed cache and return the executable."""
+    started_at = time.monotonic()
+    if (
+        isinstance(build_timeout, bool)
+        or not isinstance(build_timeout, (int, float))
+        or not math.isfinite(float(build_timeout))
+        or build_timeout <= 0
+    ):
+        raise ValueError("build_timeout must be a finite number > 0")
+    deadline = started_at + float(build_timeout)
+
+    source_root = native_source_root()
+    verify_legacy_source_hashes(source_root)
+    compiler_path = shutil.which(compiler)
+    if compiler_path is None:
+        raise SCVRPLegacyKernelError(f"C++ compiler was not found: {compiler}")
+    compiler_version = _run_checked(
+        [compiler_path, "--version"],
+        deadline=deadline,
+        phase="compiler version probe",
+    ).stdout
+    fingerprint = _kernel_fingerprint(source_root, compiler_version)
+    _remaining_build_time(deadline, phase="kernel fingerprinting")
+    root = (
+        Path(tempfile.gettempdir()) / "mkp-scvrp-legacy-kernel"
+        if cache_root is None
+        else Path(cache_root)
+    )
+    artifact_dir = root / fingerprint
+    executable = artifact_dir / "scvrp_legacy_runner"
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+
+    if _passes_self_test(
+        executable,
+        deadline=deadline,
+        phase="cached executable self-test",
+    ):
+        return executable
+
+    lock_path = artifact_dir / ".build.lock"
+    with lock_path.open("a+b") as lock_file:
+        try:
+            import fcntl
+        except ImportError as exc:  # pragma: no cover - the compatibility target is Linux
+            raise SCVRPLegacyKernelError("native kernel build requires POSIX file locking") from exc
+        _acquire_build_lock(lock_file, deadline=deadline)
+        if _passes_self_test(
+            executable,
+            deadline=deadline,
+            phase="locked cached executable self-test",
+        ):
+            return executable
+
+        with tempfile.TemporaryDirectory(prefix="build-", dir=artifact_dir) as temp_dir_text:
+            temp_dir = Path(temp_dir_text)
+            objects: list[Path] = []
+            compat_source = source_root / "compat_rng.cpp"
+            compat_object = temp_dir / "compat_rng.o"
+            _compile(
+                compiler_path,
+                compat_source,
+                compat_object,
+                extra_flags=(),
+                source_root=source_root,
+                deadline=deadline,
+            )
+            objects.append(compat_object)
+
+            legacy_sources = (
+                source_root / "runner.cpp",
+                source_root / "common" / "dependences.cpp",
+                source_root / "common" / "io_tools.cpp",
+                source_root / "common" / "local_search.cpp",
+                source_root / "metaheuristic" / "differential_evolution.cpp",
+            )
+            for index, source in enumerate(legacy_sources):
+                object_path = temp_dir / f"legacy_{index}.o"
+                _compile(
+                    compiler_path,
+                    source,
+                    object_path,
+                    extra_flags=("-include", str(source_root / "compat_rng.h")),
+                    source_root=source_root,
+                    deadline=deadline,
+                )
+                objects.append(object_path)
+
+            candidate = temp_dir / "scvrp_legacy_runner"
+            _run_checked(
+                [
+                    compiler_path,
+                    "-O2",
+                    *(str(path) for path in objects),
+                    "-lm",
+                    "-o",
+                    str(candidate),
+                ],
+                deadline=deadline,
+                phase="native kernel link",
+            )
+            if not _passes_self_test(
+                candidate,
+                deadline=deadline,
+                phase="compiled executable self-test",
+            ):
+                raise SCVRPLegacyKernelError("compiled SCVRP kernel failed its RNG self-test")
+            _remaining_build_time(
+                deadline,
+                phase="publishing compiled executable",
+            )
+            os.replace(candidate, executable)
+        return executable
+
+
+def serialize_scvrp_legacy_request(
+    problem: SCVRPProblem,
+    request: SCVRPLegacyKernelRequest,
+) -> str:
+    if not isinstance(problem, SCVRPProblem):
+        raise TypeError("SCVRP legacy kernel requires SCVRPProblem")
+    best_known = 0 if problem.best_known is None else int(problem.best_known)
+    lines = [
+        "SCVRP_LEGACY_RUNNER_V1",
+        f"customers {problem.n_customers}",
+        f"vehicles {problem.vehicle_count}",
+        f"capacity {problem.capacity}",
+        f"best_known {best_known}",
+        f"seed {request.seed}",
+        "de_technique 2",
+        f"start_temperature {request.start_temperature:.17g}",
+        f"cooling_rate {request.cooling_rate:.17g}",
+        f"iterations_per_temperature {request.iterations_per_temperature}",
+        f"termination {request.termination_mode}",
+        f"limit {request.limit}",
+        f"max_transitions {request.max_transitions}",
+        f"trace {int(request.trace)}",
+        f"process_trace {int(request.process_trace)}",
+        f"probe_target {-1 if request.probe_target is None else request.probe_target}",
+        "probe_reinsert_customer "
+        f"{-1 if request.probe_reinsert_customer is None else request.probe_reinsert_customer}",
+        "probe_reinsert_new_route "
+        f"{-1 if request.probe_reinsert_new_route is None else request.probe_reinsert_new_route}",
+        "probe_two_swap_transfer_customer "
+        f"{-1 if request.probe_two_swap_transfer_customer is None else request.probe_two_swap_transfer_customer}",
+        "probe_strong_drop_transfer_customer "
+        f"{-1 if request.probe_strong_drop_transfer_customer is None else request.probe_strong_drop_transfer_customer}",
+        f"probe_local_search {int(request.probe_local_search)}",
+        f"probe_sa_case_count {len(request.probe_sa_cases)}",
+        *(
+            "probe_sa_case "
+            f"{case.rng_seed} {case.target_cost} {case.trial_cost} "
+            f"{float(case.temperature):.17g}"
+            for case in request.probe_sa_cases
+        ),
+        f"probe_new_generation {int(request.probe_new_generation)}",
+        "demands " + " ".join(str(int(value)) for value in problem.demands.tolist()),
+        "distance_matrix "
+        + " ".join(str(int(value)) for value in problem.distance_matrix.reshape(-1).tolist()),
+        f"fixed_route_count {len(problem.fixed_routes)}",
+    ]
+    for route_index, route in enumerate(problem.fixed_routes):
+        values = (
+            int(problem.fixed_route_capacities[route_index]),
+            len(route),
+            *route,
+        )
+        lines.append("fixed_route " + " ".join(str(value) for value in values))
+    lines.append("END")
+    return "\n".join(lines) + "\n"
+
+
+def run_scvrp_legacy_kernel(
+    problem: SCVRPProblem,
+    request: SCVRPLegacyKernelRequest,
+    *,
+    executable: Path | None = None,
+    cache_root: Path | None = None,
+    timeout: float = 120.0,
+) -> dict[str, Any]:
+    binary = build_scvrp_legacy_kernel(cache_root=cache_root) if executable is None else Path(executable)
+    payload = serialize_scvrp_legacy_request(problem, request)
+    try:
+        completed = subprocess.run(
+            [str(binary)],
+            input=payload,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise SCVRPLegacyKernelError(f"SCVRP legacy kernel execution failed: {exc}") from exc
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip() or "no diagnostic output"
+        raise SCVRPLegacyKernelError(
+            f"SCVRP legacy kernel exited with {completed.returncode}: {detail}"
+        )
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise SCVRPLegacyKernelError("SCVRP legacy kernel returned invalid JSON") from exc
+    expected_protocol = DEEP_TRACE_PROTOCOL if request.process_trace else PROTOCOL
+    if not isinstance(result, dict) or result.get("protocol") != expected_protocol:
+        raise SCVRPLegacyKernelError("SCVRP legacy kernel returned an unsupported protocol")
+    return result
+
+
+def run_scvrp_legacy_probe(
+    problem: SCVRPProblem,
+    request: SCVRPLegacyKernelRequest,
+    *,
+    executable: Path | None = None,
+    cache_root: Path | None = None,
+    timeout: float = 120.0,
+) -> dict[str, Any]:
+    """Run the test-only mutation/crossover/local-search oracle for one target."""
+    if request.probe_target is None:
+        raise ValueError("probe_target is required for an SCVRP legacy probe")
+    binary = build_scvrp_legacy_kernel(cache_root=cache_root) if executable is None else Path(executable)
+    payload = serialize_scvrp_legacy_request(problem, request)
+    try:
+        completed = subprocess.run(
+            [str(binary)],
+            input=payload,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise SCVRPLegacyKernelError(f"SCVRP legacy probe execution failed: {exc}") from exc
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip() or "no diagnostic output"
+        raise SCVRPLegacyKernelError(
+            f"SCVRP legacy probe exited with {completed.returncode}: {detail}"
+        )
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise SCVRPLegacyKernelError("SCVRP legacy probe returned invalid JSON") from exc
+    if not isinstance(result, dict) or result.get("protocol") != PROBE_PROTOCOL:
+        raise SCVRPLegacyKernelError("SCVRP legacy probe returned an unsupported protocol")
+    return result
+
+
+def run_scvrp_legacy_generation_probe(
+    problem: SCVRPProblem,
+    request: SCVRPLegacyKernelRequest,
+    *,
+    executable: Path | None = None,
+    cache_root: Path | None = None,
+    timeout: float = 120.0,
+) -> dict[str, Any]:
+    """Run bounded archived generations with full state and temperature tracing."""
+    if not request.probe_new_generation:
+        raise ValueError("probe_new_generation is required for a generation probe")
+    binary = (
+        build_scvrp_legacy_kernel(cache_root=cache_root)
+        if executable is None
+        else Path(executable)
+    )
+    payload = serialize_scvrp_legacy_request(problem, request)
+    try:
+        completed = subprocess.run(
+            [str(binary)],
+            input=payload,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise SCVRPLegacyKernelError(
+            f"SCVRP legacy generation probe execution failed: {exc}"
+        ) from exc
+    if completed.returncode != 0:
+        detail = (
+            completed.stderr.strip()
+            or completed.stdout.strip()
+            or "no diagnostic output"
+        )
+        raise SCVRPLegacyKernelError(
+            "SCVRP legacy generation probe exited with "
+            f"{completed.returncode}: {detail}"
+        )
+    try:
+        result = json.loads(completed.stdout)
+    except json.JSONDecodeError as exc:
+        raise SCVRPLegacyKernelError(
+            "SCVRP legacy generation probe returned invalid JSON"
+        ) from exc
+    if (
+        not isinstance(result, dict)
+        or result.get("protocol") != GENERATION_PROBE_PROTOCOL
+    ):
+        raise SCVRPLegacyKernelError(
+            "SCVRP legacy generation probe returned an unsupported protocol"
+        )
+    return result
+
+
+def _kernel_fingerprint(source_root: Path, compiler_version: str) -> str:
+    digest = sha256()
+    digest.update("SCVRP_LEGACY_BUILD_V1\n".encode("ascii"))
+    digest.update(platform.platform().encode("utf-8"))
+    digest.update(platform.machine().encode("ascii"))
+    digest.update(compiler_version.encode("utf-8"))
+    digest.update("\0".join(_COMPILE_FLAGS).encode("ascii"))
+    for path in sorted(source_root.rglob("*")):
+        if path.is_file() and path.suffix in {".cpp", ".h"}:
+            digest.update(path.relative_to(source_root).as_posix().encode("utf-8"))
+            digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def _compile(
+    compiler_path: str,
+    source: Path,
+    output: Path,
+    *,
+    extra_flags: tuple[str, ...],
+    source_root: Path,
+    deadline: float,
+) -> None:
+    _run_checked(
+        [
+            compiler_path,
+            *_COMPILE_FLAGS,
+            f"-I{source_root}",
+            *extra_flags,
+            "-c",
+            str(source),
+            "-o",
+            str(output),
+        ],
+        deadline=deadline,
+        phase=f"compiling {source.name}",
+    )
+
+
+def _acquire_build_lock(lock_file: Any, *, deadline: float) -> None:
+    import fcntl
+
+    while True:
+        remaining = _remaining_build_time(deadline, phase="build lock")
+        try:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as exc:
+            if exc.errno == errno.EINTR:
+                continue
+            if exc.errno not in {errno.EACCES, errno.EAGAIN}:
+                raise
+            time.sleep(min(0.01, remaining))
+            continue
+        if time.monotonic() >= deadline:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            raise SCVRPLegacyKernelError(
+                "native kernel build timed out waiting for build lock"
+            )
+        return
+
+
+def _passes_self_test(
+    executable: Path,
+    *,
+    deadline: float,
+    phase: str,
+) -> bool:
+    if not executable.is_file():
+        return False
+    global_remaining = _remaining_build_time(deadline, phase=phase)
+    phase_cap_is_limiting = _SELF_TEST_TIMEOUT_SECONDS < global_remaining
+    try:
+        completed = _run_build_process(
+            [str(executable), "--self-test"],
+            deadline=deadline,
+            phase=phase,
+            timeout_cap=_SELF_TEST_TIMEOUT_SECONDS,
+        )
+    except subprocess.TimeoutExpired as exc:
+        if not phase_cap_is_limiting or time.monotonic() >= deadline:
+            raise SCVRPLegacyKernelError(
+                f"native kernel build timed out during {phase}"
+            ) from exc
+        return False
+    except OSError:
+        return False
+    return completed.returncode == 0 and completed.stdout.strip() == _SELF_TEST_OUTPUT
+
+
+def _remaining_build_time(deadline: float, *, phase: str) -> float:
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        raise SCVRPLegacyKernelError(f"native kernel build timed out during {phase}")
+    return remaining
+
+
+def _kill_process_group_and_reap(process: subprocess.Popen[str]) -> None:
+    try:
+        os.killpg(process.pid, signal.SIGKILL)
+    except ProcessLookupError:
+        pass
+    except OSError:
+        try:
+            process.kill()
+        except ProcessLookupError:
+            pass
+    process.communicate()
+
+
+def _cleanup_process_after_exception(
+    process: subprocess.Popen[str],
+    primary_error: BaseException,
+) -> None:
+    try:
+        _kill_process_group_and_reap(process)
+    except BaseException as cleanup_error:
+        try:
+            primary_error.add_note(
+                f"native build process cleanup also failed: {cleanup_error!r}"
+            )
+        except BaseException:
+            pass
+
+
+def _run_build_process(
+    command: list[str],
+    *,
+    deadline: float,
+    phase: str,
+    timeout_cap: float | None = None,
+) -> subprocess.CompletedProcess[str]:
+    started_at = time.monotonic()
+    _remaining_build_time(deadline, phase=phase)
+    process_deadline = deadline
+    if timeout_cap is not None:
+        process_deadline = min(process_deadline, started_at + timeout_cap)
+    process = subprocess.Popen(
+        command,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        start_new_session=True,
+    )
+    remaining = process_deadline - time.monotonic()
+    if remaining <= 0:
+        timeout_error = subprocess.TimeoutExpired(
+            command,
+            max(0.0, process_deadline - started_at),
+        )
+        _cleanup_process_after_exception(process, timeout_error)
+        raise timeout_error
+    try:
+        stdout, stderr = process.communicate(timeout=remaining)
+    except BaseException as exc:
+        _cleanup_process_after_exception(process, exc)
+        raise
+    if time.monotonic() >= process_deadline:
+        raise subprocess.TimeoutExpired(
+            command,
+            max(0.0, process_deadline - started_at),
+            output=stdout,
+            stderr=stderr,
+        )
+    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+
+
+def _run_checked(
+    command: list[str],
+    *,
+    deadline: float,
+    phase: str,
+) -> subprocess.CompletedProcess[str]:
+    try:
+        completed = _run_build_process(
+            command,
+            deadline=deadline,
+            phase=phase,
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise SCVRPLegacyKernelError(
+            f"native kernel build timed out during {phase}"
+        ) from exc
+    except OSError as exc:
+        detail = str(exc)
+        raise SCVRPLegacyKernelError(f"native build command failed: {detail}") from exc
+    if completed.returncode != 0:
+        detail = completed.stderr.strip() or completed.stdout.strip()
+        raise SCVRPLegacyKernelError(f"native build command failed: {detail}")
+    return completed

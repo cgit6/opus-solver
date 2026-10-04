@@ -1,4 +1,4 @@
-# SCVRP legacy compatibility kernel
+# SCVRP archived C++ test oracle
 
 The files under `common/` and `metaheuristic/` are preserved from
 `note/study/SCRP.rar` without source edits. Their SHA-256 values are recorded
@@ -30,12 +30,10 @@ legacy sources contain allocator and bounds defects. Logical defects that affect
 the optimization result are retained until the legacy profile has passed its
 full oracle suite.
 
-The Python adapter compiles this runner into a content-addressed temporary cache
-on first use. A C++14-capable `g++` must therefore be available at runtime; a
-missing compiler is reported before the timed optimization run begins. Native
-build discovery, locking, compilation, linking, and self-test share one 300
-second deadline by default. The solver's `timeout_seconds` separately bounds the
-optimization process after a usable executable is available.
+`mkp.tools.scvrp_native_oracle` compiles this runner into a content-addressed
+temporary cache when validation explicitly requests it. Production Engine runs
+only `solver/CDELS.py` and never imports or starts this oracle. A C++14-capable
+`g++` is therefore needed only for oracle tests and `scvrp_dataset validate-run`.
 
 ## Reproduce the archived seeds through the current CLI
 
@@ -44,11 +42,11 @@ sequence as follows:
 
 ```bash
 python -m mkp.cli.run \
-  --experiment-name scvrp_legacy_archive_seeds_1_10 \
+  --experiment-name cdels_archive_seeds_1_10 \
   --type scvrp \
   --dataset P \
   --problems P-n16-k8-routecap2-transfer1 \
-  --solver scvrp_legacy_sa \
+  --solver cdels \
   --set 0 \
   --repeat 10 \
   --run-seeds 1,2,3,4,5,6,7,8,9,10 \
@@ -60,7 +58,7 @@ python -m mkp.cli.run \
 preserved, and the same ordered list is used for every selected problem.
 
 The complete recovered SCVRP state is written to
-`output/scvrp_legacy_archive_seeds_1_10/scvrp_legacy_sa/param_0/runs.json` under
+`output/cdels_archive_seeds_1_10/cdels/param_0/runs.json` under
 `metadata.validation.scvrp_state`. It includes ordered routes (including empty
 routes), transferred customers, route and transfer costs, remaining capacities,
 and strict-feasibility diagnostics. Those fields can reconstruct the canonical

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -99,6 +100,47 @@ def test_scvrp_solution_encoding_preserves_empty_routes_and_validates_result() -
     assert report.objective_valid is True
     assert report.recomputed_objective == 350
     assert report.metadata["scvrp_state"]["transfer_capacities_free"] == [0, 0, 0, 0, 0, 31, 0, 0, 0]
+
+
+def test_scvrp_infeasible_result_keeps_raw_objective_and_validates_legacy_score() -> None:
+    problem, _ = _archived_problem_and_solution()
+    routes = (tuple(range(1, problem.n_customers)),) + ((),) * (problem.vehicle_count - 1)
+    evaluation = problem.evaluate(routes, ())
+
+    assert evaluation.legacy_feasible is False
+    assert evaluation.objective == evaluation.route_cost + evaluation.transfer_cost
+    assert evaluation.legacy_penalty == 100
+    assert evaluation.legacy_search_score == evaluation.objective + 100
+
+    encoded = encode_scvrp_solution(routes, (), n_customers=problem.n_customers)
+    result = SolveResult(
+        problem_id=problem.problem_id,
+        solver_id="legacy_scvrp",
+        run_seed=1,
+        best_solution=encoded,
+        best_objective=evaluation.legacy_search_score,
+        feasible=False,
+        evaluation_count=0,
+        stop_reason="legacy_fixture",
+        runtime=0.0,
+    )
+    report = problem.validate(result)
+
+    assert report.is_feasible is False
+    assert report.objective_valid is True
+    assert report.objective_mismatch is False
+    assert report.recomputed_objective == evaluation.legacy_search_score
+    assert report.metadata["scvrp_state"]["raw_objective"] == evaluation.objective
+    assert report.metadata["scvrp_state"]["legacy_penalty"] == 100
+    assert (
+        report.metadata["scvrp_state"]["legacy_search_score"]
+        == evaluation.legacy_search_score
+    )
+
+    wrong_result = replace(result, best_objective=evaluation.objective)
+    wrong_report = problem.validate(wrong_result)
+    assert wrong_report.objective_valid is False
+    assert wrong_report.objective_mismatch is True
 
 
 def test_scvrp_rejects_duplicate_customer_route_stream() -> None:

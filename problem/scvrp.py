@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from math import pow, sqrt
 from multiprocessing.shared_memory import SharedMemory
 from pathlib import Path
@@ -13,7 +13,7 @@ import numpy as np
 
 from .interface import Direction, Problem, normalize_best_known
 from .registry import ProblemShmPack, ProblemTypeSpec
-from .validation import ValidationReport, build_validation_report
+from .validation import ValidationReport, build_validation_report, objective_values_equal
 from .yaml import require_fields, validate_identity
 
 if TYPE_CHECKING:
@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 ROUTE_SEPARATOR = -1
 STATE_SEPARATOR = -2
+LEGACY_INFEASIBILITY_PENALTY = 100
 
 
 @dataclass(frozen=True)
@@ -66,6 +67,8 @@ class SCVRPEvaluation:
     """Recomputed legacy objective and all state needed for comparison."""
 
     objective: int
+    legacy_penalty: int
+    legacy_search_score: int
     route_cost: int
     transfer_cost: int
     transferred_demand: int
@@ -229,8 +232,12 @@ class SCVRPProblem(Problem):
         transfer_cost = transfer_vehicle_count * self.transfer_cost_once
         violations = tuple(structural_violations + capacity_violations + fixed_capacity_violations)
         legacy_feasible = not structural_violations and not capacity_violations
+        objective = route_cost + transfer_cost
+        legacy_penalty = 0 if legacy_feasible else LEGACY_INFEASIBILITY_PENALTY
         return SCVRPEvaluation(
-            objective=route_cost + transfer_cost,
+            objective=objective,
+            legacy_penalty=legacy_penalty,
+            legacy_search_score=objective + legacy_penalty,
             route_cost=route_cost,
             transfer_cost=transfer_cost,
             transferred_demand=transferred_demand,
@@ -277,6 +284,9 @@ class SCVRPProblem(Problem):
                 "scvrp_state": {
                     "routes": [list(route) for route in routes],
                     "transferred_customers": list(transferred),
+                    "raw_objective": evaluation.objective,
+                    "legacy_penalty": evaluation.legacy_penalty,
+                    "legacy_search_score": evaluation.legacy_search_score,
                     "route_cost": evaluation.route_cost,
                     "transfer_cost": evaluation.transfer_cost,
                     "transferred_demand": evaluation.transferred_demand,
@@ -289,11 +299,24 @@ class SCVRPProblem(Problem):
             }
         except ValueError as exc:
             metadata = {"scvrp_state": {"decode_error": str(exc)}}
-        return build_validation_report(
+            evaluation = None
+        report = build_validation_report(
             self,
             solve_result,
             solution=solution,
             metadata=metadata,
+        )
+        if evaluation is None:
+            return report
+        objective_valid = objective_values_equal(
+            evaluation.legacy_search_score,
+            solve_result.best_objective,
+        )
+        return replace(
+            report,
+            objective_valid=objective_valid,
+            recomputed_objective=evaluation.legacy_search_score,
+            objective_mismatch=not objective_valid,
         )
 
 
@@ -553,7 +576,11 @@ def decode_scvrp_solution(
 def parse_legacy_cvrp_instance(path: Path | str) -> LegacyCVRPInstance:
     """Parse the strict CVRPLIB subset read by the archived SCVRP source."""
     file_path = Path(path)
-    lines = file_path.read_text(encoding="ascii").splitlines()
+    # The archived Augerat files contain harmless trailing spaces on section
+    # markers such as ``NODE_COORD_SECTION ``.  Normalize only surrounding
+    # whitespace so the parser accepts the original bytes without changing
+    # any token or section semantics.
+    lines = [line.strip() for line in file_path.read_text(encoding="ascii").splitlines()]
     try:
         coord_start = lines.index("NODE_COORD_SECTION")
         demand_start = lines.index("DEMAND_SECTION")
