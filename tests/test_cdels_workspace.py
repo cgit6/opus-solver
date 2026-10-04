@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
+
 from mkp.problem.scvrp import load_legacy_scvrp_problem
 from mkp.solver.CDELS import CDELS
 from mkp.solver.CDELS_workspace import CDELSWorkspace
@@ -38,8 +40,13 @@ def test_workspace_is_initialized_before_population_and_reuses_buffers() -> None
 
     mutation_buffer = core.workspace.mutation_customers
     crossover_buffer = core.workspace.crossover_closed
+    mutant_buffer = core.workspace.mutant
     mutation_id = id(mutation_buffer)
     crossover_id = id(crossover_buffer)
+    mutant_id = id(mutant_buffer)
+    mutant_positions_id = id(mutant_buffer.positions)
+    mutant_transfer_mask_id = id(mutant_buffer.transfer_mask)
+    mutant_route_ids = tuple(id(route) for route in mutant_buffer.routes)
     assert mutation_buffer == list(range(core.problem.n_customers))
     assert crossover_buffer == bytearray(core.problem.n_customers)
 
@@ -51,6 +58,41 @@ def test_workspace_is_initialized_before_population_and_reuses_buffers() -> None
     assert core.workspace.crossover_closed is crossover_buffer
     assert id(core.workspace.mutation_customers) == mutation_id
     assert id(core.workspace.crossover_closed) == crossover_id
+    assert id(core.workspace.mutant) == mutant_id
+    assert id(core.workspace.mutant.positions) == mutant_positions_id
+    assert id(core.workspace.mutant.transfer_mask) == mutant_transfer_mask_id
+    assert tuple(
+        id(route) for route in core.workspace.mutant.routes
+    ) == mutant_route_ids
+
+
+def test_copy_individual_into_reuses_all_mutant_state_containers() -> None:
+    core = CDELSWorkspace(_problem(), seed=1)
+    source = core.initialize_population().individuals[0]
+    destination = core.workspace.mutant
+    destination_id = id(destination)
+    positions_id = id(destination.positions)
+    transfer_mask_id = id(destination.transfer_mask)
+    route_ids = tuple(id(route) for route in destination.routes)
+
+    copied = core._copy_individual_into(destination, source)
+
+    assert copied is destination
+    assert copied.canonical_dict() == source.canonical_dict()
+    assert id(copied) == destination_id
+    assert id(copied.positions) == positions_id
+    assert id(copied.transfer_mask) == transfer_mask_id
+    assert tuple(id(route) for route in copied.routes) == route_ids
+    assert not np.shares_memory(copied.positions, source.positions)
+    assert not np.shares_memory(copied.transfer_mask, source.transfer_mask)
+    assert all(
+        copied_route is not source_route
+        for copied_route, source_route in zip(
+            copied.routes,
+            source.routes,
+            strict=True,
+        )
+    )
 
 
 def test_workspace_two_transitions_match_cdels_bit_for_bit() -> None:

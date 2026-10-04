@@ -211,7 +211,7 @@ class _CDELSWorkspaceBuffers:
 
     這些資料只是在 mutation／crossover 執行期間暫存狀態，不屬於任何候選解，
     也不會跨 target 保留意義。因此每次操作開始時只重設內容，不丟掉容器再
-    建一份新容器。這個階段刻意只收納兩個生命週期很明確的緩衝區，避免把
+    建一份新容器。這個階段刻意只收納生命週期很明確的緩衝區，避免把
     population 或 local-search 狀態一起改動而增加驗證風險。
     """
 
@@ -219,10 +219,12 @@ class _CDELSWorkspaceBuffers:
     mutation_customers: list[int]
     crossover_closed_template: bytes
     crossover_closed: bytearray
+    mutant: CDELSIndividual
 
     @classmethod
-    def create(cls, n_customers: int) -> _CDELSWorkspaceBuffers:
+    def create(cls, problem: SCVRPProblem) -> _CDELSWorkspaceBuffers:
         """依題目大小配置一次固定容量的 Workspace。"""
+        n_customers = problem.n_customers
         mutation_template = tuple(range(n_customers))
         # 這裡只需要 0/1 標記。bytearray 是固定容量的連續記憶體；相較
         # ``list[bool]``，不需要為每個客戶保存一個 8-byte 物件指標。
@@ -232,6 +234,15 @@ class _CDELSWorkspaceBuffers:
             mutation_customers=list(mutation_template),
             crossover_closed_template=crossover_template,
             crossover_closed=bytearray(crossover_template),
+            # mutant 的所有容器都在第一個世代以前建立。初始值沒有演算法
+            # 意義；每次 mutation 開始前會完整覆寫成來源 x1 的狀態。
+            mutant=CDELSIndividual(
+                routes=[[] for _ in range(problem.vehicle_count)],
+                positions=np.zeros((2, n_customers), dtype=np.int64),
+                transfer_mask=np.zeros(n_customers, dtype=np.int64),
+                route_capacities_free=[0] * problem.vehicle_count,
+                transfer_capacities_free=[0] * len(problem.fixed_routes),
+            ),
         )
 
     def reset_mutation_customers(self) -> list[int]:
@@ -313,9 +324,7 @@ class CDELSWorkspace:
         self._next_generation_id = 1
         # Workspace 必須在建立初始族群和進入迭代以前就配置完成。後面的每個
         # target 只重設既有內容，不再為 mutation/crossover 建立同尺寸容器。
-        self.workspace = _CDELSWorkspaceBuffers.create(
-            problem.n_customers
-        )
+        self.workspace = _CDELSWorkspaceBuffers.create(problem)
 
     def solve(
         self,
@@ -698,7 +707,9 @@ class CDELSWorkspace:
         # 配置的陣列；重設後的內容與舊版新建 list 完全相同。
         customers_possible = self.workspace.reset_mutation_customers()
         customers_possible_num = n_customers - 1
-        mutant = self._make_hard_clone(x1)
+        # 不再為每一個 target 建立新的 CDELSIndividual 與 NumPy arrays。
+        # x1 本身仍維持唯讀；內容寫入求解前配置好的 mutant 工作區。
+        mutant = self._copy_individual_into(self.workspace.mutant, x1)
         perturbed_components = 0
         perturbed_components_max = int(
             (n_customers / 2.0) * CDELS_F
@@ -863,6 +874,52 @@ class CDELSWorkspace:
                 individual.transfer_total_capacity_free
             ),
         )
+
+    def _copy_individual_into(
+        self,
+        destination: CDELSIndividual,
+        source: CDELSIndividual,
+    ) -> CDELSIndividual:
+        """把完整狀態覆寫進既有物件，不建立新的 Individual 或 NumPy array。
+
+        route 仍是可變長 list，所以只保證 route list 物件本身會被重用；Python
+        可能依新長度調整其內部容量。positions 與 transfer_mask 則使用固定形狀
+        array，``np.copyto`` 只複製內容，不配置新的 array。
+        """
+        if destination is source:
+            return destination
+        if len(destination.routes) != len(source.routes):
+            raise ValueError("CDELS buffer/source route count mismatch")
+        if destination.positions.shape != source.positions.shape:
+            raise ValueError("CDELS buffer/source positions shape mismatch")
+        if destination.transfer_mask.shape != source.transfer_mask.shape:
+            raise ValueError("CDELS buffer/source transfer mask shape mismatch")
+
+        for destination_route, source_route in zip(
+            destination.routes,
+            source.routes,
+            strict=True,
+        ):
+            destination_route[:] = source_route
+        np.copyto(destination.positions, source.positions, casting="no")
+        np.copyto(
+            destination.transfer_mask,
+            source.transfer_mask,
+            casting="no",
+        )
+        destination.cost = source.cost
+        destination.feasible = source.feasible
+        destination.route_capacities_free[:] = (
+            source.route_capacities_free
+        )
+        destination.transfer_capacities_free[:] = (
+            source.transfer_capacities_free
+        )
+        destination.transfer_vehicle_count = source.transfer_vehicle_count
+        destination.transfer_total_capacity_free = (
+            source.transfer_total_capacity_free
+        )
+        return destination
 
     def _remove_customer(
         self,
