@@ -41,9 +41,9 @@ def test_workspace_is_initialized_before_population_and_reuses_buffers() -> None
     mutation_id = id(mutation_buffer)
     crossover_id = id(crossover_buffer)
     assert mutation_buffer == list(range(core.problem.n_customers))
-    assert crossover_buffer == [False] * core.problem.n_customers
+    assert crossover_buffer == bytearray(core.problem.n_customers)
 
-    # 跑完整兩次世代轉換後，Workspace 應仍是原本那兩個 list，而不是每個
+    # 跑完整兩次世代轉換後，Workspace 應仍是原本那兩個容器，而不是每個
     # target 重新建立一份。內容可以被演算法改寫，但容器 identity 不可改變。
     _solve(core)
 

@@ -210,26 +210,28 @@ class _CDELSWorkspaceBuffers:
     """求解開始前一次配置、之後反覆重用的工作區。
 
     這些資料只是在 mutation／crossover 執行期間暫存狀態，不屬於任何候選解，
-    也不會跨 target 保留意義。因此每次操作開始時只重設內容，不丟掉 list 再
-    建一份新的 list。這個階段刻意只收納兩個生命週期很明確的緩衝區，避免把
+    也不會跨 target 保留意義。因此每次操作開始時只重設內容，不丟掉容器再
+    建一份新容器。這個階段刻意只收納兩個生命週期很明確的緩衝區，避免把
     population 或 local-search 狀態一起改動而增加驗證風險。
     """
 
     mutation_customer_template: tuple[int, ...]
     mutation_customers: list[int]
-    crossover_closed_template: tuple[bool, ...]
-    crossover_closed: list[bool]
+    crossover_closed_template: bytes
+    crossover_closed: bytearray
 
     @classmethod
     def create(cls, n_customers: int) -> _CDELSWorkspaceBuffers:
         """依題目大小配置一次固定容量的 Workspace。"""
         mutation_template = tuple(range(n_customers))
-        crossover_template = (False,) * n_customers
+        # 這裡只需要 0/1 標記。bytearray 是固定容量的連續記憶體；相較
+        # ``list[bool]``，不需要為每個客戶保存一個 8-byte 物件指標。
+        crossover_template = bytes(n_customers)
         return cls(
             mutation_customer_template=mutation_template,
             mutation_customers=list(mutation_template),
             crossover_closed_template=crossover_template,
-            crossover_closed=list(crossover_template),
+            crossover_closed=bytearray(crossover_template),
         )
 
     def reset_mutation_customers(self) -> list[int]:
@@ -237,8 +239,8 @@ class _CDELSWorkspaceBuffers:
         self.mutation_customers[:] = self.mutation_customer_template
         return self.mutation_customers
 
-    def reset_crossover_closed(self) -> list[bool]:
-        """把所有標記恢復為 False，並保留原本 list 的配置。"""
+    def reset_crossover_closed(self) -> bytearray:
+        """把所有標記清為 0，並保留原本 bytearray 的配置。"""
         self.crossover_closed[:] = self.crossover_closed_template
         return self.crossover_closed
 
@@ -310,7 +312,7 @@ class CDELSWorkspace:
         self.population_size = 3 * problem.n_customers
         self._next_generation_id = 1
         # Workspace 必須在建立初始族群和進入迭代以前就配置完成。後面的每個
-        # target 只重設既有內容，不再為 mutation/crossover 建立同尺寸 list。
+        # target 只重設既有內容，不再為 mutation/crossover 建立同尺寸容器。
         self.workspace = _CDELSWorkspaceBuffers.create(
             problem.n_customers
         )
@@ -805,7 +807,7 @@ class CDELSWorkspace:
         customer_chosen: int,
         route_index: int,
         component_index: int,
-        customers_closed: list[bool],
+        customers_closed: bytearray,
     ) -> None:
         """把一個 mutant component 套到 trial；本函式不抽 RNG。"""
         if component_index >= len(trial.routes[route_index]):
