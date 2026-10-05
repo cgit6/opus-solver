@@ -41,7 +41,7 @@ Run one repeat of the bundled `weish01` problem with the first BSMA parameter se
   --type mkp \
   --dataset WEISH \
   --problems weish01 \
-  --solver bsma_numba \
+  --solver bsma_rc_numba \
   --set 0 \
   --repeat 1 \
   --seed 42 \
@@ -57,7 +57,7 @@ After an experiment has produced a seed bank, replay it with another compatible 
 ```bash
 .venv/bin/python -m mkp.cli.replay \
   --seed-bank output/<experiment-name>/seed_bank.json \
-  --solver bsma_numba \
+  --solver bsma_rc_numba \
   --set 0
 ```
 

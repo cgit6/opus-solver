@@ -62,10 +62,400 @@ _UINT32_MASK = 0xFFFF_FFFF
 _MSVC_MULTIPLIER = 214_013
 _MSVC_INCREMENT = 2_531_011
 
+# 題目上限約 2,000 點；route index 與 route 內位置都落在 0..1,999，
+# uint16 足以保存。transfer 狀態只有 0/1，使用 uint8 即可。
+_POSITION_DTYPE = np.dtype(np.uint16)
+_TRANSFER_MASK_DTYPE = np.dtype(np.uint8)
+_MAX_POSITION_VALUE = int(np.iinfo(_POSITION_DTYPE).max)
+
 
 # ============================================================
 # ** 執行過程中的資料結構 **
 # ============================================================
+
+class _CDELSFixedRoutesPrototype:
+    """尚未接入求解器的固定容量 route 儲存原型。
+
+    每個 customer 在所有 route 中只會出現一次，所以不需要替每一條 route
+    各自保留 ``n_customers`` 個位置。這裡把所有 route 依原順序接在同一塊
+    ``uint16`` array，再用 ``starts`` 和 ``lengths`` 標示各 route 的範圍。
+
+    目前只實作不會改變 route 長度的 read、clone 和 swap。remove／insert
+    尚未加入；在那些操作逐一驗證以前，本類別不得放進正式求解流程。
+    """
+
+    __slots__ = (
+        "customers",
+        "starts",
+        "lengths",
+        "_customer_values",
+        "_start_values",
+        "_length_values",
+    )
+
+    def __init__(
+        self,
+        *,
+        customers: np.ndarray,
+        starts: np.ndarray,
+        lengths: np.ndarray,
+    ) -> None:
+        if customers.dtype != _POSITION_DTYPE or customers.ndim != 1:
+            raise ValueError("fixed routes customers must be 1-D uint16")
+        if starts.dtype != _POSITION_DTYPE or starts.ndim != 1:
+            raise ValueError("fixed routes starts must be 1-D uint16")
+        if lengths.dtype != _POSITION_DTYPE or lengths.ndim != 1:
+            raise ValueError("fixed routes lengths must be 1-D uint16")
+        if starts.shape != lengths.shape:
+            raise ValueError("fixed routes starts/lengths shape mismatch")
+        if not (
+            customers.flags.c_contiguous
+            and starts.flags.c_contiguous
+            and lengths.flags.c_contiguous
+        ):
+            raise ValueError("fixed routes arrays must be C-contiguous")
+
+        self.customers = customers
+        self.starts = starts
+        self.lengths = lengths
+        # memoryview 的 scalar read 直接回傳 Python int，不會像 NumPy scalar
+        # 一樣在每次索引時建立 np.uint16 物件。view 只在初始化時建立一次。
+        self._customer_values = memoryview(customers)
+        self._start_values = memoryview(starts)
+        self._length_values = memoryview(lengths)
+
+    @classmethod
+    def from_routes(
+        cls,
+        routes: Sequence[Sequence[int]],
+        *,
+        n_customers: int,
+    ) -> _CDELSFixedRoutesPrototype:
+        """依 route 順序建立一次固定容量儲存，並檢查完整 permutation。
+
+        depot 0 不放入 route；因此容量固定是 ``n_customers - 1``。初始化
+        可以做較完整的防呆，因為這不在 generation 熱路徑中。
+        """
+        n_customers = int(n_customers)
+        route_count = len(routes)
+        if not 1 <= n_customers <= _MAX_POSITION_VALUE + 1:
+            raise ValueError(
+                "fixed routes require 1..65,536 customer indices"
+            )
+        if not 1 <= route_count <= _MAX_POSITION_VALUE + 1:
+            raise ValueError(
+                "fixed routes require 1..65,536 routes"
+            )
+
+        customers = np.empty(n_customers - 1, dtype=_POSITION_DTYPE)
+        starts = np.empty(route_count, dtype=_POSITION_DTYPE)
+        lengths = np.empty(route_count, dtype=_POSITION_DTYPE)
+        seen = bytearray(n_customers)
+        seen[0] = 1
+        cursor = 0
+
+        for route_index, route in enumerate(routes):
+            route_length = len(route)
+            if cursor + route_length > n_customers - 1:
+                raise ValueError(
+                    "fixed routes contain more customers than expected"
+                )
+            starts[route_index] = cursor
+            lengths[route_index] = route_length
+            for customer in route:
+                customer = int(customer)
+                if not 1 <= customer < n_customers:
+                    raise ValueError(
+                        "fixed routes customer is outside 1..n-1"
+                    )
+                if seen[customer]:
+                    raise ValueError(
+                        "fixed routes contain a duplicate customer"
+                    )
+                seen[customer] = 1
+                customers[cursor] = customer
+                cursor += 1
+
+        if cursor != n_customers - 1 or not all(seen):
+            raise ValueError(
+                "fixed routes must contain every non-depot customer once"
+            )
+        return cls(
+            customers=customers,
+            starts=starts,
+            lengths=lengths,
+        )
+
+    @property
+    def route_count(self) -> int:
+        return len(self._length_values)
+
+    @property
+    def customer_capacity(self) -> int:
+        """固定 customer 空間；route 操作不得改變這個長度。"""
+        return len(self._customer_values)
+
+    @property
+    def owned_nbytes(self) -> int:
+        """三個底層 array 的有效 payload bytes，不含 Python object header。"""
+        return int(
+            self.customers.nbytes
+            + self.starts.nbytes
+            + self.lengths.nbytes
+        )
+
+    def route_length(self, route_index: int) -> int:
+        """回傳 route 的有效 customer 數，不建立暫時 list。"""
+        route_index = int(route_index)
+        if not 0 <= route_index < self.route_count:
+            raise IndexError("fixed route index out of range")
+        return int(self._length_values[route_index])
+
+    def customer_at(self, route_index: int, position: int) -> int:
+        """依 route 內位置讀取 customer，不建立 route slice。"""
+        route_index = int(route_index)
+        if not 0 <= route_index < self.route_count:
+            raise IndexError("fixed route index out of range")
+        start = int(self._start_values[route_index])
+        route_length = int(self._length_values[route_index])
+        position = int(position)
+        if not 0 <= position < route_length:
+            raise IndexError("fixed route position out of range")
+        return int(self._customer_values[start + position])
+
+    def route_tuple(self, route_index: int) -> tuple[int, ...]:
+        """只供測試／輸出使用；熱路徑不得建立這個 tuple。"""
+        route_index = int(route_index)
+        if not 0 <= route_index < self.route_count:
+            raise IndexError("fixed route index out of range")
+        start = int(self._start_values[route_index])
+        route_length = int(self._length_values[route_index])
+        return tuple(
+            int(self._customer_values[index])
+            for index in range(start, start + route_length)
+        )
+
+    def routes_tuple(self) -> tuple[tuple[int, ...], ...]:
+        """只供驗證使用，把固定表示法還原成可比較的 routes。"""
+        return tuple(
+            self.route_tuple(route_index)
+            for route_index in range(self.route_count)
+        )
+
+    def copy_into(
+        self,
+        destination: _CDELSFixedRoutesPrototype,
+    ) -> _CDELSFixedRoutesPrototype:
+        """覆寫既有 destination，不建立新的底層 array。"""
+        if destination.customers.shape != self.customers.shape:
+            raise ValueError("fixed routes customer capacity mismatch")
+        if destination.starts.shape != self.starts.shape:
+            raise ValueError("fixed routes route count mismatch")
+        np.copyto(destination.customers, self.customers)
+        np.copyto(destination.starts, self.starts)
+        np.copyto(destination.lengths, self.lengths)
+        return destination
+
+    def swap(
+        self,
+        route1: int,
+        position1: int,
+        route2: int,
+        position2: int,
+    ) -> None:
+        """交換兩個 customer；route 邊界、長度和容量都不會改變。"""
+        route1 = int(route1)
+        route2 = int(route2)
+        if not 0 <= route1 < self.route_count:
+            raise IndexError("first fixed route index out of range")
+        if not 0 <= route2 < self.route_count:
+            raise IndexError("second fixed route index out of range")
+        start1 = int(self._start_values[route1])
+        start2 = int(self._start_values[route2])
+        length1 = int(self._length_values[route1])
+        length2 = int(self._length_values[route2])
+        position1 = int(position1)
+        position2 = int(position2)
+        if not 0 <= position1 < length1:
+            raise IndexError("first fixed route position out of range")
+        if not 0 <= position2 < length2:
+            raise IndexError("second fixed route position out of range")
+        index1 = start1 + position1
+        index2 = start2 + position2
+        customer1 = int(self._customer_values[index1])
+        self._customer_values[index1] = self._customer_values[index2]
+        self._customer_values[index2] = customer1
+
+
+class _CDELSFlatListRoutesPrototype:
+    """尚未接入求解器的固定長度一維 Python-list route 原型。
+
+    這個版本使用與 packed ``uint16`` 原型相同的扁平排列，但 customer、route
+    起點和 route 長度都保存為 Python ``list[int]``。它不追求最大壓縮率，
+    而是測試能否保留 Python 原生 list 的 scalar 存取速度。
+
+    三份 list 在初始化後都不做 append、insert、pop 或重新綁定。等長 slice
+    copy 會保留 destination list 的 identity 與長度；但 CPython 內部仍可能
+    使用短暫的引用暫存，因此這個原型只保證固定的長期 backing container，
+    不宣稱 clone 過程完全零配置。
+    """
+
+    __slots__ = ("customers", "starts", "lengths")
+
+    def __init__(
+        self,
+        *,
+        customers: list[int],
+        starts: list[int],
+        lengths: list[int],
+    ) -> None:
+        if len(starts) != len(lengths):
+            raise ValueError("flat-list routes starts/lengths mismatch")
+        if not starts:
+            raise ValueError("flat-list routes require at least one route")
+        self.customers = customers
+        self.starts = starts
+        self.lengths = lengths
+
+    @classmethod
+    def from_routes(
+        cls,
+        routes: Sequence[Sequence[int]],
+        *,
+        n_customers: int,
+    ) -> _CDELSFlatListRoutesPrototype:
+        """建立固定長度 flat list，並檢查完整 customer permutation。"""
+        n_customers = int(n_customers)
+        route_count = len(routes)
+        if not 1 <= n_customers <= _MAX_POSITION_VALUE + 1:
+            raise ValueError(
+                "flat-list routes require 1..65,536 customer indices"
+            )
+        if not 1 <= route_count <= _MAX_POSITION_VALUE + 1:
+            raise ValueError(
+                "flat-list routes require 1..65,536 routes"
+            )
+
+        # list 的長度在這裡一次決定。後面的 read／clone／swap 都只覆寫既有格子。
+        customers = [0] * (n_customers - 1)
+        starts = [0] * route_count
+        lengths = [0] * route_count
+        seen = bytearray(n_customers)
+        seen[0] = 1
+        cursor = 0
+
+        for route_index, route in enumerate(routes):
+            route_length = len(route)
+            if cursor + route_length > n_customers - 1:
+                raise ValueError(
+                    "flat-list routes contain more customers than expected"
+                )
+            starts[route_index] = cursor
+            lengths[route_index] = route_length
+            for customer in route:
+                customer = int(customer)
+                if not 1 <= customer < n_customers:
+                    raise ValueError(
+                        "flat-list routes customer is outside 1..n-1"
+                    )
+                if seen[customer]:
+                    raise ValueError(
+                        "flat-list routes contain a duplicate customer"
+                    )
+                seen[customer] = 1
+                customers[cursor] = customer
+                cursor += 1
+
+        if cursor != n_customers - 1 or not all(seen):
+            raise ValueError(
+                "flat-list routes must contain every non-depot customer once"
+            )
+        return cls(
+            customers=customers,
+            starts=starts,
+            lengths=lengths,
+        )
+
+    @property
+    def route_count(self) -> int:
+        return len(self.lengths)
+
+    @property
+    def customer_capacity(self) -> int:
+        return len(self.customers)
+
+    def route_length(self, route_index: int) -> int:
+        route_index = int(route_index)
+        if not 0 <= route_index < self.route_count:
+            raise IndexError("flat-list route index out of range")
+        return self.lengths[route_index]
+
+    def customer_at(self, route_index: int, position: int) -> int:
+        route_index = int(route_index)
+        if not 0 <= route_index < self.route_count:
+            raise IndexError("flat-list route index out of range")
+        position = int(position)
+        route_length = self.lengths[route_index]
+        if not 0 <= position < route_length:
+            raise IndexError("flat-list route position out of range")
+        return self.customers[self.starts[route_index] + position]
+
+    def route_tuple(self, route_index: int) -> tuple[int, ...]:
+        """只供測試／輸出使用；熱路徑不得建立 route slice。"""
+        route_index = int(route_index)
+        if not 0 <= route_index < self.route_count:
+            raise IndexError("flat-list route index out of range")
+        start = self.starts[route_index]
+        stop = start + self.lengths[route_index]
+        return tuple(self.customers[index] for index in range(start, stop))
+
+    def routes_tuple(self) -> tuple[tuple[int, ...], ...]:
+        return tuple(
+            self.route_tuple(route_index)
+            for route_index in range(self.route_count)
+        )
+
+    def copy_into(
+        self,
+        destination: _CDELSFlatListRoutesPrototype,
+    ) -> _CDELSFlatListRoutesPrototype:
+        """等長覆寫 destination；三份 backing list 的 identity 保持不變。"""
+        if len(destination.customers) != len(self.customers):
+            raise ValueError("flat-list route customer capacity mismatch")
+        if len(destination.starts) != len(self.starts):
+            raise ValueError("flat-list route count mismatch")
+        destination.customers[:] = self.customers
+        destination.starts[:] = self.starts
+        destination.lengths[:] = self.lengths
+        return destination
+
+    def swap(
+        self,
+        route1: int,
+        position1: int,
+        route2: int,
+        position2: int,
+    ) -> None:
+        """交換既有格子的 Python int 引用，不改變三份 list 的長度。"""
+        route1 = int(route1)
+        route2 = int(route2)
+        if not 0 <= route1 < self.route_count:
+            raise IndexError("first flat-list route index out of range")
+        if not 0 <= route2 < self.route_count:
+            raise IndexError("second flat-list route index out of range")
+        position1 = int(position1)
+        position2 = int(position2)
+        if not 0 <= position1 < self.lengths[route1]:
+            raise IndexError("first flat-list route position out of range")
+        if not 0 <= position2 < self.lengths[route2]:
+            raise IndexError("second flat-list route position out of range")
+        index1 = self.starts[route1] + position1
+        index2 = self.starts[route2] + position2
+        self.customers[index1], self.customers[index2] = (
+            self.customers[index2],
+            self.customers[index1],
+        )
+
 
 @dataclass
 class CDELSIndividual:
@@ -205,6 +595,22 @@ class CDELSRunResult:
     process_trace_sha256: str | None
 
 
+def _make_empty_individual_buffer(
+    problem: SCVRPProblem,
+    *,
+    positions: np.ndarray,
+    transfer_mask: np.ndarray,
+) -> CDELSIndividual:
+    """用連續 Population storage 的一列建立空白 Individual view。"""
+    return CDELSIndividual(
+        routes=[[] for _ in range(problem.vehicle_count)],
+        positions=positions,
+        transfer_mask=transfer_mask,
+        route_capacities_free=[0] * problem.vehicle_count,
+        transfer_capacities_free=[0] * len(problem.fixed_routes),
+    )
+
+
 @dataclass
 class _CDELSWorkspaceBuffers:
     """求解開始前一次配置、之後反覆重用的工作區。
@@ -219,7 +625,14 @@ class _CDELSWorkspaceBuffers:
     mutation_customers: list[int]
     crossover_closed_template: bytes
     crossover_closed: bytearray
+    positions_storage: np.ndarray
+    transfer_mask_storage: np.ndarray
     mutant: CDELSIndividual
+    elite: CDELSIndividual
+    initial_population: list[CDELSIndividual]
+    active_population: list[CDELSIndividual] | None
+    free_population: list[CDELSIndividual]
+    spare_population_refs: list[CDELSIndividual]
 
     @classmethod
     def create(cls, problem: SCVRPProblem) -> _CDELSWorkspaceBuffers:
@@ -229,20 +642,46 @@ class _CDELSWorkspaceBuffers:
         # 這裡只需要 0/1 標記。bytearray 是固定容量的連續記憶體；相較
         # ``list[bool]``，不需要為每個客戶保存一個 8-byte 物件指標。
         crossover_template = bytes(n_customers)
+        population_size = 3 * n_customers
+        # 2P 保存 current/free 兩組候選解，最後兩列分別給 mutant 與 elite。
+        # 每個 Individual 只持有其中一列的 view，底層數值資料只有兩次配置。
+        buffer_count = 2 * population_size + 2
+        positions_storage = np.zeros(
+            (buffer_count, 2, n_customers),
+            dtype=_POSITION_DTYPE,
+        )
+        transfer_mask_storage = np.zeros(
+            (buffer_count, n_customers),
+            dtype=_TRANSFER_MASK_DTYPE,
+        )
+        buffers = [
+            _make_empty_individual_buffer(
+                problem,
+                positions=positions_storage[index],
+                transfer_mask=transfer_mask_storage[index],
+            )
+            for index in range(buffer_count)
+        ]
+        initial_population = buffers[:population_size]
+        free_population = buffers[population_size : 2 * population_size]
         return cls(
             mutation_customer_template=mutation_template,
             mutation_customers=list(mutation_template),
             crossover_closed_template=crossover_template,
             crossover_closed=bytearray(crossover_template),
+            positions_storage=positions_storage,
+            transfer_mask_storage=transfer_mask_storage,
             # mutant 的所有容器都在第一個世代以前建立。初始值沒有演算法
             # 意義；每次 mutation 開始前會完整覆寫成來源 x1 的狀態。
-            mutant=CDELSIndividual(
-                routes=[[] for _ in range(problem.vehicle_count)],
-                positions=np.zeros((2, n_customers), dtype=np.int64),
-                transfer_mask=np.zeros(n_customers, dtype=np.int64),
-                route_capacities_free=[0] * problem.vehicle_count,
-                transfer_capacities_free=[0] * len(problem.fixed_routes),
-            ),
+            mutant=buffers[2 * population_size],
+            # elite 專門保存已離開 population 的全域最佳解，不加入一般物件池。
+            elite=buffers[2 * population_size + 1],
+            initial_population=initial_population,
+            active_population=None,
+            free_population=free_population,
+            # 這份 list 只保存引用。第一代結束時每一格都會被真正的空閒
+            # Individual 覆寫，因此初始內容使用重複引用也沒有關係。
+            spare_population_refs=free_population.copy(),
         )
 
     def reset_mutation_customers(self) -> list[int]:
@@ -313,6 +752,10 @@ class CDELSWorkspace:
     """加入可重用 Workspace 的 CDELS 實驗演算法。"""
 
     def __init__(self, problem: SCVRPProblem, *, seed: int) -> None:
+        if problem.n_customers - 1 > _MAX_POSITION_VALUE:
+            raise ValueError(
+                "CDELSWorkspace supports at most 65,536 customer indices"
+            )
         self.problem = problem
         # memoryview 直接共用 problem 的 NumPy buffer，不複製距離矩陣。
         # Hot loop 使用 ``view[row, column]`` 取得 Python int，可避開每次
@@ -516,16 +959,21 @@ class CDELSWorkspace:
         [相容性] 若 slot 0 不可行，而且其 penalty cost 仍比後面的可行解低，
         best 可能繼續指向不可行的 slot 0。這是舊版行為，不在此偷偷修正。
         """
-        individuals: list[CDELSIndividual] = []
+        individuals = self.workspace.initial_population
         best_index = 0
         feasible_solutions = 0
 
         for population_index in range(self.population_size):
             top_to_down = self.rng.rand_mod(2) == 1
-            individual = self._generate_individual(
+            generated = self._generate_individual(
                 top_to_down=top_to_down
             )
-            individuals.append(individual)
+            # 初始解也寫入 Population backing storage；generated 只是建立
+            # 初始路線時的單一暫時物件，不會留在 population 中。
+            individual = self._copy_individual_into(
+                individuals[population_index],
+                generated,
+            )
 
             if individual.feasible:
                 feasible_solutions += 1
@@ -535,12 +983,16 @@ class CDELSWorkspace:
                 ):
                     best_index = population_index
 
-        return CDELSGeneration(
+        generation = CDELSGeneration(
             individuals=individuals,
             best_solution=individuals[best_index],
             feasible_solutions=feasible_solutions,
             generation_id=self._take_generation_id(),
         )
+        # 初始族群是第一組 active population。從下一代開始，active、free、
+        # spare 三份引用清單只做角色旋轉，不再建立新的 population list。
+        self.workspace.active_population = individuals
+        return generation
 
     def trace_generation(
         self,
@@ -762,6 +1214,8 @@ class CDELSWorkspace:
         self,
         target: CDELSIndividual,
         mutant: CDELSIndividual,
+        *,
+        destination: CDELSIndividual | None = None,
     ) -> CDELSIndividual:
         """依 route 順序做 DE/rand/1/exp crossover。
 
@@ -782,7 +1236,11 @@ class CDELSWorkspace:
         # 標記陣列；它不會被 trial 或 population 保存，因此可以安全重用。
         customers_closed = self.workspace.reset_crossover_closed()
         customers_closed[0] = True
-        trial = self._make_hard_clone(target)
+        trial = (
+            self._make_hard_clone(target)
+            if destination is None
+            else self._copy_individual_into(destination, target)
+        )
 
         customer_chosen = mutant.routes[route_index][component_index]
         self._apply_crossover_component(
@@ -884,7 +1342,7 @@ class CDELSWorkspace:
 
         route 仍是可變長 list，所以只保證 route list 物件本身會被重用；Python
         可能依新長度調整其內部容量。positions 與 transfer_mask 則使用固定形狀
-        array，``np.copyto`` 只複製內容，不配置新的 array。
+        array，以整體切片覆寫內容，不配置新的 array。
         """
         if destination is source:
             return destination
@@ -901,12 +1359,10 @@ class CDELSWorkspace:
             strict=True,
         ):
             destination_route[:] = source_route
-        np.copyto(destination.positions, source.positions, casting="no")
-        np.copyto(
-            destination.transfer_mask,
-            source.transfer_mask,
-            casting="no",
-        )
+        # 兩邊 dtype/shape 在建立 Buffer 時已固定；ellipsis assignment 比
+        # ``np.copyto`` 少一層函式呼叫成本，同樣只覆寫既有 array。
+        destination.positions[...] = source.positions
+        destination.transfer_mask[...] = source.transfer_mask
         destination.cost = source.cost
         destination.feasible = source.feasible
         destination.route_capacities_free[:] = (
@@ -1207,13 +1663,35 @@ class CDELSWorkspace:
         5. 再做一次完整 reevaluation，同步刻意 stale 的欄位。
         6. SA selection；必要時保留舊 elite。
         """
-        individuals: list[CDELSIndividual] = []
+        workspace = self.workspace
+        if workspace.active_population is not generation.individuals:
+            raise ValueError(
+                "CDELS generation is not the active population buffer"
+            )
+        if (
+            len(workspace.free_population) != self.population_size
+            or len(workspace.spare_population_refs) != self.population_size
+        ):
+            raise ValueError("CDELS population buffer size mismatch")
+
+        # free_population 內的 P 個 Individual 依序作為本代 trial。處理完畢
+        # 後，這份引用清單直接成為下一代 population，不複製整個種群。
+        individuals = workspace.free_population
+        reclaimed = workspace.spare_population_refs
+        old_individuals = generation.individuals
         best_solution = generation.best_solution
         feasible_solutions = 0
 
-        for target_index, target in enumerate(generation.individuals):
+        for target_index, target in enumerate(old_individuals):
+            # 先保存這一格原本的空閒物件；selection 稍後會把 individuals
+            # 的同一格改成 trial 或沿用的 target 引用。
+            trial_buffer = individuals[target_index]
             mutant = self._mutation(generation, target_index)
-            trial = self._crossover(target, mutant)
+            trial = self._crossover(
+                target,
+                mutant,
+                destination=trial_buffer,
+            )
             del mutant
 
             self._reevaluate(trial)
@@ -1227,20 +1705,38 @@ class CDELSWorkspace:
             ):
                 if trial.feasible:
                     feasible_solutions += 1
+                    target_was_best = target is best_solution
                     if trial.cost < best_solution.cost:
                         best_solution = trial
-                    individuals.append(trial)
+                    elif target_was_best:
+                        # trial 被接受但沒有刷新最佳值時，舊 best 會離開
+                        # population。只在這個少見情況複製到專用 elite Buffer。
+                        best_solution = self._copy_individual_into(
+                            workspace.elite,
+                            target,
+                        )
+                    individuals[target_index] = trial
+                    reclaimed[target_index] = target
                 elif target is best_solution:
-                    # SA 接受不可行 trial 時，舊 elite 的 slot 仍強制保留 elite。
-                    individuals.append(target)
+                    # SA 接受不可行 trial 時，舊 elite 的位置仍強制保留 elite。
+                    individuals[target_index] = target
+                    reclaimed[target_index] = trial
                     feasible_solutions += 1
                 else:
-                    individuals.append(trial)
+                    individuals[target_index] = trial
+                    reclaimed[target_index] = target
             else:
                 # 拒絕時直接共享舊 target 物件，不能偷偷 clone。
-                individuals.append(target)
+                individuals[target_index] = target
+                reclaimed[target_index] = trial
                 if target.feasible:
                     feasible_solutions += 1
+
+        # 三份引用清單只交換角色：新 population、下一代空閒池、下一次可覆寫
+        # 的備用清單。Individual 本身完全不在世代邊界做深度 copy。
+        workspace.active_population = individuals
+        workspace.free_population = reclaimed
+        workspace.spare_population_refs = old_individuals
 
         return CDELSGeneration(
             individuals=individuals,
@@ -1321,7 +1817,10 @@ class CDELSWorkspace:
                 routes,
                 n_customers=n_customers,
             ),
-            transfer_mask=np.zeros(n_customers, dtype=np.int64),
+            transfer_mask=np.zeros(
+                n_customers,
+                dtype=_TRANSFER_MASK_DTYPE,
+            ),
         )
         self._reevaluate(individual)
         return individual
@@ -1370,7 +1869,7 @@ def _build_positions(
     n_customers: int,
 ) -> np.ndarray:
     """建立 customer -> (route, position) 的反向索引。"""
-    positions = np.zeros((2, n_customers), dtype=np.int64)
+    positions = np.zeros((2, n_customers), dtype=_POSITION_DTYPE)
     for route_index, route in enumerate(routes):
         for position, customer in enumerate(route):
             positions[0, customer] = route_index

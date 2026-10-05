@@ -21,7 +21,7 @@ from .BSCASMA_rl_rc_numba import (
     _restart_bscasma_bucket_biased_row_inplace,
     _shuffle_efficiency_groups,
 )
-from .BSMA_numba import (
+from ._mkp_numba_common import (
     _ctf_flip_probability_fast,
     _argsort_pop_fit_desc_deterministic,
     _expect_mkp_problem_tensors,

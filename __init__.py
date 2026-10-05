@@ -27,11 +27,8 @@ from .problem import (
     ValidationReport,
 )
 from .simulator import Simulator, SimulatorResult, SimulatorRunRow
-from .solver.BSCA_numba import BSCANumbaCore, BSCANumbaSolver
 from .solver.BSCA_rc_numba import BSCARCNumbaCore, BSCARCNumbaSolver
-from .solver.BSCASMA_rl_numba import BRLSMASCARLNumbaSolver
 from .solver.BSCASMA_rl_rc_numba import BRLSMASCARLRCNumbaSolver
-from .solver.BSMA_numba import BSMANumbaCore, BSMANumbaSolver
 from .solver.BSMA_rc_numba import BSMARCNumbaCore, BSMARCNumbaSolver
 from .solver.registry import SolverRegistry, StubMaxIterationsSolver
 from .tools.show import write_simulator_result
@@ -57,14 +54,9 @@ __all__ = [
     "SolverConfigsSnapshot",
     "build",
     "executeSimulator",
-    "BSCANumbaCore",
-    "BSCANumbaSolver",
     "BSCARCNumbaCore",
     "BSCARCNumbaSolver",
-    "BRLSMASCARLNumbaSolver",
     "BRLSMASCARLRCNumbaSolver",
-    "BSMANumbaCore",
-    "BSMANumbaSolver",
     "BSMARCNumbaCore",
     "BSMARCNumbaSolver",
     "main",

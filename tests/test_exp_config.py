@@ -122,9 +122,9 @@ def test_build_sample_exp_cfg_success() -> None:
     assert experiment.cfg.repeat == 300000000000
     assert experiment.cfg.worker_count == DEFAULT_WORKER_COUNT
     assert experiment.cfg.solver_ids == (
-        "bsma_numba",
-        "bsca_numba",
-        "brlsmasca_rl_numba",
+        "bsma_rc_numba",
+        "bsca_rc_numba",
+        "brlsmasca_rl_rc_numba",
     )
     assert len(experiment.cfg.solver_variants) == 45
     assert len(experiment.cfg.dataset_settings) == 6
