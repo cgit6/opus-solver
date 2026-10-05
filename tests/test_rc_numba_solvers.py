@@ -8,8 +8,8 @@ import pytest
 from mkp.engine.builders import solverBuilders
 from mkp.engine.repository import ProblemRepository
 from mkp.problem import ProblemModel, buildProblemRegistry, problemBuilders
-from mkp.solver.BSCA_rc_numba import BSCARCNumbaCore, BSCARCNumbaSolver
-from mkp.solver.BSMA_rc_numba import BSMARCNumbaCore, BSMARCNumbaSolver
+from mkp.solver.BSCA import BSCACore, BSCASolver
+from mkp.solver.BSMA import BSMACore, BSMASolver
 from mkp.solver.registry import SolverRegistry
 from mkp.tools.solver_config_loader import SolverConfigLoader
 
@@ -47,26 +47,26 @@ def _config(solver_id: str, solver_class: str, *, max_iterations: int = 6, param
 def test_rc_numba_solvers_can_be_created_by_registry():
     registry = SolverRegistry()
     builders = solverBuilders()
-    registry.register("bsma_rc_numba", builders["bsma_rc_numba"])
-    registry.register("bsca_rc_numba", builders["bsca_rc_numba"])
+    registry.register("bsma", builders["bsma"])
+    registry.register("bsca", builders["bsca"])
 
-    assert isinstance(registry.create("bsma_rc_numba"), BSMARCNumbaSolver)
-    assert isinstance(registry.create("bsca_rc_numba"), BSCARCNumbaSolver)
+    assert isinstance(registry.create("bsma"), BSMASolver)
+    assert isinstance(registry.create("bsca"), BSCASolver)
 
 
 def test_rc_numba_solver_configs_load_param_0_and_last():
     loader = SolverConfigLoader()
 
-    bsma_first = loader.load("bsma_rc_numba", param_set_index=0)
-    bsma_last = loader.load("bsma_rc_numba", param_set_index=8)
-    bsca_first = loader.load("bsca_rc_numba", param_set_index=0)
-    bsca_last = loader.load("bsca_rc_numba", param_set_index=8)
+    bsma_first = loader.load("bsma", param_set_index=0)
+    bsma_last = loader.load("bsma", param_set_index=8)
+    bsca_first = loader.load("bsca", param_set_index=0)
+    bsca_last = loader.load("bsca", param_set_index=8)
 
-    assert bsma_first["solver_class"] == "BSMARCNumbaSolver"
+    assert bsma_first["solver_class"] == "BSMASolver"
     assert bsma_first["params"]["z"] == 0.01
     assert bsma_last["params"]["z"] == 0.15
     assert bsma_last["params"]["ctf"] == "abs_pow_16"
-    assert bsca_first["solver_class"] == "BSCARCNumbaSolver"
+    assert bsca_first["solver_class"] == "BSCASolver"
     assert bsca_first["params"]["a"] == 1.5
     assert bsca_last["params"]["a"] == 2.5
     for cfg in (bsma_first, bsma_last, bsca_first, bsca_last):
@@ -80,13 +80,13 @@ def test_rc_numba_solver_configs_load_param_0_and_last():
 @pytest.mark.parametrize(
     ("solver", "solver_id", "solver_class", "params"),
     (
-        (BSMARCNumbaSolver(), "bsma_rc_numba", "BSMARCNumbaSolver", {"pop_size": 6, "z": 0.08}),
-        (BSCARCNumbaSolver(), "bsca_rc_numba", "BSCARCNumbaSolver", {"pop_size": 6, "a": 2.0}),
+        (BSMASolver(), "bsma", "BSMASolver", {"pop_size": 6, "z": 0.08}),
+        (BSCASolver(), "bsca", "BSCASolver", {"pop_size": 6, "a": 2.0}),
     ),
 )
 def test_rc_numba_solvers_return_valid_solve_result_and_metadata(solver, solver_id, solver_class, params):
-    BSMARCNumbaCore._item_eval_cache.clear()
-    BSCARCNumbaCore._item_eval_cache.clear()
+    BSMACore._item_eval_cache.clear()
+    BSCACore._item_eval_cache.clear()
     problem = _build_problem()
     config = _config(solver_id, solver_class, params=params)
 
@@ -113,8 +113,8 @@ def test_rc_numba_solvers_return_valid_solve_result_and_metadata(solver, solver_
 @pytest.mark.parametrize(
     ("solver", "solver_id", "solver_class", "params"),
     (
-        (BSMARCNumbaSolver(), "bsma_rc_numba", "BSMARCNumbaSolver", {"pop_size": 6, "z": 0.08}),
-        (BSCARCNumbaSolver(), "bsca_rc_numba", "BSCARCNumbaSolver", {"pop_size": 6, "a": 2.0}),
+        (BSMASolver(), "bsma", "BSMASolver", {"pop_size": 6, "z": 0.08}),
+        (BSCASolver(), "bsca", "BSCASolver", {"pop_size": 6, "a": 2.0}),
     ),
 )
 def test_rc_numba_solvers_are_reproducible_with_same_seed(solver, solver_id, solver_class, params):
@@ -132,8 +132,8 @@ def test_rc_numba_solvers_are_reproducible_with_same_seed(solver, solver_id, sol
 @pytest.mark.parametrize(
     ("core_cls", "params"),
     (
-        (BSMARCNumbaCore, {"pop_size": 6, "z": 0.08, "max_iter": 1}),
-        (BSCARCNumbaCore, {"pop_size": 6, "a": 2.0, "max_iter": 1}),
+        (BSMACore, {"pop_size": 6, "z": 0.08, "max_iter": 1}),
+        (BSCACore, {"pop_size": 6, "a": 2.0, "max_iter": 1}),
     ),
 )
 def test_rc_numba_core_cp_list_is_complete_permutation(core_cls, params):
@@ -157,8 +157,8 @@ def test_rc_numba_core_cp_list_is_complete_permutation(core_cls, params):
 @pytest.mark.parametrize(
     ("core_cls", "params"),
     (
-        (BSMARCNumbaCore, {"pop_size": 10, "z": 0.08, "max_iter": 1}),
-        (BSCARCNumbaCore, {"pop_size": 10, "a": 2.0, "max_iter": 1}),
+        (BSMACore, {"pop_size": 10, "z": 0.08, "max_iter": 1}),
+        (BSCACore, {"pop_size": 10, "a": 2.0, "max_iter": 1}),
     ),
 )
 def test_rc_numba_mixed_init_is_feasible_binary_and_reproducible(core_cls, params):
@@ -195,8 +195,8 @@ def test_rc_numba_mixed_init_is_feasible_binary_and_reproducible(core_cls, param
 @pytest.mark.parametrize(
     ("core_cls", "params"),
     (
-        (BSMARCNumbaCore, {"pop_size": 4, "z": 1.0, "max_iter": 3}),
-        (BSCARCNumbaCore, {"pop_size": 4, "a": 2.0, "max_iter": 3}),
+        (BSMACore, {"pop_size": 4, "z": 1.0, "max_iter": 3}),
+        (BSCACore, {"pop_size": 4, "a": 2.0, "max_iter": 3}),
     ),
 )
 def test_rc_numba_restart_triggers_after_stagnation_and_keeps_best_feasible(core_cls, params):
@@ -232,8 +232,8 @@ def test_rc_numba_restart_triggers_after_stagnation_and_keeps_best_feasible(core
 @pytest.mark.parametrize(
     ("solver", "solver_id", "solver_class", "valid_params"),
     (
-        (BSMARCNumbaSolver(), "bsma_rc_numba", "BSMARCNumbaSolver", {"pop_size": 6, "z": 0.08}),
-        (BSCARCNumbaSolver(), "bsca_rc_numba", "BSCARCNumbaSolver", {"pop_size": 6, "a": 2.0}),
+        (BSMASolver(), "bsma", "BSMASolver", {"pop_size": 6, "z": 0.08}),
+        (BSCASolver(), "bsca", "BSCASolver", {"pop_size": 6, "a": 2.0}),
     ),
 )
 def test_rc_numba_solvers_reject_invalid_repair_restart_params(solver, solver_id, solver_class, valid_params):

@@ -25,19 +25,19 @@ solve(problem: Problem, config: dict[str, Any], rng: np.random.Generator) -> Sol
 
 | Family | Baseline | Numba | RC / Advanced | 角色 |
 |---|---|---|---|---|
-| BSMA | [`BSMA.py`](modules/solver/BSMA.md) | [`BSMA_numba.py`](modules/solver/BSMA_numba.md) | [`BSMA_rc_numba.py`](modules/solver/BSMA_rc_numba.md) | Binary Slime Mould Algorithm 主線。 |
-| BSCA | [`BSCA.py`](modules/solver/BSCA.md) | [`BSCA_numba.py`](modules/solver/BSCA_numba.md) | [`BSCA_rc_numba.py`](modules/solver/BSCA_rc_numba.md) | Binary Sine Cosine Algorithm 主線。 |
-| Hybrid SMA/SCA | [`BSCASMA.py`](modules/solver/BSCASMA.md) | [`BSCASMA_test_numba.py`](modules/solver/BSCASMA_test_numba.md) | [`BSCASMA_rl_numba.py`](modules/solver/BSCASMA_rl_numba.md)、[`BSCASMA_rl_rc_numba.py`](modules/solver/BSCASMA_rl_rc_numba.md) | 混合策略、RL、RC、guided binary、local search、archive/path relinking。 |
+| BSMA | [`BSMA.py`](modules/solver/BSMA.md) | [`BSMA_numba.py`](modules/solver/BSMA_numba.md) | [`BSMA.py`](modules/solver/BSMA.md) | Binary Slime Mould Algorithm 主線。 |
+| BSCA | [`BSCA.py`](modules/solver/BSCA.md) | [`BSCA_numba.py`](modules/solver/BSCA_numba.md) | [`BSCA.py`](modules/solver/BSCA.md) | Binary Sine Cosine Algorithm 主線。 |
+| Hybrid SMA/SCA | [`BSCASMA.py`](modules/solver/BSCASMA.md) | [`BSCASMA_test_numba.py`](modules/solver/BSCASMA_test_numba.md) | [`BSCASMA_rl_numba.py`](modules/solver/BSCASMA_rl_numba.md)、[`HSMSCA.py`](modules/solver/HSMSCA.md) | 混合策略、RL、RC、guided binary、local search、archive/path relinking。 |
 
 ## Registered Solvers
 
 目前 `engine/builders.py::solverBuilders` 註冊：
 
 - `stub_solver`
-- `bsma` / `bsma_numba` / `bsma_rc_numba`
-- `bsca` / `bsca_numba` / `bsca_rc_numba`
+- `bsma` / `bsma_numba` / `bsma`
+- `bsca` / `bsca_numba` / `bsca`
 - `brlsmasca` / `brlsmasca_test_numba`
-- `brlsmasca_rl_numba` / `brlsmasca_rl_rc_numba`
+- `brlsmasca_rl_numba` / `hsmsca`
 
 這些 builder 在主行程與 process worker 都會被重新註冊，因此 solver module 必須可被重複 import 且不依賴隱含的外部初始化。
 
@@ -135,7 +135,7 @@ solver family 本身不是孤立存在，周邊還有幾個直接影響演算法
 
 ### Item Evaluation / RC Family
 
-集中在 [`BSCASMA_rl_rc_numba.py`](modules/solver/BSCASMA_rl_rc_numba.md)：
+集中在 [`HSMSCA.py`](modules/solver/HSMSCA.md)：
 
 - `_build_lp_rc_item_eval_payload(...)`
 - `_build_core_score_cp_payload(...)`
@@ -168,7 +168,7 @@ solver family 本身不是孤立存在，周邊還有幾個直接影響演算法
 - archive/path relinking helper
 - restart helper
 
-主要集中在 `brlsmasca_rl_rc_numba`，這也是目前最需要小心維護的強化版本。
+主要集中在 `hsmsca`，這也是目前最需要小心維護的強化版本。
 
 功能開關與 guard 問題比較主要由 [`tools/mkp_rc_feature_ablation.py`](modules/tools/mkp_rc_feature_ablation.md) 支撐。
 
@@ -190,11 +190,11 @@ solver family 本身不是孤立存在，周邊還有幾個直接影響演算法
 
 - `BSCASMA.py` / `BSCASMA_test_numba.py` 是 test-policy 路線。
 - `BSCASMA_rl_numba.py` 把 policy 改成 Q-learning。
-- `BSCASMA_rl_rc_numba.py` 再加上 RC score、guided binary、local search、archive/path relinking、restart。
+- `HSMSCA.py` 再加上 RC score、guided binary、local search、archive/path relinking、restart。
 
 ## Risk Notes
 
-- `BSCASMA_rl_rc_numba.py` 是目前最脆弱、變化面最大的檔案；修改時應配套檢查 deterministic 行為、Q-table 路徑、repair 統計與 metadata。
+- `HSMSCA.py` 是目前最脆弱、變化面最大的檔案；修改時應配套檢查 deterministic 行為、Q-table 路徑、repair 統計與 metadata。
 - `BSMA.py`、`BSCA.py`、`BSCASMA.py` 雖然較慢，但它們是很多 Numba 版的語意基準，不應任意重構。
 - 類別層級 cache 會影響後續 runs 的 `linprog_runtime` 與 metadata，分析效能時必須區分 cold / warm cache。
 

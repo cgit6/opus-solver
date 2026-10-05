@@ -1,4 +1,4 @@
-"""CDELS Workspace 實驗版（SCVRP + SA）的單檔、純 Python 實作。
+"""CDELS 2 實驗版（SCVRP + SA）的單檔、純 Python 實作。
 
 這個檔案的目的，是讓演算法可以從上到下閱讀，不必在 core、local search、
 RNG 等多個檔案之間跳轉。它會完整收錄以下流程：
@@ -11,7 +11,7 @@ RNG 等多個檔案之間跳轉。它會完整收錄以下流程：
 
 這是 ``CDELS.py`` 的獨立效能實驗副本。第一階段只把熱路徑中反覆建立的
 工作陣列移到求解前初始化的 Workspace；演算法順序、亂數抽取和判斷式不變。
-原本的 ``cdels`` 仍保留為比較基準，本檔另外註冊為 ``cdels_workspace``。
+原本的 ``cdels`` 仍保留為比較基準，本檔另外註冊為 ``cdels_2``。
 
 術語：
 
@@ -612,7 +612,7 @@ def _make_empty_individual_buffer(
 
 
 @dataclass
-class _CDELSWorkspaceBuffers:
+class _CDELS2WorkspaceBuffers:
     """求解開始前一次配置、之後反覆重用的工作區。
 
     這些資料只是在 mutation／crossover 執行期間暫存狀態，不屬於任何候選解，
@@ -635,7 +635,7 @@ class _CDELSWorkspaceBuffers:
     spare_population_refs: list[CDELSIndividual]
 
     @classmethod
-    def create(cls, problem: SCVRPProblem) -> _CDELSWorkspaceBuffers:
+    def create(cls, problem: SCVRPProblem) -> _CDELS2WorkspaceBuffers:
         """依題目大小配置一次固定容量的 Workspace。"""
         n_customers = problem.n_customers
         mutation_template = tuple(range(n_customers))
@@ -748,13 +748,13 @@ class MSVCRandom:
 # ** CDELS 公開介面與初始族群 **
 # ============================================================
 
-class CDELSWorkspace:
+class CDELS2:
     """加入可重用 Workspace 的 CDELS 實驗演算法。"""
 
     def __init__(self, problem: SCVRPProblem, *, seed: int) -> None:
         if problem.n_customers - 1 > _MAX_POSITION_VALUE:
             raise ValueError(
-                "CDELSWorkspace supports at most 65,536 customer indices"
+                "CDELS2 supports at most 65,536 customer indices"
             )
         self.problem = problem
         # memoryview 直接共用 problem 的 NumPy buffer，不複製距離矩陣。
@@ -767,7 +767,7 @@ class CDELSWorkspace:
         self._next_generation_id = 1
         # Workspace 必須在建立初始族群和進入迭代以前就配置完成。後面的每個
         # target 只重設既有內容，不再為 mutation/crossover 建立同尺寸容器。
-        self.workspace = _CDELSWorkspaceBuffers.create(problem)
+        self.workspace = _CDELS2WorkspaceBuffers.create(problem)
 
     def solve(
         self,
@@ -2947,7 +2947,7 @@ def _process_trace_sha256(trace: list[CDELSProcessTrace]) -> str:
 # ============================================================
 
 # Engine、solver config 與輸出報告一律使用這個 ID。
-CDELS_WORKSPACE_SOLVER_ID = "cdels_workspace"
+CDELS_2_SOLVER_ID = "cdels_2"
 COMPATIBILITY_PROFILE = "vs2019_v142_archive"
 DE_TECHNIQUE = "rand_1_exp"
 _EXPECTED_START_TEMPERATURE = 1.0
@@ -2980,7 +2980,7 @@ class CDELSSolverError(RuntimeError):
 
 
 @dataclass(frozen=True)
-class CDELSWorkspaceSolver:
+class CDELS2Solver:
     """讓 Engine 以標準介面執行加入 Workspace 的 CDELS 副本。"""
 
     def solve(
@@ -2993,11 +2993,11 @@ class CDELSWorkspaceSolver:
         del rng
         if not isinstance(problem, SCVRPProblem):
             raise TypeError(
-                "CDELSWorkspaceSolver only supports SCVRPProblem"
+                "CDELS2Solver only supports SCVRPProblem"
             )
         adapter = _parse_adapter_config(config)
 
-        algorithm = CDELSWorkspace(problem, seed=adapter.run_seed)
+        algorithm = CDELS2(problem, seed=adapter.run_seed)
         started = time.perf_counter()
         output = algorithm.solve(
             termination_mode=adapter.termination_mode,
@@ -3072,7 +3072,7 @@ class CDELSWorkspaceSolver:
         return SolveResult(
             problem_id=problem.problem_id,
             solver_id=str(
-                config.get("solver_id", CDELS_WORKSPACE_SOLVER_ID)
+                config.get("solver_id", CDELS_2_SOLVER_ID)
             ),
             run_seed=adapter.run_seed,
             best_solution=encoded,
@@ -3120,10 +3120,10 @@ def _parse_adapter_config(config: dict[str, Any]) -> _CDELSAdapterConfig:
     if run_seed > 0xFFFF_FFFF:
         raise ValueError("run_seed must fit in an unsigned 32-bit integer")
 
-    solver_id = str(config.get("solver_id", CDELS_WORKSPACE_SOLVER_ID))
-    if solver_id != CDELS_WORKSPACE_SOLVER_ID:
+    solver_id = str(config.get("solver_id", CDELS_2_SOLVER_ID))
+    if solver_id != CDELS_2_SOLVER_ID:
         raise ValueError(
-            f"solver_id must be {CDELS_WORKSPACE_SOLVER_ID!r}"
+            f"solver_id must be {CDELS_2_SOLVER_ID!r}"
         )
 
     stop_condition = config.get("stop_condition")

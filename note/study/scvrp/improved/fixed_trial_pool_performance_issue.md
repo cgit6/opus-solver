@@ -4,9 +4,9 @@
 
 ## 文件目的
 
-本文件記錄 `CDELS_workspace` 實驗版採用「固定長度 trial Pool」後觀察到的成本，以及之後要如何處理。
+本文件記錄 `CDELS_2` 實驗版採用「固定長度 trial Pool」後觀察到的成本，以及之後要如何處理。
 
-目前只記錄問題與驗證門檻，不修改正式算法。正式入口 `solver/CDELS.py` 仍維持原狀；實驗內容位於 `solver/CDELS_workspace.py`。
+目前只記錄問題與驗證門檻，不修改正式算法。正式入口 `solver/CDELS.py` 仍維持原狀；實驗內容位於 `solver/CDELS_2.py`。
 
 ## 先說結論
 
@@ -40,7 +40,7 @@
 
 ## 目前實驗版已做的事情
 
-`solver/CDELS_workspace.py` 目前包含：
+`solver/CDELS_2.py` 目前包含：
 
 - 求解開始前建立 Workspace。
 - 固定配置 `P` 個 trial Buffer。
@@ -167,7 +167,7 @@ A-n80 的 population 主要數值狀態若全部使用 `int64`，估算為 `925,
 
 ## 下一步與停止門檻
 
-目前不把 `CDELS_workspace` 切換成正式入口，也不修改 `solver/CDELS.py`。
+目前不把 `CDELS_2` 切換成正式入口，也不修改 `solver/CDELS.py`。
 
 若繼續處理，建議下一個獨立工作單元是「routes 固定儲存設計與單模組原型」，不要同時改 Pool 策略。完成後依序通過：
 

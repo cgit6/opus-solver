@@ -45,7 +45,7 @@
 ## 與其他模組的關係
 
 - 上游：`engine.builders`、`solver.registry`。
-- 下游：`BSCA_rc_numba.py` 重用 RC 相關擴充模式。
+- 下游：`BSCA.py` 重用 RC 相關擴充模式。
 - 參考基準：`BSCA.py`。
 
 ## 核心函式與 helper 說明

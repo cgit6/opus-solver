@@ -1,8 +1,8 @@
-# `solver/BSCASMA_rl_rc_numba.py`
+# `solver/HSMSCA.py`
 
 ## 模組責任
 
-`solver/BSCASMA_rl_rc_numba.py` 是目前最複雜的 solver 模組。它在 RL 混合 SMA/SCA 的基礎上，再整合 LP reduced-cost item evaluation、named score family、guided binary、dynamic repair、local search、archive/path relinking 與 restart。
+`solver/HSMSCA.py` 是目前最複雜的 solver 模組。它在 RL 混合 SMA/SCA 的基礎上，再整合 LP reduced-cost item evaluation、named score family、guided binary、dynamic repair、local search、archive/path relinking 與 restart。
 
 ## 公開入口/主要類型
 
@@ -13,8 +13,8 @@
 - archive / path relinking helper
 - RL state / action helper
 - `_bscasma_rl_main_loop_numba(...)`
-- `BRLSMASCARLRCNumbaCore`
-- `BRLSMASCARLRCNumbaSolver`
+- `HSMSCACore`
+- `HSMSCASolver`
 
 ## 主要資料結構與資料契約
 
@@ -78,7 +78,7 @@
 ## 與其他模組的關係
 
 - 上游：`engine.builders`、`solver.registry`、實驗配置 YAML。
-- 下游：`BSMA_rc_numba.py`、`BSCA_rc_numba.py` 直接重用這裡的 RC/repair helper。
+- 下游：`BSMA.py`、`BSCA.py` 直接重用這裡的 RC/repair helper。
 - 參考基準：`BSCASMA_rl_numba.py` 提供較純的 RL 架構；本檔是其增強版。
 
 ## 核心函式與 helper 說明
@@ -100,22 +100,22 @@
 - 角色：這一整族 helper 決定 intensification 與 diversification 如何進入 RL 主循環。
 - 修改風險：這些 helper 多數直接在 hot-loop 內被呼叫，小改動就可能改變可重現性與路徑品質。
 
-### `BRLSMASCARLRCNumbaCore.pseudo_utility()`
+### `HSMSCACore.pseudo_utility()`
 
 - 目的：建立或命中完整 item-eval payload cache，而不只是單純的 `cp_list` cache。
 - 副作用：會回填 `item_eval_method`、`guided_mode`、`freq_*`、`fallback` 等診斷欄位。
 
-### `BRLSMASCARLRCNumbaCore.initial_pop()`
+### `HSMSCACore.initial_pop()`
 
 - 目的：依設定混合 deterministic greedy、LP rounding、RCL greedy、random greedy 初始化策略。
 - 角色：這是 RC 版比純 RL 版更早導入 domain bias 的第一個入口。
 
-### `BRLSMASCARLRCNumbaCore.run()`
+### `HSMSCACore.run()`
 
 - 目的：準備所有 RL、guided、repair、LS、archive、restart 所需工作陣列，然後呼叫 `_bscasma_rl_main_loop_numba(...)`。
 - 副作用：會累積 repair / restart / local-search / path-relinking 統計，並在 run 後回填 core state。
 
-### `BRLSMASCARLRCNumbaSolver.solve(...)`
+### `HSMSCASolver.solve(...)`
 
 - 角色：這是整個 solver family 最厚的 adapter，負責解析大量 YAML 參數、布林 coercion、score family 選擇與 metadata 輸出。
 - 維護建議：新增新策略時，先判斷它屬於 payload、guided、repair、LS、archive 還是 restart 家族，再掛到對應區塊，不要直接把新邏輯塞進 `solve(...)`。
@@ -145,8 +145,8 @@
 21. `_sca_sin_row`
 22. `_sca_cos_row`
 23. `_bscasma_rl_main_loop_numba`
-24. `BRLSMASCARLRCNumbaCore`
-25. `BRLSMASCARLRCNumbaCore.pseudo_utility`
-26. `BRLSMASCARLRCNumbaCore.initial_pop`
-27. `BRLSMASCARLRCNumbaCore.run`
-28. `BRLSMASCARLRCNumbaSolver.solve`
+24. `HSMSCACore`
+25. `HSMSCACore.pseudo_utility`
+26. `HSMSCACore.initial_pop`
+27. `HSMSCACore.run`
+28. `HSMSCASolver.solve`

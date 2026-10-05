@@ -1,5 +1,5 @@
-solver_id: brlsmasca_rl_rc_numba
-solver_class: BRLSMASCARLRCNumbaSolver
+solver_id: hsmsca
+solver_class: HSMSCASolver
 
 # 做一個優化器的開關
 optimal_setting:

@@ -121,7 +121,7 @@
 核心契約：
 
 - baseline 中必須存在 `name == "qpso"` 的 mean。
-- target variant 固定為 `brlsmasca_rl_rc_numba/param_20`。
+- target variant 固定為 `hsmsca/param_20`。
 
 ### 3. Calibration Matrix 家族
 

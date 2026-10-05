@@ -2,7 +2,7 @@
 
 ## 模組責任
 
-`test_rc_numba_solvers.py` 聚焦 `BSMA_rc_numba` 與 `BSCA_rc_numba` 兩個 repair/restart 家族，確保 registry、配置載入與 RC helper 行為穩定。
+`test_rc_numba_solvers.py` 聚焦 `BSMA` 與 `BSCA` 兩個 repair/restart 家族，確保 registry、配置載入與 RC helper 行為穩定。
 
 ## 公開入口/主要類型
 
@@ -28,7 +28,7 @@ helpers 建 problem 與 config，先走 registry create，再驗證 config 載�
 
 ## 與其他模組的關係
 
-目標模組是 `mkp.solver.BSMA_rc_numba`、`mkp.solver.BSCA_rc_numba`、`mkp.engine.builders`、`mkp.solver.registry` 與 `mkp.tools.solver_config_loader`。
+目標模組是 `mkp.solver.BSMA`、`mkp.solver.BSCA`、`mkp.engine.builders`、`mkp.solver.registry` 與 `mkp.tools.solver_config_loader`。
 
 ## 對應函式索引與閱讀順序
 

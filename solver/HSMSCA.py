@@ -1,4 +1,4 @@
-"""BRLSMASCA RL/Q-learning Numba solver with LP reduced-cost item evaluation.
+"""HSMSCA solver with RL/Q-learning, Numba, and LP reduced-cost item evaluation.
 
 This file is intentionally independent from removed legacy hybrid solver files. Shared
 Numba kernels are duplicated so the RL and test-policy variants can evolve
@@ -20,7 +20,36 @@ from ..engine.models import SolveResult
 from ..problem import ProblemModel
 from ..tools.continuous_to_binary import parse_ctf_kind
 from ..tools.ctf_numba import ctf_flip_probability
-from ._mkp_numba_common import _argsort_pop_fit_desc_deterministic, _expect_mkp_problem_tensors
+
+
+def _argsort_pop_fit_desc_deterministic(pop_fit: np.ndarray, pop_size: int) -> np.ndarray:
+    """Return deterministic descending-fitness indices (lower index wins ties)."""
+    idx = np.arange(pop_size, dtype=np.int64)
+    for i in range(pop_size):
+        best = i
+        for j in range(i + 1, pop_size):
+            candidate = int(idx[j])
+            current = int(idx[best])
+            if float(pop_fit[candidate]) > float(pop_fit[current]) or (
+                float(pop_fit[candidate]) == float(pop_fit[current]) and candidate < current
+            ):
+                best = j
+        idx[i], idx[best] = idx[best], idx[i]
+    return idx
+
+
+def _expect_mkp_problem_tensors(
+    values: np.ndarray,
+    weights: np.ndarray,
+    capacities: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Validate the int64 C-contiguous tensor contract provided by ProblemModel."""
+    for name, array in (("values", values), ("weights", weights), ("capacities", capacities)):
+        if array.dtype != np.int64:
+            raise TypeError(f"{name}: expected np.int64 from ProblemModel, got {array.dtype}")
+        if not array.flags.c_contiguous:
+            raise ValueError(f"{name}: must be C-contiguous")
+    return values, weights, capacities
 
 
 def _cp_list_cache_key(
@@ -2581,7 +2610,7 @@ def _bscasma_rl_main_loop_numba(
     return gbest_fit
 
 
-class BRLSMASCARLRCNumbaCore:
+class HSMSCACore:
     _cp_list_cache: dict[Any, dict[str, Any]] = {}
 
     def __init__(
@@ -3302,11 +3331,11 @@ class BRLSMASCARLRCNumbaCore:
 
 
 @dataclass
-class BRLSMASCARLRCNumbaSolver:
+class HSMSCASolver:
     def solve(self, problem: ProblemModel, config: dict[str, Any], rng: np.random.Generator) -> SolveResult:
         stop_condition = config.get("stop_condition", {})
         if stop_condition.get("type") != "max_iterations":
-            raise ValueError("brlsmasca_rl_rc_numba only supports stop_condition.type=max_iterations")
+            raise ValueError("hsmsca only supports stop_condition.type=max_iterations")
         max_iterations = int(stop_condition.get("max_iterations", 0))
         if max_iterations <= 0:
             raise ValueError("max_iterations must be > 0")
@@ -3500,7 +3529,7 @@ class BRLSMASCARLRCNumbaSolver:
         run_seed = int(config.get("run_seed", rng.integers(0, np.iinfo(np.int32).max)))
         np.random.seed(run_seed)
         t_alg0 = time.perf_counter()
-        core = BRLSMASCARLRCNumbaCore(
+        core = HSMSCACore(
             problem.items,
             problem.dim,
             problem.best_known,
@@ -3574,7 +3603,7 @@ class BRLSMASCARLRCNumbaSolver:
 
         return SolveResult(
             problem_id=problem.problem_id,
-            solver_id=str(config.get("solver_id", "brlsmasca_rl_rc_numba")),
+            solver_id=str(config.get("solver_id", "hsmsca")),
             run_seed=run_seed,
             best_solution=np.asarray(best_sol, dtype=np.int64),
             best_objective=int(best_fit),

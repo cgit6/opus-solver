@@ -2,7 +2,7 @@
 
 ## 模組責任
 
-`tools/mkp_rc_feature_ablation.py` 是 `brlsmasca_rl_rc_numba` 功能開關的 ablation 工具。它固定從 param set `20` 出發，逐一切換 guided binary、local search、archive/path relinking 等功能，再用 `cli/exp/exp_cfg.yaml` 內的 QPSO baseline mean 做 guard 與排名。
+`tools/mkp_rc_feature_ablation.py` 是 `hsmsca` 功能開關的 ablation 工具。它固定從 param set `20` 出發，逐一切換 guided binary、local search、archive/path relinking 等功能，再用 `cli/exp/exp_cfg.yaml` 內的 QPSO baseline mean 做 guard 與排名。
 
 ## 公開入口/主要類型
 
@@ -49,7 +49,7 @@
 
 - 會讀：
   - `configs/problems/...`
-  - `configs/solvers/brlsmasca_rl_rc_numba.yaml`
+  - `configs/solvers/hsmsca.yaml`
   - `cli/exp/exp_cfg.yaml`
 - 會寫 `output/mkp_rc_feature_ablation/summary.json` 或自訂輸出路徑。
 - 目前是單程序迴圈，沒有 pool/shared memory 管理邏輯。

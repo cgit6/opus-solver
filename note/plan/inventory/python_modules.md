@@ -86,13 +86,13 @@
 | `solver/BSCA.py` | 231 | 2 | 7 | 求解器與演算法核心。 |  |
 | `solver/BSCASMA.py` | 415 | 2 | 15 | 求解器與演算法核心。 |  |
 | `solver/BSCASMA_rl_numba.py` | 895 | 2 | 27 | 求解器與演算法核心。 | BRLSMASCA RL/Q-learning Numba solver. |
-| `solver/BSCASMA_rl_rc_numba.py` | 3660 | 2 | 80 | 求解器與演算法核心。 | BRLSMASCA RL/Q-learning Numba solver with LP reduced-cost item evaluation. |
+| `solver/HSMSCA.py` | 3660 | 2 | 80 | 求解器與演算法核心。 | BRLSMASCA RL/Q-learning Numba solver with LP reduced-cost item evaluation. |
 | `solver/BSCASMA_test_numba.py` | 667 | 2 | 20 | 求解器與演算法核心。 | BRLSMASCA test-policy Numba solver. |
 | `solver/BSCA_numba.py` | 391 | 2 | 10 | 求解器與演算法核心。 | BSCA 的 Numba 加速版 v2：與 ``BSCACore`` 主迴圈數值行為對齊。 |
-| `solver/BSCA_rc_numba.py` | 600 | 2 | 12 | 求解器與演算法核心。 | BSCA Numba variant with LP reduced-cost item evaluation and Repair 2.0. |
+| `solver/BSCA.py` | 600 | 2 | 12 | 求解器與演算法核心。 | BSCA Numba variant with LP reduced-cost item evaluation and Repair 2.0. |
 | `solver/BSMA.py` | 309 | 2 | 9 | 求解器與演算法核心。 |  |
 | `solver/BSMA_numba.py` | 513 | 2 | 14 | 求解器與演算法核心。 | BSMA 的 Numba 加速版：與 [solver/BSMA.py](BSMA.py) 的 ``BSMACore`` 主迴圈語意對齊。 |
-| `solver/BSMA_rc_numba.py` | 652 | 2 | 13 | 求解器與演算法核心。 | BSMA Numba variant with LP reduced-cost item evaluation and Repair 2.0. |
+| `solver/BSMA.py` | 652 | 2 | 13 | 求解器與演算法核心。 | BSMA Numba variant with LP reduced-cost item evaluation and Repair 2.0. |
 | `solver/__init__.py` | 1 | 0 | 0 | 求解器與演算法核心。 | 演算法實作與註冊表。 |
 | `solver/registry.py` | 74 | 3 | 6 | 求解器與演算法核心。 |  |
 | `tests/test_app.py` | 321 | 0 | 12 | pytest 測試。 |  |

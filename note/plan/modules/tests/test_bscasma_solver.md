@@ -28,7 +28,7 @@
 
 ## 與其他模組的關係
 
-目標模組橫跨 `mkp.solver.BSCASMA`、`BSCASMA_test_numba`、`BSCASMA_rl_numba`、`BSCASMA_rl_rc_numba`，並與 `BSMA_numba`、`BSCA_numba` repair/score helper 做交叉比對。
+目標模組橫跨 `mkp.solver.BSCASMA`、`BSCASMA_test_numba`、`BSCASMA_rl_numba`、`HSMSCA`，並與 `BSMA_numba`、`BSCA_numba` repair/score helper 做交叉比對。
 
 ## 對應函式索引與閱讀順序
 

@@ -1,5 +1,5 @@
-solver_id: cdels_workspace
-solver_class: CDELSWorkspaceSolver
+solver_id: cdels_2
+solver_class: CDELS2Solver
 capabilities:
   problem_types: [scvrp]
   encodings: [scvrp_route_transfer]

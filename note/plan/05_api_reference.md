@@ -1062,7 +1062,7 @@
 ### 工程補充
 
 - `mkp_qpso_mean_gte_evaluator(...)` 是少數直接比 projected `avg_objective` 與外部 QPSO `Mean` 的規則，不走 `Pdev`。
-- `_qpso_mean(...)` 固定從 baseline 區找 `name == "qpso"`；`_target_variant(...)` 則固定鎖定 `brlsmasca_rl_rc_numba/param_20`。
+- `_qpso_mean(...)` 固定從 baseline 區找 `name == "qpso"`；`_target_variant(...)` 則固定鎖定 `hsmsca/param_20`。
 - `_summary_failure(...)` 先把缺平均值或有 excluded runs 的 target summary 擋掉，再做門檻比較。
 
 ### Function: `mkp_qpso_mean_gte_evaluator`
@@ -2110,7 +2110,7 @@
 - 輸出: return dict
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: StubMaxIterationsSolver, BSMASolver, BSMANumbaSolver, BSMARCNumbaSolver, BSCASolver, BSCANumbaSolver, BSCARCNumbaSolver, BRLSMASCATestSolver, BRLSMASCARLNumbaSolver, BRLSMASCARLRCNumbaSolver, BRLSMASCATestNumbaSolver
+- 被呼叫者: StubMaxIterationsSolver, BSMASolver, BSMANumbaSolver, BSMASolver, BSCASolver, BSCANumbaSolver, BSCASolver, BRLSMASCATestSolver, BRLSMASCARLNumbaSolver, HSMSCASolver, BRLSMASCATestNumbaSolver
 - 主要呼叫者: engine/assembly.py:31 build, machine/core.py:479 _configure_process_worker, machine/core.py:494 _assert_process_solvers_registered, tests/test_rc_numba_solvers.py:47 test_rc_numba_solvers_can_be_created_by_registry, tools/mkp_item_eval_experiment.py:151 _solver_registry, tools/mkp_rc_feature_ablation.py:67 _solver_registry
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -2322,7 +2322,7 @@
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
 - 被呼叫者: dataclass, field, object.__setattr__, np.asarray, best_solution.setflags, self.problem_id.strip, ValueError, self.solver_id.strip, self.stop_reason.strip, normalize_objective_value, dict
-- 主要呼叫者: solver/BSCA.py:169 BSCASolver.solve, solver/BSCASMA.py:340 BRLSMASCATestSolver.solve, solver/BSCASMA_rl_numba.py:819 BRLSMASCARLNumbaSolver.solve, solver/BSCASMA_rl_rc_numba.py:3307 BRLSMASCARLRCNumbaSolver.solve, solver/BSCASMA_test_numba.py:599 BRLSMASCATestNumbaSolver.solve, solver/BSCA_numba.py:325 BSCANumbaSolver.solve, solver/BSCA_rc_numba.py:468 BSCARCNumbaSolver.solve, solver/BSMA.py:246 BSMASolver.solve 等
+- 主要呼叫者: solver/BSCA.py:169 BSCASolver.solve, solver/BSCASMA.py:340 BRLSMASCATestSolver.solve, solver/BSCASMA_rl_numba.py:819 BRLSMASCARLNumbaSolver.solve, solver/HSMSCA.py:3307 HSMSCASolver.solve, solver/BSCASMA_test_numba.py:599 BRLSMASCATestNumbaSolver.solve, solver/BSCA_numba.py:325 BSCANumbaSolver.solve, solver/BSCA.py:468 BSCASolver.solve, solver/BSMA.py:246 BSMASolver.solve 等
 - 資料契約: dataclass 資料契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
@@ -4681,7 +4681,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.max
-- 主要呼叫者: old/BSCASMA.py:386 BRLSMASCA.run, solver/BSCASMA_rl_rc_numba.py:418 _build_freq_gated_v2_payload, tests/test_contracts.py:37 test_experiment_spec_invalid, tests/test_contracts.py:104 test_run_task_invalid, tests/test_contracts.py:184 test_run_result_invalid, tools/mkp_item_eval_experiment.py:223 _run_variant, tools/mkp_rc_feature_ablation.py:96 _run_one
+- 主要呼叫者: old/BSCASMA.py:386 BRLSMASCA.run, solver/HSMSCA.py:418 _build_freq_gated_v2_payload, tests/test_contracts.py:37 test_experiment_spec_invalid, tests/test_contracts.py:104 test_run_task_invalid, tests/test_contracts.py:184 test_run_result_invalid, tools/mkp_item_eval_experiment.py:223 _run_variant, tools/mkp_rc_feature_ablation.py:96 _run_one
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 所屬物件: `BRLSMASCA`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -8375,7 +8375,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: values.tobytes, weights.tobytes, capacities.tobytes
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/BSCASMA_rl_rc_numba.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/HSMSCA.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8390,7 +8390,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8405,7 +8405,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.log10, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8420,7 +8420,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, ctf_flip_probability, abs, math.exp, math.tanh
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/HSMSCA.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8435,7 +8435,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, int, float
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:1293 _repair_bscasma_row_v2_inplace, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:1293 _repair_bscasma_row_v2_inplace, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8450,7 +8450,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:294 _state_for_row, solver/BSCASMA_rl_rc_numba.py:1902 _state_for_row
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:294 _state_for_row, solver/HSMSCA.py:1902 _state_for_row
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8465,7 +8465,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:190 _init_density_state, solver/BSCASMA_rl_rc_numba.py:1798 _init_density_state
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:190 _init_density_state, solver/HSMSCA.py:1798 _init_density_state
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8480,7 +8480,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, _init_ones_count, range, int
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8495,7 +8495,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8510,7 +8510,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, float, int
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8540,7 +8540,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, float, _state_bin
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8555,7 +8555,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.randint
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8570,7 +8570,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8585,7 +8585,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/BSCASMA_rl_rc_numba.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/HSMSCA.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8600,7 +8600,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.randint, _map_position_excluding
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/HSMSCA.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8615,7 +8615,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, int, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8630,7 +8630,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, math.tanh, range, abs, np.random.random, _select_two_distinct_indices_excluding, _ctf_flip_probability_fast
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8645,7 +8645,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.random, _ctf_flip_probability_fast, abs, math.sin
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8660,7 +8660,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.random, _ctf_flip_probability_fast, abs, math.cos
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8675,7 +8675,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.seed, range, _init_density_state, float, _update_sma_weight_inplace, np.arctanh, _sort_bscasma_rl_desc_deterministic_inplace, int, _state_for_row, _copy_row_bits, _repair_bscasma_row_inplace, _update_density_state_for_row, _update_q_value, np.random.random, _select_q_action_non_global 等
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/HSMSCA.py:3149 HSMSCACore.run
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -8752,7 +8752,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, _argsort_pop_fit_desc_deterministic, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run, solver/BSCASMA_test_numba.py:539 BRLSMASCATestNumbaCore.run
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/HSMSCA.py:3149 HSMSCACore.run, solver/BSCASMA_test_numba.py:539 BRLSMASCATestNumbaCore.run
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
 - 所屬物件: `BRLSMASCARLNumbaCore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -8803,7 +8803,7 @@
 - 所屬物件: `BRLSMASCARLNumbaSolver`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-## `solver/BSCASMA_rl_rc_numba.py`
+## `solver/HSMSCA.py`
 
 - Lines: `3660`
 - Role: 求解器與演算法核心。
@@ -8813,11 +8813,11 @@
 
 - 這是目前最厚的 solver family：item-eval payload、guided binary、repair、local search、archive/path relinking、restart 全都在這個模組匯流。
 - `_build_lp_rc_item_eval_payload(...)`、`_build_core_score_cp_payload(...)`、`_build_frequency_cp_payload(...)`、`_build_freq_gated_v2_payload(...)`、`_build_sbl_lite_cp_payload(...)` 共同決定 solver 看到的 item 排序與分數訊號。
-- `BRLSMASCARLRCNumbaCore.pseudo_utility()` 快取的不是單純 `cp_list`，而是完整 item-eval payload；`run()` 則把 RL、guided、repair、LS、PR、restart 所需工作陣列全部接到單一 Numba 主迴圈。
+- `HSMSCACore.pseudo_utility()` 快取的不是單純 `cp_list`，而是完整 item-eval payload；`run()` 則把 RL、guided、repair、LS、PR、restart 所需工作陣列全部接到單一 Numba 主迴圈。
 
 ### Function: `_cp_list_cache_key`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:27`
+- Location: `solver/HSMSCA.py:27`
 - Signature: `def _cp_list_cache_key(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray) -> tuple[tuple[tuple[int, ...], str, bytes], ...]`
 - Decorators: `none`
 - 用途: 執行 _cp_list_cache_key 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8826,13 +8826,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: values.tobytes, weights.tobytes, capacities.tobytes
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/BSCASMA_rl_rc_numba.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/HSMSCA.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_item_eval_cache_key`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:39`
+- Location: `solver/HSMSCA.py:39`
 - Signature: `def _item_eval_cache_key(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, *, eval_group_decimals: int, eval_rc_eps: float, eval_x_eps: float, item_eval_method: str = 'lp_rc_ordered', item_eval_seed: int | None = None, extra_params: tuple[Any, ...] = ()) -> tuple[Any, ...]`
 - Decorators: `none`
 - 用途: 執行 _item_eval_cache_key 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8841,13 +8841,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: _cp_list_cache_key, int, float, str, tuple
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility, solver/BSCA_rc_numba.py:277 BSCARCNumbaCore.pseudo_utility, solver/BSMA_rc_numba.py:327 BSMARCNumbaCore.pseudo_utility
+- 主要呼叫者: solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility, solver/BSCA.py:277 BSCACore.pseudo_utility, solver/BSMA.py:327 BSMACore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_coerce_bool_param`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:62`
+- Location: `solver/HSMSCA.py:62`
 - Signature: `def _coerce_bool_param(value: Any, *, name: str) -> bool`
 - Decorators: `none`
 - 用途: 執行 _coerce_bool_param 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8856,13 +8856,13 @@
 - 例外: `ValueError`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: isinstance, ValueError, value.strip.lower, bool, value.strip
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3307 BRLSMASCARLRCNumbaSolver.solve, solver/BSCA_rc_numba.py:468 BSCARCNumbaSolver.solve, solver/BSMA_rc_numba.py:520 BSMARCNumbaSolver.solve
+- 主要呼叫者: solver/HSMSCA.py:3307 HSMSCASolver.solve, solver/BSCA.py:468 BSCASolver.solve, solver/BSMA.py:520 BSMASolver.solve
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_safe_efficiency`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:76`
+- Location: `solver/HSMSCA.py:76`
 - Signature: `def _safe_efficiency(values: np.ndarray, weighted_cost: np.ndarray) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _safe_efficiency 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8871,13 +8871,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray.ravel, np.where, np.nan_to_num, np.errstate, np.asarray, np.finfo
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:132 _dual_efficiency_fallback, solver/BSCASMA_rl_rc_numba.py:167 _build_lp_rc_item_eval_payload
+- 主要呼叫者: solver/HSMSCA.py:132 _dual_efficiency_fallback, solver/HSMSCA.py:167 _build_lp_rc_item_eval_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_sort_items_by_bucket_efficiency`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:85`
+- Location: `solver/HSMSCA.py:85`
 - Signature: `def _sort_items_by_bucket_efficiency(bucket: np.ndarray, efficiency: np.ndarray) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _sort_items_by_bucket_efficiency 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8886,13 +8886,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.arange, np.ascontiguousarray, np.lexsort.astype, np.lexsort
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:132 _dual_efficiency_fallback, solver/BSCASMA_rl_rc_numba.py:167 _build_lp_rc_item_eval_payload
+- 主要呼叫者: solver/HSMSCA.py:132 _dual_efficiency_fallback, solver/HSMSCA.py:167 _build_lp_rc_item_eval_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_efficiency_group_count`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:90`
+- Location: `solver/HSMSCA.py:90`
 - Signature: `def _efficiency_group_count(base_order: np.ndarray, bucket: np.ndarray, rounded_efficiency: np.ndarray) -> int`
 - Decorators: `none`
 - 用途: 執行 _efficiency_group_count 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8901,13 +8901,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: int
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:132 _dual_efficiency_fallback, solver/BSCASMA_rl_rc_numba.py:167 _build_lp_rc_item_eval_payload
+- 主要呼叫者: solver/HSMSCA.py:132 _dual_efficiency_fallback, solver/HSMSCA.py:167 _build_lp_rc_item_eval_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_shuffle_efficiency_groups`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:108`
+- Location: `solver/HSMSCA.py:108`
 - Signature: `def _shuffle_efficiency_groups(base_order: np.ndarray, bucket: np.ndarray, rounded_efficiency: np.ndarray) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 執行 _shuffle_efficiency_groups 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8916,13 +8916,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.ascontiguousarray, int, base_order.copy.astype, np.random.shuffle, base_order.copy
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility, solver/BSCA_rc_numba.py:277 BSCARCNumbaCore.pseudo_utility, solver/BSMA_rc_numba.py:327 BSMARCNumbaCore.pseudo_utility, tests/test_bscasma_solver.py:573 test_bscasma_rl_rc_group_shuffle_is_seeded_and_stays_inside_groups
+- 主要呼叫者: solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility, solver/BSCA.py:277 BSCACore.pseudo_utility, solver/BSMA.py:327 BSMACore.pseudo_utility, tests/test_bscasma_solver.py:573 test_bscasma_rl_rc_group_shuffle_is_seeded_and_stays_inside_groups
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_dual_efficiency_fallback`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:132`
+- Location: `solver/HSMSCA.py:132`
 - Signature: `def _dual_efficiency_fallback(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, *, eval_group_decimals: int) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 執行 _dual_efficiency_fallback 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8931,13 +8931,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.concatenate, linprog, np.matmul, _safe_efficiency, np.zeros, _sort_items_by_bucket_efficiency, np.round, np.asarray, np.ones, _efficiency_group_count, int, np.eye
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:167 _build_lp_rc_item_eval_payload, tests/test_bscasma_solver.py:550 test_bscasma_rl_rc_dual_price_matches_legacy_dual_formulation
+- 主要呼叫者: solver/HSMSCA.py:167 _build_lp_rc_item_eval_payload, tests/test_bscasma_solver.py:550 test_bscasma_rl_rc_dual_price_matches_legacy_dual_formulation
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_build_lp_rc_item_eval_payload`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:167`
+- Location: `solver/HSMSCA.py:167`
 - Signature: `def _build_lp_rc_item_eval_payload(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, *, eval_group_decimals: int, eval_rc_eps: float, eval_x_eps: float) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 組裝資料結構或執行物件。
@@ -8946,13 +8946,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: linprog, np.asarray.ravel, np.matmul, _safe_efficiency, np.full, _sort_items_by_bucket_efficiency, np.asarray, _dual_efficiency_fallback, np.round, int, _efficiency_group_count, hasattr, np.abs, np.count_nonzero
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:418 _build_freq_gated_v2_payload, solver/BSCASMA_rl_rc_numba.py:707 _build_frequency_cp_payload, solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility, solver/BSCA_rc_numba.py:277 BSCARCNumbaCore.pseudo_utility, solver/BSMA_rc_numba.py:327 BSMARCNumbaCore.pseudo_utility, tests/test_bscasma_solver.py:378 test_bscasma_rl_rc_core_score_cp_payload_builds_complete_order, tests/test_bscasma_solver.py:403 test_bscasma_rl_rc_freq_gated_v2_payload_is_reproducible_with_seed, tests/test_bscasma_solver.py:550 test_bscasma_rl_rc_dual_price_matches_legacy_dual_formulation 等
+- 主要呼叫者: solver/HSMSCA.py:418 _build_freq_gated_v2_payload, solver/HSMSCA.py:707 _build_frequency_cp_payload, solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility, solver/BSCA.py:277 BSCACore.pseudo_utility, solver/BSMA.py:327 BSMACore.pseudo_utility, tests/test_bscasma_solver.py:378 test_bscasma_rl_rc_core_score_cp_payload_builds_complete_order, tests/test_bscasma_solver.py:403 test_bscasma_rl_rc_freq_gated_v2_payload_is_reproducible_with_seed, tests/test_bscasma_solver.py:550 test_bscasma_rl_rc_dual_price_matches_legacy_dual_formulation 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_robust_minmax`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:227`
+- Location: `solver/HSMSCA.py:227`
 - Signature: `def _robust_minmax(x: np.ndarray, *, q_low: float = 0.05, q_high: float = 0.95) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _robust_minmax 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8961,13 +8961,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray.ravel, np.isfinite, arr.copy, float, math.isclose, np.clip, np.any, np.zeros, np.min, np.max, np.quantile, np.asarray
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:266 _build_core_score_cp_payload, solver/BSCASMA_rl_rc_numba.py:597 _normalize_score
+- 主要呼叫者: solver/HSMSCA.py:266 _build_core_score_cp_payload, solver/HSMSCA.py:597 _normalize_score
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_clean_efficiency_for_score`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:247`
+- Location: `solver/HSMSCA.py:247`
 - Signature: `def _clean_efficiency_for_score(efficiency: np.ndarray) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _clean_efficiency_for_score 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8976,13 +8976,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray.ravel, np.isfinite, eff.copy, np.any, np.nan_to_num, float, np.asarray, np.max
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:266 _build_core_score_cp_payload
+- 主要呼叫者: solver/HSMSCA.py:266 _build_core_score_cp_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_bucket_score`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:258`
+- Location: `solver/HSMSCA.py:258`
 - Signature: `def _bucket_score(bucket: np.ndarray) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _bucket_score 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -8991,13 +8991,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray.ravel, np.zeros, np.asarray
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:266 _build_core_score_cp_payload
+- 主要呼叫者: solver/HSMSCA.py:266 _build_core_score_cp_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_build_core_score_cp_payload`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:266`
+- Location: `solver/HSMSCA.py:266`
 - Signature: `def _build_core_score_cp_payload(base_payload: dict[str, Any], *, core_w_x_lp: float, core_w_rc: float, core_w_eff: float, core_w_bucket: float) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 組裝資料結構或執行物件。
@@ -9006,13 +9006,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray.ravel, np.clip, _robust_minmax, _bucket_score, np.arange, np.ascontiguousarray, np.log1p, np.lexsort.astype, np.asarray, np.maximum, float, _clean_efficiency_for_score, np.lexsort
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:418 _build_freq_gated_v2_payload, solver/BSCASMA_rl_rc_numba.py:707 _build_frequency_cp_payload, solver/BSCASMA_rl_rc_numba.py:857 _build_sbl_lite_cp_payload, solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility, tests/test_bscasma_solver.py:378 test_bscasma_rl_rc_core_score_cp_payload_builds_complete_order
+- 主要呼叫者: solver/HSMSCA.py:418 _build_freq_gated_v2_payload, solver/HSMSCA.py:707 _build_frequency_cp_payload, solver/HSMSCA.py:857 _build_sbl_lite_cp_payload, solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility, tests/test_bscasma_solver.py:378 test_bscasma_rl_rc_core_score_cp_payload_builds_complete_order
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_repair_solution_by_order`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:306`
+- Location: `solver/HSMSCA.py:306`
 - Signature: `def _repair_solution_by_order(initial_sol: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, order: np.ndarray, *, repair_passes: int, repair_swap_limit: int) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 修補候選解，使其符合限制或改善可行性。
@@ -9021,13 +9021,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.ascontiguousarray, np.asarray, np.zeros, np.ones, _repair_bscasma_row_v2_inplace, np.asarray.reshape, int, float, np.dot
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:341 _greedy_solution_by_order, solver/BSCASMA_rl_rc_numba.py:368 _randomized_probe_solution
+- 主要呼叫者: solver/HSMSCA.py:341 _greedy_solution_by_order, solver/HSMSCA.py:368 _randomized_probe_solution
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_greedy_solution_by_order`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:341`
+- Location: `solver/HSMSCA.py:341`
 - Signature: `def _greedy_solution_by_order(order: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, *, repair_passes: int, repair_swap_limit: int) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 執行 _greedy_solution_by_order 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9036,13 +9036,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, np.asarray, _repair_solution_by_order, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:418 _build_freq_gated_v2_payload
+- 主要呼叫者: solver/HSMSCA.py:418 _build_freq_gated_v2_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_randomized_probe_solution`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:368`
+- Location: `solver/HSMSCA.py:368`
 - Signature: `def _randomized_probe_solution(order: np.ndarray, score: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, rng: np.random.Generator, *, repair_passes: int, repair_swap_limit: int) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 執行 _randomized_probe_solution 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9051,13 +9051,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.zeros, np.clip, np.asarray, _repair_solution_by_order, np.all, rng.random
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:418 _build_freq_gated_v2_payload, solver/BSCASMA_rl_rc_numba.py:707 _build_frequency_cp_payload
+- 主要呼叫者: solver/HSMSCA.py:418 _build_freq_gated_v2_payload, solver/HSMSCA.py:707 _build_frequency_cp_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_freq_samples_and_rho`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:401`
+- Location: `solver/HSMSCA.py:401`
 - Signature: `def _freq_samples_and_rho(dim: int, *, freq_samples_dim5: int, freq_samples_dim10: int, freq_samples_dim30: int, freq_blend_rho_dim5: float, freq_blend_rho_dim10: float, freq_blend_rho_dim30: float) -> tuple[int, float]`
 - Decorators: `none`
 - 用途: 執行 _freq_samples_and_rho 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9066,13 +9066,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: int, float
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:418 _build_freq_gated_v2_payload, solver/BSCASMA_rl_rc_numba.py:707 _build_frequency_cp_payload
+- 主要呼叫者: solver/HSMSCA.py:418 _build_freq_gated_v2_payload, solver/HSMSCA.py:707 _build_frequency_cp_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_build_freq_gated_v2_payload`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:418`
+- Location: `solver/HSMSCA.py:418`
 - Signature: `def _build_freq_gated_v2_payload(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, base_payload: dict[str, Any], rng: np.random.Generator, *, core_w_x_lp: float, core_w_rc: float, core_w_eff: float, core_w_bucket: float, eval_group_decimals: int, eval_rc_eps: float, eval_x_eps: float, freq_cp_noise: float, freq_elite_ratio: float, freq_quality_power: float, freq_samples_dim5: int, freq_samples_dim10: int, freq_samples_dim30: int, freq_blend_rho_dim5: float, freq_blend_rho_dim10: float, freq_blend_rho_dim30: float, freq_gate_probe_margin: float, freq_gate_min_elites: int, freq_gate_min_std: float, freq_gate_min_topk_overlap: float, repair_passes: int, repair_swap_limit: int) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 組裝資料結構或執行物件。
@@ -9081,13 +9081,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.asarray, _build_core_score_cp_payload, _greedy_solution_by_order, _freq_samples_and_rho, range, np.zeros, int, np.arange, np.ascontiguousarray, rng.uniform, _build_lp_rc_item_eval_payload, _randomized_probe_solution, probe_solutions.append, probe_fits.append, float, np.sum 等
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility, tests/test_bscasma_solver.py:403 test_bscasma_rl_rc_freq_gated_v2_payload_is_reproducible_with_seed
+- 主要呼叫者: solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility, tests/test_bscasma_solver.py:403 test_bscasma_rl_rc_freq_gated_v2_payload_is_reproducible_with_seed
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_normalize_score`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:597`
+- Location: `solver/HSMSCA.py:597`
 - Signature: `def _normalize_score(values: np.ndarray) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _normalize_score 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9096,13 +9096,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: _robust_minmax, np.asarray
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:640 _score_values_for_method, solver/BSCASMA_rl_rc_numba.py:679 _build_named_score_cp_payload, solver/BSCASMA_rl_rc_numba.py:857 _build_sbl_lite_cp_payload, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run
+- 主要呼叫者: solver/HSMSCA.py:640 _score_values_for_method, solver/HSMSCA.py:679 _build_named_score_cp_payload, solver/HSMSCA.py:857 _build_sbl_lite_cp_payload, solver/HSMSCA.py:3149 HSMSCACore.run
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_safe_ratio_for_score`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:601`
+- Location: `solver/HSMSCA.py:601`
 - Signature: `def _safe_ratio_for_score(values: np.ndarray, denom: np.ndarray) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _safe_ratio_for_score 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9111,13 +9111,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.where, np.nan_to_num, np.errstate, np.asarray.ravel, np.asarray, np.finfo
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:640 _score_values_for_method
+- 主要呼叫者: solver/HSMSCA.py:640 _score_values_for_method
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_lagrangian_multipliers_lite`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:609`
+- Location: `solver/HSMSCA.py:609`
 - Signature: `def _lagrangian_multipliers_lite(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, *, iterations: int = 200, step0: float = 2.0) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _lagrangian_multipliers_lite 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9126,13 +9126,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: int, np.zeros, lam.copy, np.asarray.ravel, np.asarray, range, astype, float, np.maximum, np.linalg.norm, np.maximum.sum, math.sqrt
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:640 _score_values_for_method
+- 主要呼叫者: solver/HSMSCA.py:640 _score_values_for_method
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_score_values_for_method`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:640`
+- Location: `solver/HSMSCA.py:640`
 - Signature: `def _score_values_for_method(score_name: str, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, base_payload: dict[str, Any]) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 _score_values_for_method 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9141,13 +9141,13 @@
 - 例外: `ValueError`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: str.lower, np.asarray.ravel, np.asarray, ValueError, _safe_ratio_for_score, np.maximum, _score_values_for_method, astype, _lagrangian_multipliers_lite, str, _normalize_score, np.clip
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:679 _build_named_score_cp_payload, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run
+- 主要呼叫者: solver/HSMSCA.py:679 _build_named_score_cp_payload, solver/HSMSCA.py:3149 HSMSCACore.run
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_build_named_score_cp_payload`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:679`
+- Location: `solver/HSMSCA.py:679`
 - Signature: `def _build_named_score_cp_payload(score_name: str, mode: str, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, base_payload: dict[str, Any]) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 組裝資料結構或執行物件。
@@ -9156,13 +9156,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: _score_values_for_method, _normalize_score, np.arange, np.ascontiguousarray, np.lexsort.astype, str.lower, np.clip, np.lexsort, str
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility
+- 主要呼叫者: solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_build_frequency_cp_payload`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:707`
+- Location: `solver/HSMSCA.py:707`
 - Signature: `def _build_frequency_cp_payload(mode: str, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, base_payload: dict[str, Any], rng: np.random.Generator, *, core_w_x_lp: float, core_w_rc: float, core_w_eff: float, core_w_bucket: float, eval_group_decimals: int, eval_rc_eps: float, eval_x_eps: float, freq_cp_noise: float, freq_elite_ratio: float, freq_quality_power: float, freq_samples_dim5: int, freq_samples_dim10: int, freq_samples_dim30: int, repair_passes: int, repair_swap_limit: int) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 組裝資料結構或執行物件。
@@ -9171,13 +9171,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: str, np.asarray, np.asarray.ravel, _build_core_score_cp_payload, _freq_samples_and_rho, range, np.zeros, np.arange, np.ascontiguousarray, int, mode_s.startswith, _randomized_probe_solution, probe_solutions.append, probe_fits.append, list, max 等
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility
+- 主要呼叫者: solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_solve_lp_bound_with_fixed_item`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:836`
+- Location: `solver/HSMSCA.py:836`
 - Signature: `def _solve_lp_bound_with_fixed_item(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, item: int, fixed_value: float) -> float`
 - Decorators: `none`
 - 用途: 執行 _solve_lp_bound_with_fixed_item 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9186,13 +9186,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: linprog, float, int, np.asarray
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:857 _build_sbl_lite_cp_payload
+- 主要呼叫者: solver/HSMSCA.py:857 _build_sbl_lite_cp_payload
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_build_sbl_lite_cp_payload`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:857`
+- Location: `solver/HSMSCA.py:857`
 - Signature: `def _build_sbl_lite_cp_payload(values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, base_payload: dict[str, Any], *, core_w_x_lp: float, core_w_rc: float, core_w_eff: float, core_w_bucket: float, sbl_candidate_limit: int) -> dict[str, Any]`
 - Decorators: `none`
 - 用途: 組裝資料結構或執行物件。
@@ -9201,13 +9201,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: _build_core_score_cp_payload, np.asarray, core_score.copy, float, min, np.zeros, np.arange, np.ascontiguousarray, np.dot, int, _solve_lp_bound_with_fixed_item, np.lexsort.astype, max, np.isfinite, _normalize_score, np.lexsort
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility
+- 主要呼叫者: solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_parse_named_score_item_eval_method`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:921`
+- Location: `solver/HSMSCA.py:921`
 - Signature: `def _parse_named_score_item_eval_method(method: str) -> tuple[str, str] | None`
 - Decorators: `none`
 - 用途: 解析輸入資料並轉成內部格式。
@@ -9216,13 +9216,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: str.lower.split, str.lower, len, str
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:928 _is_supported_item_eval_method, solver/BSCASMA_rl_rc_numba.py:2870 BRLSMASCARLRCNumbaCore.pseudo_utility
+- 主要呼叫者: solver/HSMSCA.py:928 _is_supported_item_eval_method, solver/HSMSCA.py:2870 HSMSCACore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_is_supported_item_eval_method`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:928`
+- Location: `solver/HSMSCA.py:928`
 - Signature: `def _is_supported_item_eval_method(method: str) -> bool`
 - Decorators: `none`
 - 用途: 執行 _is_supported_item_eval_method 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9231,13 +9231,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: str.lower, str, _parse_named_score_item_eval_method
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2588 BRLSMASCARLRCNumbaCore.__init__, solver/BSCASMA_rl_rc_numba.py:3307 BRLSMASCARLRCNumbaSolver.solve
+- 主要呼叫者: solver/HSMSCA.py:2588 HSMSCACore.__init__, solver/HSMSCA.py:3307 HSMSCASolver.solve
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_sort_bscasma_rl_desc_deterministic_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:934`
+- Location: `solver/HSMSCA.py:934`
 - Signature: `def _sort_bscasma_rl_desc_deterministic_inplace(pop_sol: np.ndarray, pop_fit: np.ndarray, individual_ids: np.ndarray, row_hamming: np.ndarray, tmp_sol: np.ndarray, tmp_fit: np.ndarray, tmp_ids: np.ndarray, tmp_hamming: np.ndarray, idx_work: np.ndarray, pop_size: int, items: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _sort_bscasma_rl_desc_deterministic_inplace 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9246,13 +9246,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_update_sma_weight_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:977`
+- Location: `solver/HSMSCA.py:977`
 - Signature: `def _update_sma_weight_inplace(W: np.ndarray, pop_fit: np.ndarray, pop_size: int, items: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _update_sma_weight_inplace 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9261,13 +9261,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.log10, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_ctf_flip_probability_fast`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:995`
+- Location: `solver/HSMSCA.py:995`
 - Signature: `def _ctf_flip_probability_fast(ctf_id: int, x: float) -> float`
 - Decorators: `njit`
 - 用途: 執行 _ctf_flip_probability_fast 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9276,13 +9276,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, ctf_flip_probability, abs, math.exp, math.tanh
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/HSMSCA.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_clip01`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1009`
+- Location: `solver/HSMSCA.py:1009`
 - Signature: `def _clip01(value: float) -> float`
 - Decorators: `njit`
 - 用途: 執行 _clip01 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9291,13 +9291,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability
+- 主要呼叫者: solver/HSMSCA.py:1036 _guided_probability
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_clip_symmetric_half`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1018`
+- Location: `solver/HSMSCA.py:1018`
 - Signature: `def _clip_symmetric_half(value: float) -> float`
 - Decorators: `njit`
 - 用途: 執行 _clip_symmetric_half 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9306,13 +9306,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability, solver/BSCASMA_rl_rc_numba.py:1086 _guided_slack_score
+- 主要呼叫者: solver/HSMSCA.py:1036 _guided_probability, solver/HSMSCA.py:1086 _guided_slack_score
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_guided_bucket_bias`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1027`
+- Location: `solver/HSMSCA.py:1027`
 - Signature: `def _guided_bucket_bias(bucket_value: int) -> float`
 - Decorators: `njit`
 - 用途: 執行 _guided_bucket_bias 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9321,13 +9321,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability
+- 主要呼叫者: solver/HSMSCA.py:1036 _guided_probability
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_guided_probability`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1036`
+- Location: `solver/HSMSCA.py:1036`
 - Signature: `def _guided_probability(ctf_id: int, continuous_value: float, x_lp_value: float, bucket_value: int, slack_score: float, guided_enabled: bool, guided_lambda_lp: float, guided_lambda_bucket: float, guided_lambda_slack: float) -> float`
 - Decorators: `njit`
 - 用途: 執行 _guided_probability 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9336,13 +9336,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, _ctf_flip_probability_fast, _clip01, _guided_bucket_bias, _clip_symmetric_half
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2065 _sca_sin_row, solver/BSCASMA_rl_rc_numba.py:2111 _sca_cos_row, tests/test_bscasma_solver.py:763 test_bscasma_rl_rc_guided_probability_is_finite_and_clipped
+- 主要呼叫者: solver/HSMSCA.py:2009 _sma_local_row, solver/HSMSCA.py:2065 _sca_sin_row, solver/HSMSCA.py:2111 _sca_cos_row, tests/test_bscasma_solver.py:763 test_bscasma_rl_rc_guided_probability_is_finite_and_clipped
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_init_row_resource_from_bits`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1056`
+- Location: `solver/HSMSCA.py:1056`
 - Signature: `def _init_row_resource_from_bits(pop_sol: np.ndarray, row: int, weights: np.ndarray, resource: np.ndarray, items: int, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _init_row_resource_from_bits 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9351,13 +9351,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2065 _sca_sin_row, solver/BSCASMA_rl_rc_numba.py:2111 _sca_cos_row
+- 主要呼叫者: solver/HSMSCA.py:2009 _sma_local_row, solver/HSMSCA.py:2065 _sca_sin_row, solver/HSMSCA.py:2111 _sca_cos_row
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_resource_excluding_item_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1073`
+- Location: `solver/HSMSCA.py:1073`
 - Signature: `def _resource_excluding_item_inplace(resource: np.ndarray, old_bit: float, weights: np.ndarray, item: int, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _resource_excluding_item_inplace 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9366,13 +9366,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2065 _sca_sin_row, solver/BSCASMA_rl_rc_numba.py:2111 _sca_cos_row
+- 主要呼叫者: solver/HSMSCA.py:2009 _sma_local_row, solver/HSMSCA.py:2065 _sca_sin_row, solver/HSMSCA.py:2111 _sca_cos_row
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_guided_slack_score`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1086`
+- Location: `solver/HSMSCA.py:1086`
 - Signature: `def _guided_slack_score(resource_excluding_item: np.ndarray, weights: np.ndarray, capacities: np.ndarray, item: int, dim: int) -> float`
 - Decorators: `njit`
 - 用途: 執行 _guided_slack_score 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9381,13 +9381,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, _clip_symmetric_half, float
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2065 _sca_sin_row, solver/BSCASMA_rl_rc_numba.py:2111 _sca_cos_row
+- 主要呼叫者: solver/HSMSCA.py:2009 _sma_local_row, solver/HSMSCA.py:2065 _sca_sin_row, solver/HSMSCA.py:2111 _sca_cos_row
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_set_guided_binary_bit_and_update_resource`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1103`
+- Location: `solver/HSMSCA.py:1103`
 - Signature: `def _set_guided_binary_bit_and_update_resource(pop_sol: np.ndarray, row: int, item: int, probability: float, weights: np.ndarray, resource_excluding_item: np.ndarray, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _set_guided_binary_bit_and_update_resource 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9396,13 +9396,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2065 _sca_sin_row, solver/BSCASMA_rl_rc_numba.py:2111 _sca_cos_row
+- 主要呼叫者: solver/HSMSCA.py:2009 _sma_local_row, solver/HSMSCA.py:2065 _sca_sin_row, solver/HSMSCA.py:2111 _sca_cos_row
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_repair_bscasma_row_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1120`
+- Location: `solver/HSMSCA.py:1120`
 - Signature: `def _repair_bscasma_row_inplace(pop_sol: np.ndarray, row: int, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, resource: np.ndarray, items: int, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 修補候選解，使其符合限制或改善可行性。
@@ -9411,13 +9411,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, int, float
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:1293 _repair_bscasma_row_v2_inplace, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:1293 _repair_bscasma_row_v2_inplace, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_repair_bscasma_row_dynamic_drop_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1176`
+- Location: `solver/HSMSCA.py:1176`
 - Signature: `def _repair_bscasma_row_dynamic_drop_inplace(pop_sol: np.ndarray, row: int, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, drop_score: np.ndarray, resource: np.ndarray, items: int, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 修補候選解，使其符合限制或改善可行性。
@@ -9426,13 +9426,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, float, int
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1293 _repair_bscasma_row_v2_inplace
+- 主要呼叫者: solver/HSMSCA.py:1293 _repair_bscasma_row_v2_inplace
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_repair_bscasma_swap_once_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1254`
+- Location: `solver/HSMSCA.py:1254`
 - Signature: `def _repair_bscasma_swap_once_inplace(pop_sol: np.ndarray, row: int, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, resource: np.ndarray, items: int, dim: int) -> int`
 - Decorators: `njit`
 - 用途: 修補候選解，使其符合限制或改善可行性。
@@ -9441,13 +9441,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, int, float
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1293 _repair_bscasma_row_v2_inplace
+- 主要呼叫者: solver/HSMSCA.py:1293 _repair_bscasma_row_v2_inplace
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_repair_bscasma_row_v2_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1293`
+- Location: `solver/HSMSCA.py:1293`
 - Signature: `def _repair_bscasma_row_v2_inplace(pop_sol: np.ndarray, row: int, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, resource: np.ndarray, items: int, dim: int, repair_passes: int, repair_swap_limit: int, repair_stats: np.ndarray, repair_drop_mode: int, drop_score: np.ndarray) -> None`
 - Decorators: `njit`
 - 用途: 修補候選解，使其符合限制或改善可行性。
@@ -9456,13 +9456,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, _repair_bscasma_row_dynamic_drop_inplace, _repair_bscasma_row_inplace, _repair_bscasma_swap_once_inplace
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:306 _repair_solution_by_order, solver/BSCASMA_rl_rc_numba.py:1407 _local_search_bscasma_row_inplace, solver/BSCASMA_rl_rc_numba.py:1679 _path_relink_bscasma_inplace, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCA_rc_numba.py:33 _bsca_rc_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba, tests/test_bscasma_solver.py:924 test_bscasma_rl_rc_repair_v2_default_matches_current_repair, tests/test_bscasma_solver.py:973 test_bscasma_rl_rc_repair_v2_repairs_infeasible_solution 等
+- 主要呼叫者: solver/HSMSCA.py:306 _repair_solution_by_order, solver/HSMSCA.py:1407 _local_search_bscasma_row_inplace, solver/HSMSCA.py:1679 _path_relink_bscasma_inplace, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCA.py:33 _bsca_rc_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba, tests/test_bscasma_solver.py:924 test_bscasma_rl_rc_repair_v2_default_matches_current_repair, tests/test_bscasma_solver.py:973 test_bscasma_rl_rc_repair_v2_repairs_infeasible_solution 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_copy_row_to_work`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1387`
+- Location: `solver/HSMSCA.py:1387`
 - Signature: `def _copy_row_to_work(pop_sol: np.ndarray, row: int, work_row: np.ndarray, items: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _copy_row_to_work 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9471,13 +9471,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1407 _local_search_bscasma_row_inplace
+- 主要呼叫者: solver/HSMSCA.py:1407 _local_search_bscasma_row_inplace
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_restore_work_to_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1393`
+- Location: `solver/HSMSCA.py:1393`
 - Signature: `def _restore_work_to_row(pop_sol: np.ndarray, row: int, work_row: np.ndarray, pop_fit: np.ndarray, fit_value: float, items: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _restore_work_to_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9486,13 +9486,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1407 _local_search_bscasma_row_inplace
+- 主要呼叫者: solver/HSMSCA.py:1407 _local_search_bscasma_row_inplace
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_local_search_bscasma_row_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1407`
+- Location: `solver/HSMSCA.py:1407`
 - Signature: `def _local_search_bscasma_row_inplace(pop_sol: np.ndarray, row: int, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, resource: np.ndarray, items: int, dim: int, repair_passes: int, repair_swap_limit: int, repair_stats: np.ndarray, repair_drop_mode: int, drop_score: np.ndarray, ls_work_row: np.ndarray, ls_max_passes: int, ls_add_cap: int, ls_drop_cap: int, ls_budget_per_run: int, ls_stats: np.ndarray) -> None`
 - Decorators: `njit`
 - 用途: 執行 _local_search_bscasma_row_inplace 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9501,13 +9501,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, _copy_row_to_work, range, int, _restore_work_to_row, _repair_bscasma_row_v2_inplace
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:791 test_bscasma_rl_rc_local_search_improves_toy_solution_and_keeps_feasible
+- 主要呼叫者: solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:791 test_bscasma_rl_rc_local_search_improves_toy_solution_and_keeps_feasible
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_restart_bscasma_bucket_biased_row_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1518`
+- Location: `solver/HSMSCA.py:1518`
 - Signature: `def _restart_bscasma_bucket_biased_row_inplace(pop_sol: np.ndarray, row: int, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, bucket: np.ndarray, resource: np.ndarray, items: int, dim: int, strong_p: float, core_p: float, weak_p: float) -> None`
 - Decorators: `njit`
 - 用途: 執行 _restart_bscasma_bucket_biased_row_inplace 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9516,13 +9516,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, int, np.random.random, float
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCA_rc_numba.py:33 _bsca_rc_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCA.py:33 _bsca_rc_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_archive_hamming_distance`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1566`
+- Location: `solver/HSMSCA.py:1566`
 - Signature: `def _archive_hamming_distance(archive_sol: np.ndarray, archive_idx: int, candidate_sol: np.ndarray, items: int) -> int`
 - Decorators: `njit`
 - 用途: 執行 _archive_hamming_distance 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9531,13 +9531,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1655 _archive_select_donor
+- 主要呼叫者: solver/HSMSCA.py:1655 _archive_select_donor
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_archive_contains_vector`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1582`
+- Location: `solver/HSMSCA.py:1582`
 - Signature: `def _archive_contains_vector(archive_sol: np.ndarray, archive_count: np.ndarray, candidate_sol: np.ndarray, items: int) -> bool`
 - Decorators: `njit`
 - 用途: 執行 _archive_contains_vector 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9546,13 +9546,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, int, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1601 _archive_add_vector
+- 主要呼叫者: solver/HSMSCA.py:1601 _archive_add_vector
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_archive_add_vector`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1601`
+- Location: `solver/HSMSCA.py:1601`
 - Signature: `def _archive_add_vector(archive_sol: np.ndarray, archive_fit: np.ndarray, archive_count: np.ndarray, candidate_sol: np.ndarray, candidate_fit: float, archive_size: int, items: int) -> int`
 - Decorators: `njit`
 - 用途: 執行 _archive_add_vector 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9561,13 +9561,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, _archive_contains_vector, int, range
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1630 _archive_add_row, solver/BSCASMA_rl_rc_numba.py:1679 _path_relink_bscasma_inplace, tests/test_bscasma_solver.py:837 test_bscasma_rl_rc_archive_path_relink_improves_without_downgrading_best
+- 主要呼叫者: solver/HSMSCA.py:1630 _archive_add_row, solver/HSMSCA.py:1679 _path_relink_bscasma_inplace, tests/test_bscasma_solver.py:837 test_bscasma_rl_rc_archive_path_relink_improves_without_downgrading_best
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_archive_add_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1630`
+- Location: `solver/HSMSCA.py:1630`
 - Signature: `def _archive_add_row(archive_sol: np.ndarray, archive_fit: np.ndarray, archive_count: np.ndarray, pop_sol: np.ndarray, pop_fit: np.ndarray, row: int, archive_size: int, items: int, work_row: np.ndarray) -> int`
 - Decorators: `njit`
 - 用途: 執行 _archive_add_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9576,13 +9576,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, _archive_add_vector
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_archive_select_donor`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1655`
+- Location: `solver/HSMSCA.py:1655`
 - Signature: `def _archive_select_donor(archive_sol: np.ndarray, archive_fit: np.ndarray, archive_count: np.ndarray, gbest_sol: np.ndarray, items: int) -> int`
 - Decorators: `njit`
 - 用途: 執行 _archive_select_donor 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9591,13 +9591,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, int, range, _archive_hamming_distance
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:1679 _path_relink_bscasma_inplace
+- 主要呼叫者: solver/HSMSCA.py:1679 _path_relink_bscasma_inplace
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_path_relink_bscasma_inplace`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1679`
+- Location: `solver/HSMSCA.py:1679`
 - Signature: `def _path_relink_bscasma_inplace(archive_sol: np.ndarray, archive_fit: np.ndarray, archive_count: np.ndarray, archive_size: int, gbest_sol: np.ndarray, gbest_fit: float, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, bucket: np.ndarray, pr_sol: np.ndarray, pr_fit: np.ndarray, resource: np.ndarray, repair_passes: int, repair_swap_limit: int, repair_stats: np.ndarray, repair_drop_mode: int, drop_score: np.ndarray, pr_max_steps: int, pr_core_only: bool, pr_stats: np.ndarray, items: int, dim: int) -> float`
 - Decorators: `njit`
 - 用途: 執行 _path_relink_bscasma_inplace 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9606,13 +9606,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, _archive_select_donor, range, int, _archive_add_vector, _repair_bscasma_row_v2_inplace
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:837 test_bscasma_rl_rc_archive_path_relink_improves_without_downgrading_best
+- 主要呼叫者: solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:837 test_bscasma_rl_rc_archive_path_relink_improves_without_downgrading_best
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_state_bin`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1779`
+- Location: `solver/HSMSCA.py:1779`
 - Signature: `def _state_bin(value: float) -> int`
 - Decorators: `njit`
 - 用途: 執行 _state_bin 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9621,13 +9621,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:294 _state_for_row, solver/BSCASMA_rl_rc_numba.py:1902 _state_for_row
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:294 _state_for_row, solver/HSMSCA.py:1902 _state_for_row
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_init_ones_count`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1788`
+- Location: `solver/HSMSCA.py:1788`
 - Signature: `def _init_ones_count(pop_sol: np.ndarray, ones_count: np.ndarray, pop_size: int, items: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _init_ones_count 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9636,13 +9636,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:190 _init_density_state, solver/BSCASMA_rl_rc_numba.py:1798 _init_density_state
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:190 _init_density_state, solver/HSMSCA.py:1798 _init_density_state
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_init_density_state`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1798`
+- Location: `solver/HSMSCA.py:1798`
 - Signature: `def _init_density_state(pop_sol: np.ndarray, ones_count: np.ndarray, avg_bits: np.ndarray, row_hamming: np.ndarray, sqrt_lookup: np.ndarray, pop_size: int, items: int) -> float`
 - Decorators: `njit`
 - 用途: 執行 _init_density_state 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9651,13 +9651,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, _init_ones_count, range, int
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_copy_row_bits`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1823`
+- Location: `solver/HSMSCA.py:1823`
 - Signature: `def _copy_row_bits(pop_sol: np.ndarray, row: int, old_row: np.ndarray, items: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _copy_row_bits 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9666,13 +9666,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_update_density_state_for_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1829`
+- Location: `solver/HSMSCA.py:1829`
 - Signature: `def _update_density_state_for_row(pop_sol: np.ndarray, row: int, old_row: np.ndarray, ones_count: np.ndarray, avg_bits: np.ndarray, row_hamming: np.ndarray, density_sum: float, sqrt_lookup: np.ndarray, pop_size: int, items: int) -> float`
 - Decorators: `njit`
 - 用途: 執行 _update_density_state_for_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9681,13 +9681,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, float, int
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, tests/test_bscasma_solver.py:1177 test_bscasma_rl_incremental_density_matches_full_density
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_population_density_from_counts`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1882`
+- Location: `solver/HSMSCA.py:1882`
 - Signature: `def _population_density_from_counts(pop_sol: np.ndarray, ones_count: np.ndarray, sqrt_lookup: np.ndarray, pop_size: int, items: int) -> float`
 - Decorators: `njit`
 - 用途: 執行 _population_density_from_counts 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9702,7 +9702,7 @@
 
 ### Function: `_state_for_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1902`
+- Location: `solver/HSMSCA.py:1902`
 - Signature: `def _state_for_row(pop_sol: np.ndarray, row: int, gbest_sol: np.ndarray, pop_size: int, items: int, density: float) -> int`
 - Decorators: `njit`
 - 用途: 執行 _state_for_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9711,13 +9711,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, float, _state_bin
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_select_q_action_non_global`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1921`
+- Location: `solver/HSMSCA.py:1921`
 - Signature: `def _select_q_action_non_global(q_table: np.ndarray, individual_id: int, state: int) -> int`
 - Decorators: `njit`
 - 用途: 執行 _select_q_action_non_global 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9726,13 +9726,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.randint
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_update_q_value`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1942`
+- Location: `solver/HSMSCA.py:1942`
 - Signature: `def _update_q_value(q_table: np.ndarray, individual_id: int, state: int, action: int, reward: float, next_state: int, alpha: float, gamma: float) -> None`
 - Decorators: `njit`
 - 用途: 執行 _update_q_value 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9741,13 +9741,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_map_position_excluding`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1961`
+- Location: `solver/HSMSCA.py:1961`
 - Signature: `def _map_position_excluding(pos: int, excluded: int) -> int`
 - Decorators: `njit`
 - 用途: 執行 _map_position_excluding 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9756,13 +9756,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/BSCASMA_rl_rc_numba.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/HSMSCA.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_select_two_distinct_indices_excluding`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1968`
+- Location: `solver/HSMSCA.py:1968`
 - Signature: `def _select_two_distinct_indices_excluding(pop_size: int, excluded: int) -> tuple[int, int]`
 - Decorators: `njit`
 - 用途: 執行 _select_two_distinct_indices_excluding 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9771,13 +9771,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.randint, _map_position_excluding
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/HSMSCA.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_sma_global_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:1980`
+- Location: `solver/HSMSCA.py:1980`
 - Signature: `def _sma_global_row(pop_sol: np.ndarray, row: int, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, acc_res: np.ndarray, items: int, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _sma_global_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9786,13 +9786,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, int, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_sma_local_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2009`
+- Location: `solver/HSMSCA.py:2009`
 - Signature: `def _sma_local_row(pop_sol: np.ndarray, pop_fit: np.ndarray, row: int, gbest_fit: float, gbest_sol: np.ndarray, W: np.ndarray, weights: np.ndarray, capacities: np.ndarray, x_lp: np.ndarray, bucket: np.ndarray, resource: np.ndarray, local_a: float, local_b: float, pop_size: int, items: int, dim: int, ctf_id: int, guided_enabled: bool, guided_lambda_lp: float, guided_lambda_bucket: float, guided_lambda_slack: float) -> None`
 - Decorators: `njit`
 - 用途: 執行 _sma_local_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9801,13 +9801,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, math.tanh, _init_row_resource_from_bits, range, abs, _resource_excluding_item_inplace, np.random.random, _select_two_distinct_indices_excluding, _guided_slack_score, _guided_probability, _set_guided_binary_bit_and_update_resource, int
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_sca_sin_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2065`
+- Location: `solver/HSMSCA.py:2065`
 - Signature: `def _sca_sin_row(pop_sol: np.ndarray, individual_best_sol: np.ndarray, row: int, individual_id: int, gbest_sol: np.ndarray, weights: np.ndarray, capacities: np.ndarray, x_lp: np.ndarray, bucket: np.ndarray, resource: np.ndarray, r1: float, items: int, dim: int, two_pi: float, ctf_id: int, guided_enabled: bool, guided_lambda_lp: float, guided_lambda_bucket: float, guided_lambda_slack: float) -> None`
 - Decorators: `njit`
 - 用途: 執行 _sca_sin_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9816,13 +9816,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, _init_row_resource_from_bits, range, _resource_excluding_item_inplace, _guided_slack_score, _guided_probability, _set_guided_binary_bit_and_update_resource, np.random.random, int, abs, math.sin
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_sca_cos_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2111`
+- Location: `solver/HSMSCA.py:2111`
 - Signature: `def _sca_cos_row(pop_sol: np.ndarray, individual_best_sol: np.ndarray, row: int, individual_id: int, gbest_sol: np.ndarray, weights: np.ndarray, capacities: np.ndarray, x_lp: np.ndarray, bucket: np.ndarray, resource: np.ndarray, r1: float, items: int, dim: int, two_pi: float, ctf_id: int, guided_enabled: bool, guided_lambda_lp: float, guided_lambda_bucket: float, guided_lambda_slack: float) -> None`
 - Decorators: `njit`
 - 用途: 執行 _sca_cos_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9831,13 +9831,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, _init_row_resource_from_bits, range, _resource_excluding_item_inplace, _guided_slack_score, _guided_probability, _set_guided_binary_bit_and_update_resource, np.random.random, int, abs, math.cos
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_bscasma_rl_main_loop_numba`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2157`
+- Location: `solver/HSMSCA.py:2157`
 - Signature: `def _bscasma_rl_main_loop_numba(pop_sol: np.ndarray, pop_fit: np.ndarray, individual_best_sol: np.ndarray, individual_best_fit: np.ndarray, individual_ids: np.ndarray, q_table: np.ndarray, action_counts: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, W: np.ndarray, pop_size: int, items: int, dim: int, a: float, z: float, alpha: float, gamma: float, glbal_best: int, max_iter: int, rng_seed: int, tmp_sol: np.ndarray, tmp_fit: np.ndarray, tmp_ids: np.ndarray, tmp_hamming: np.ndarray, idx_work: np.ndarray, ones_count: np.ndarray, avg_bits: np.ndarray, row_hamming: np.ndarray, old_row: np.ndarray, sqrt_lookup: np.ndarray, acc_res: np.ndarray, gbest_sol: np.ndarray, ctf_id: int, repair_passes: int, repair_swap_limit: int, repair_stats: np.ndarray, repair_drop_mode: int, drop_score: np.ndarray, bucket: np.ndarray, x_lp: np.ndarray, guided_binary_enabled: bool, guided_lambda_lp: float, guided_lambda_bucket: float, guided_lambda_slack: float, local_search_enabled: bool, ls_budget_per_run: int, ls_max_passes: int, ls_cooldown: int, ls_add_cap: int, ls_drop_cap: int, ls_work_row: np.ndarray, ls_stats: np.ndarray, archive_pr_enabled: bool, archive_size: int, pr_interval: int, pr_max_steps: int, pr_core_only: bool, archive_sol: np.ndarray, archive_fit: np.ndarray, archive_count: np.ndarray, pr_sol: np.ndarray, pr_fit: np.ndarray, pr_stats: np.ndarray, restart_enabled: bool, restart_window: int, restart_rows: int, restart_strong_p: float, restart_core_p: float, restart_weak_p: float, restart_stats: np.ndarray) -> float`
 - Decorators: `njit`
 - 用途: 執行 _bscasma_rl_main_loop_numba 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9846,27 +9846,27 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.seed, range, _init_density_state, float, _update_sma_weight_inplace, np.arctanh, _sort_bscasma_rl_desc_deterministic_inplace, _archive_add_row, int, _state_for_row, _copy_row_bits, _repair_bscasma_row_v2_inplace, _update_density_state_for_row, _update_q_value, _path_relink_bscasma_inplace 等
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/HSMSCA.py:3149 HSMSCACore.run
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Class: `BRLSMASCARLRCNumbaCore`
+### Class: `HSMSCACore`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2585`
+- Location: `solver/HSMSCA.py:2585`
 - Bases: `object`
 - Decorators: `none`
-- 用途: 定義 BRLSMASCARLRCNumbaCore 類型，作為此模組的資料結構、服務物件或測試輔助類別。
+- 用途: 定義 HSMSCACore 類型，作為此模組的資料結構、服務物件或測試輔助類別。
 - 輸入/輸出: class 建構、屬性與方法契約請看欄位、`__post_init__` 與方法文件。
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
 - 被呼叫者: _expect_mkp_problem_tensors, int, bool, float, str, self.pseudo_utility, np.zeros, np.arange, self.initial_pop, _item_eval_cache_key, type._cp_list_cache.get, np.sum, np.asarray, np.ascontiguousarray, max, range 等
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3307 BRLSMASCARLRCNumbaSolver.solve, tests/test_bscasma_solver.py:352 test_bscasma_rl_rc_numba_cp_list_is_complete_permutation, tests/test_bscasma_solver.py:509 test_bscasma_rl_rc_numba_default_cp_list_is_ordered_and_seed_independent, tests/test_bscasma_solver.py:599 test_bscasma_rl_rc_numba_explicit_group_shuffle_uses_group_method, tests/test_bscasma_solver.py:625 test_bscasma_rl_rc_initial_pop_does_not_keep_rejected_item_resource, tests/test_bscasma_solver.py:682 test_bscasma_rl_rc_mixed_init_is_feasible_binary_and_reproducible, tests/test_bscasma_solver.py:726 test_bscasma_rl_rc_restart_triggers_after_stagnation_and_keeps_best_feasible
+- 主要呼叫者: solver/HSMSCA.py:3307 HSMSCASolver.solve, tests/test_bscasma_solver.py:352 test_bscasma_rl_rc_numba_cp_list_is_complete_permutation, tests/test_bscasma_solver.py:509 test_bscasma_rl_rc_numba_default_cp_list_is_ordered_and_seed_independent, tests/test_bscasma_solver.py:599 test_bscasma_rl_rc_numba_explicit_group_shuffle_uses_group_method, tests/test_bscasma_solver.py:625 test_bscasma_rl_rc_initial_pop_does_not_keep_rejected_item_resource, tests/test_bscasma_solver.py:682 test_bscasma_rl_rc_mixed_init_is_feasible_binary_and_reproducible, tests/test_bscasma_solver.py:726 test_bscasma_rl_rc_restart_triggers_after_stagnation_and_keeps_best_feasible
 - 資料契約: 一般類別契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BRLSMASCARLRCNumbaCore.__init__`
+### Method: `HSMSCACore.__init__`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2588`
+- Location: `solver/HSMSCA.py:2588`
 - Signature: `def __init__(self, items: int, dim: int, glbal_best: int, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, seed: int | None = None, *, pop_size: int, a: float, z: float, max_iter: int, alpha: float, gamma: float, ctf_id: int = 0, eval_group_decimals: int = 1, eval_group_shuffle: bool = False, eval_rc_eps: float = 1e-09, eval_x_eps: float = 1e-09, item_eval_method: str = 'lp_rc_ordered', core_w_x_lp: float = 0.4, core_w_rc: float = 0.25, core_w_eff: float = 0.2, core_w_bucket: float = 0.15, freq_cp_noise: float = 0.03, freq_elite_ratio: float = 0.995, freq_quality_power: float = 4.0, freq_samples_dim5: int = 16, freq_samples_dim10: int = 32, freq_samples_dim30: int = 48, freq_blend_rho_dim5: float = 0.5, freq_blend_rho_dim10: float = 0.7, freq_blend_rho_dim30: float = 0.75, freq_gate_probe_margin: float = 0.0002, freq_gate_min_elites: int = 2, freq_gate_min_std: float = 0.08, freq_gate_min_topk_overlap: float = 0.65, sbl_candidate_limit: int = 24, repair_passes: int = 1, repair_swap_limit: int = 0, repair_drop_mode: str = 'rank', repair_drop_score_mode: str = 'hyb', mixed_init_enabled: bool = False, restart_enabled: bool = False, restart_window: int = 40, restart_ratio: float = 0.25, restart_strong_p: float = 0.85, restart_core_p: float = 0.5, restart_weak_p: float = 0.15, guided_binary_enabled: bool = False, guided_lambda_lp: float = 0.3, guided_lambda_bucket: float = 0.08, guided_lambda_slack: float = 0.1, local_search_enabled: bool = False, ls_budget_per_run: int = 1500, ls_max_passes: int = 2, ls_cooldown: int = 10, ls_add_cap: int = 80, ls_drop_cap: int = 80, archive_pr_enabled: bool = False, archive_size: int = 8, pr_interval: int = 15, pr_max_steps: int = 15, pr_core_only: bool = True) -> None`
 - Decorators: `none`
 - 用途: 執行 __init__ 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9877,12 +9877,12 @@
 - 被呼叫者: _expect_mkp_problem_tensors, int, bool, float, str, self.pseudo_utility, np.zeros, np.arange, self.initial_pop, np.random.seed, ValueError, _is_supported_item_eval_method
 - 主要呼叫者: valid/bsca_population_trace.py:194 _make_old_trace_class, valid/bsca_population_trace.py:196 _make_old_trace_class.OldTraceBSCA.__init__, valid/bsca_population_trace.py:291 NewTraceBSCA.__init__, valid/bscasma_population_trace.py:217 _make_old_trace_class, valid/bscasma_population_trace.py:219 _make_old_trace_class.OldTraceBSCASMATest.__init__, valid/bscasma_population_trace.py:335 NewTraceBSCASMATest.__init__, valid/bsma_population_trace.py:192 _make_old_trace_class, valid/bsma_population_trace.py:194 _make_old_trace_class.OldTraceBSMA.__init__ 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BRLSMASCARLRCNumbaCore.pseudo_utility`
+### Method: `HSMSCACore.pseudo_utility`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:2870`
+- Location: `solver/HSMSCA.py:2870`
 - Signature: `def pseudo_utility(self) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 pseudo_utility 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9893,12 +9893,12 @@
 - 被呼叫者: _item_eval_cache_key, type._cp_list_cache.get, bool, int, str, float, time.perf_counter, _build_lp_rc_item_eval_payload, _parse_named_score_item_eval_method, np.ascontiguousarray, payload.get, _build_core_score_cp_payload, np.asarray.copy, _shuffle_efficiency_groups, np.asarray, type 等
 - 主要呼叫者: old/BSCA.py:11 BSCA_V1_25.__init__, old/BSCA.py:140 BSCA.__init__, old/BSCASMA.py:13 BRLSMASCA.__init__, old/BSCASMA.py:456 BRLSMASCATest.__init__, old/BSMA.py:8 BSMA.__init__, solver/BSCA.py:21 BSCACore.__init__, solver/BSCASMA.py:26 BRLSMASCATestCore.__init__, solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__ 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BRLSMASCARLRCNumbaCore._finish_initial_row`
+### Method: `HSMSCACore._finish_initial_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3061`
+- Location: `solver/HSMSCA.py:3061`
 - Signature: `def _finish_initial_row(self, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _finish_initial_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9907,14 +9907,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.sum, np.multiply
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BRLSMASCARLRCNumbaCore._fill_initial_random_greedy_row`
+### Method: `HSMSCACore._fill_initial_random_greedy_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3066`
+- Location: `solver/HSMSCA.py:3066`
 - Signature: `def _fill_initial_random_greedy_row(self, row: int, order: np.ndarray) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_random_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9923,14 +9923,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.zeros, np.random.random, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BRLSMASCARLRCNumbaCore._fill_initial_deterministic_greedy_row`
+### Method: `HSMSCACore._fill_initial_deterministic_greedy_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3075`
+- Location: `solver/HSMSCA.py:3075`
 - Signature: `def _fill_initial_deterministic_greedy_row(self, row: int, order: np.ndarray) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_deterministic_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9939,14 +9939,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BRLSMASCARLRCNumbaCore._fill_initial_lp_rounding_row`
+### Method: `HSMSCACore._fill_initial_lp_rounding_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3083`
+- Location: `solver/HSMSCA.py:3083`
 - Signature: `def _fill_initial_lp_rounding_row(self, row: int, threshold: float, order: np.ndarray) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_lp_rounding_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9955,14 +9955,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray, np.zeros, self.item_eval_payload.get, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BRLSMASCARLRCNumbaCore._fill_initial_rcl_greedy_row`
+### Method: `HSMSCACore._fill_initial_rcl_greedy_row`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3093`
+- Location: `solver/HSMSCA.py:3093`
 - Signature: `def _fill_initial_rcl_greedy_row(self, row: int, order: np.ndarray) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_rcl_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9971,14 +9971,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.ascontiguousarray, max, np.zeros, range, order.copy, int, min, np.random.shuffle, math.sqrt, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BRLSMASCARLRCNumbaCore.initial_pop`
+### Method: `HSMSCACore.initial_pop`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3107`
+- Location: `solver/HSMSCA.py:3107`
 - Signature: `def initial_pop(self) -> None`
 - Decorators: `none`
 - 用途: 執行 initial_pop 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -9989,12 +9989,12 @@
 - 被呼叫者: np.zeros, min, range, max, int, self._fill_initial_deterministic_greedy_row, self._finish_initial_row, self._fill_initial_lp_rounding_row, self._fill_initial_rcl_greedy_row, self._fill_initial_random_greedy_row, math.ceil, len
 - 主要呼叫者: old/BSCA.py:11 BSCA_V1_25.__init__, old/BSCA.py:140 BSCA.__init__, old/BSCASMA.py:13 BRLSMASCA.__init__, old/BSCASMA.py:456 BRLSMASCATest.__init__, old/BSMA.py:8 BSMA.__init__, solver/BSCA.py:21 BSCACore.__init__, solver/BSCASMA.py:26 BRLSMASCATestCore.__init__, solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__ 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BRLSMASCARLRCNumbaCore.sort_pop_with_ids`
+### Method: `HSMSCACore.sort_pop_with_ids`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3137`
+- Location: `solver/HSMSCA.py:3137`
 - Signature: `def sort_pop_with_ids(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]`
 - Decorators: `none`
 - 用途: 執行 sort_pop_with_ids 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10003,14 +10003,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, _argsort_pop_fit_desc_deterministic, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run, solver/BSCASMA_test_numba.py:539 BRLSMASCATestNumbaCore.run
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/HSMSCA.py:3149 HSMSCACore.run, solver/BSCASMA_test_numba.py:539 BRLSMASCATestNumbaCore.run
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BRLSMASCARLRCNumbaCore.run`
+### Method: `HSMSCACore.run`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3149`
+- Location: `solver/HSMSCA.py:3149`
 - Signature: `def run(self) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 執行一段模擬、驗證或實驗流程。
@@ -10021,26 +10021,26 @@
 - 被呼叫者: np.random.seed, self.sort_pop_with_ids, np.ascontiguousarray, np.empty, np.sqrt, np.zeros, self.item_eval_payload.get, max, _bscasma_rl_main_loop_numba, np.asarray, int, range, self.individual_ids.astype, self.q_table.astype, self.action_counts.astype, np.arange 等
 - 主要呼叫者: cli/exp/main.py:32 main, experiment/experiment.py:345 executeExperiment, machine/core.py:221 MachinePool.run, old/main1cb.py:52 main.exe, old/main1gk.py:52 main.exe, old/main1hp.py:51 main.exe, old/main1pb.py:51 main.exe, old/main1pet.py:74 main.exe 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaCore`
+- 所屬物件: `HSMSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Class: `BRLSMASCARLRCNumbaSolver`
+### Class: `HSMSCASolver`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3306`
+- Location: `solver/HSMSCA.py:3306`
 - Bases: `object`
 - Decorators: `dataclass`
-- 用途: 定義 BRLSMASCARLRCNumbaSolver 類型，作為此模組的資料結構、服務物件或測試輔助類別。
+- 用途: 定義 HSMSCASolver 類型，作為此模組的資料結構、服務物件或測試輔助類別。
 - 輸入/輸出: class 建構、屬性與方法契約請看欄位、`__post_init__` 與方法文件。
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
-- 被呼叫者: config.get, int, float, _coerce_bool_param, str, parse_ctf_kind, np.random.seed, time.perf_counter, BRLSMASCARLRCNumbaCore, core.run, np.asarray, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get 等
+- 被呼叫者: config.get, int, float, _coerce_bool_param, str, parse_ctf_kind, np.random.seed, time.perf_counter, HSMSCACore, core.run, np.asarray, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get 等
 - 主要呼叫者: engine/builders.py:19 solverBuilders, tests/test_bscasma_solver.py:110 test_bscasma_numba_solvers_can_be_created_by_registry, tests/test_bscasma_solver.py:283 test_bscasma_rl_rc_numba_returns_valid_solve_result_and_metadata, tests/test_bscasma_solver.py:333 test_bscasma_rl_rc_numba_reproducibility_same_seed_same_result, tests/test_bscasma_solver.py:480 test_bscasma_rl_rc_item_eval_methods_solve_and_report_metadata, tests/test_bscasma_solver.py:656 test_bscasma_rl_rc_default_init_flags_match_implicit_defaults, tests/test_bscasma_solver.py:892 test_bscasma_rl_rc_new_feature_flags_are_reproducible_and_report_metadata, tests/test_bscasma_solver.py:1042 test_bscasma_rl_rc_numba_rejects_invalid_repair_params 等
 - 資料契約: dataclass 資料契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BRLSMASCARLRCNumbaSolver.solve`
+### Method: `HSMSCASolver.solve`
 
-- Location: `solver/BSCASMA_rl_rc_numba.py:3307`
+- Location: `solver/HSMSCA.py:3307`
 - Signature: `def solve(self, problem: ProblemModel, config: dict[str, Any], rng: np.random.Generator) -> SolveResult`
 - Decorators: `none`
 - 用途: 執行 solve 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10048,10 +10048,10 @@
 - 輸出: return SolveResult
 - 例外: `ValueError`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: config.get, int, float, _coerce_bool_param, str, parse_ctf_kind, np.random.seed, time.perf_counter, BRLSMASCARLRCNumbaCore, core.run, np.asarray, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get 等
+- 被呼叫者: config.get, int, float, _coerce_bool_param, str, parse_ctf_kind, np.random.seed, time.perf_counter, HSMSCACore, core.run, np.asarray, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get 等
 - 主要呼叫者: machine/core.py:171 Machine.run_task, machine/core.py:506 _run_task_process, tests/test_bsca2_solver.py:59 test_bsca2_solver_returns_valid_solve_result, tests/test_bsca2_solver.py:72 test_bsca2_reproducibility_same_seed_same_result, tests/test_bsca2_solver.py:85 test_bsca2_reproducibility_different_seed_can_differ, tests/test_bsca2_solver.py:96 test_bsca2_stop_condition_max_iterations_reached_or_best_known, tests/test_bsca2_solver.py:106 test_bsca2_params_pop_size_from_config_affects_evaluation_count, tests/test_bsca2_solver.py:121 test_bsca2_rejects_invalid_params 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BRLSMASCARLRCNumbaSolver`
+- 所屬物件: `HSMSCASolver`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
 ## `solver/BSCASMA_test_numba.py`
@@ -10071,7 +10071,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: values.tobytes, weights.tobytes, capacities.tobytes
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/BSCASMA_rl_rc_numba.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/HSMSCA.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10101,7 +10101,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.log10, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10116,7 +10116,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, ctf_flip_probability, abs, math.exp, math.tanh
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/HSMSCA.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10131,7 +10131,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range, int, float
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:1293 _repair_bscasma_row_v2_inplace, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:1293 _repair_bscasma_row_v2_inplace, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10161,7 +10161,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/BSCASMA_rl_rc_numba.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/HSMSCA.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10176,7 +10176,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.randint, _map_position_excluding
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/HSMSCA.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10191,7 +10191,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, int, np.random.random
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10206,7 +10206,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, math.tanh, range, abs, np.random.random, _select_two_distinct_indices_excluding, _ctf_flip_probability_fast
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10221,7 +10221,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.random, _ctf_flip_probability_fast, abs, math.sin
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10236,7 +10236,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, np.random.random, _ctf_flip_probability_fast, abs, math.cos
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/BSCASMA_rl_rc_numba.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:483 _bscasma_rl_main_loop_numba, solver/HSMSCA.py:2157 _bscasma_rl_main_loop_numba, solver/BSCASMA_test_numba.py:309 _bscasma_test_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10344,7 +10344,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, _argsort_pop_fit_desc_deterministic, range
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/BSCASMA_rl_rc_numba.py:3149 BRLSMASCARLRCNumbaCore.run, solver/BSCASMA_test_numba.py:539 BRLSMASCATestNumbaCore.run
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:740 BRLSMASCARLNumbaCore.run, solver/HSMSCA.py:3149 HSMSCACore.run, solver/BSCASMA_test_numba.py:539 BRLSMASCATestNumbaCore.run
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
 - 所屬物件: `BRLSMASCATestNumbaCore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -10418,7 +10418,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: values.tobytes, weights.tobytes, capacities.tobytes
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/BSCASMA_rl_rc_numba.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/HSMSCA.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10433,7 +10433,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, ctf_flip_probability, abs, math.exp, math.tanh
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/HSMSCA.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -10591,7 +10591,7 @@
 - 所屬物件: `BSCANumbaSolver`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-## `solver/BSCA_rc_numba.py`
+## `solver/BSCA.py`
 
 - Lines: `600`
 - Role: 求解器與演算法核心。
@@ -10599,7 +10599,7 @@
 
 ### Function: `_bsca_rc_main_loop_numba`
 
-- Location: `solver/BSCA_rc_numba.py:33`
+- Location: `solver/BSCA.py:33`
 - Signature: `def _bsca_rc_main_loop_numba(pop_sol: np.ndarray, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, pop_size: int, items: int, dim: int, a: float, glbal_best: int, max_iter: int, rng_seed: int, tmp_sol: np.ndarray, tmp_fit: np.ndarray, idx_work: np.ndarray, acc_res: np.ndarray, gbest_sol: np.ndarray, ctf_id: int, repair_passes: int, repair_swap_limit: int, repair_stats: np.ndarray, bucket: np.ndarray, restart_enabled: bool, restart_window: int, restart_rows: int, restart_strong_p: float, restart_core_p: float, restart_weak_p: float, restart_stats: np.ndarray) -> float`
 - Decorators: `njit`
 - 用途: 執行 _bsca_rc_main_loop_numba 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10608,27 +10608,27 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.seed, range, float, _sort_pop_desc_deterministic_inplace, _repair_bscasma_row_v2_inplace, np.random.random, _restart_bscasma_bucket_biased_row_inplace, _ctf_flip_probability_fast, abs, math.sin, math.cos
-- 主要呼叫者: solver/BSCA_rc_numba.py:403 BSCARCNumbaCore.run
+- 主要呼叫者: solver/BSCA.py:403 BSCACore.run
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Class: `BSCARCNumbaCore`
+### Class: `BSCACore`
 
-- Location: `solver/BSCA_rc_numba.py:177`
+- Location: `solver/BSCA.py:177`
 - Bases: `object`
 - Decorators: `none`
-- 用途: 定義 BSCARCNumbaCore 類型，作為此模組的資料結構、服務物件或測試輔助類別。
+- 用途: 定義 BSCACore 類型，作為此模組的資料結構、服務物件或測試輔助類別。
 - 輸入/輸出: class 建構、屬性與方法契約請看欄位、`__post_init__` 與方法文件。
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
 - 被呼叫者: _expect_mkp_problem_tensors, int, bool, float, self.pseudo_utility, np.zeros, self.initial_pop, self.pop_sol.copy, _item_eval_cache_key, type._item_eval_cache.get, np.sum, np.asarray, max, range, min, _argsort_pop_fit_desc_deterministic 等
-- 主要呼叫者: solver/BSCA_rc_numba.py:468 BSCARCNumbaSolver.solve
+- 主要呼叫者: solver/BSCA.py:468 BSCASolver.solve
 - 資料契約: 一般類別契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSCARCNumbaCore.__init__`
+### Method: `BSCACore.__init__`
 
-- Location: `solver/BSCA_rc_numba.py:180`
+- Location: `solver/BSCA.py:180`
 - Signature: `def __init__(self, items: int, dim: int, glbal_best: int, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, seed: int | None = None, *, pop_size: int, a: float, max_iter: int, ctf_id: int = 0, eval_group_decimals: int = 1, eval_group_shuffle: bool = False, eval_rc_eps: float = 1e-09, eval_x_eps: float = 1e-09, repair_passes: int = 1, repair_swap_limit: int = 0, mixed_init_enabled: bool = False, restart_enabled: bool = False, restart_window: int = 40, restart_ratio: float = 0.25, restart_strong_p: float = 0.85, restart_core_p: float = 0.5, restart_weak_p: float = 0.15) -> None`
 - Decorators: `none`
 - 用途: 執行 __init__ 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10639,12 +10639,12 @@
 - 被呼叫者: _expect_mkp_problem_tensors, int, bool, float, self.pseudo_utility, np.zeros, self.initial_pop, self.pop_sol.copy, np.random.seed, ValueError
 - 主要呼叫者: valid/bsca_population_trace.py:194 _make_old_trace_class, valid/bsca_population_trace.py:196 _make_old_trace_class.OldTraceBSCA.__init__, valid/bsca_population_trace.py:291 NewTraceBSCA.__init__, valid/bscasma_population_trace.py:217 _make_old_trace_class, valid/bscasma_population_trace.py:219 _make_old_trace_class.OldTraceBSCASMATest.__init__, valid/bscasma_population_trace.py:335 NewTraceBSCASMATest.__init__, valid/bsma_population_trace.py:192 _make_old_trace_class, valid/bsma_population_trace.py:194 _make_old_trace_class.OldTraceBSMA.__init__ 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSCARCNumbaCore.pseudo_utility`
+### Method: `BSCACore.pseudo_utility`
 
-- Location: `solver/BSCA_rc_numba.py:277`
+- Location: `solver/BSCA.py:277`
 - Signature: `def pseudo_utility(self) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 pseudo_utility 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10655,12 +10655,12 @@
 - 被呼叫者: _item_eval_cache_key, type._item_eval_cache.get, bool, int, time.perf_counter, _build_lp_rc_item_eval_payload, _shuffle_efficiency_groups, np.ascontiguousarray, np.asarray, np.asarray.copy, type
 - 主要呼叫者: old/BSCA.py:11 BSCA_V1_25.__init__, old/BSCA.py:140 BSCA.__init__, old/BSCASMA.py:13 BRLSMASCA.__init__, old/BSCASMA.py:456 BRLSMASCATest.__init__, old/BSMA.py:8 BSMA.__init__, solver/BSCA.py:21 BSCACore.__init__, solver/BSCASMA.py:26 BRLSMASCATestCore.__init__, solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__ 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSCARCNumbaCore._finish_initial_row`
+### Method: `BSCACore._finish_initial_row`
 
-- Location: `solver/BSCA_rc_numba.py:320`
+- Location: `solver/BSCA.py:320`
 - Signature: `def _finish_initial_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _finish_initial_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10669,14 +10669,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.sum, np.multiply
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSCARCNumbaCore._fill_initial_random_greedy_row`
+### Method: `BSCACore._fill_initial_random_greedy_row`
 
-- Location: `solver/BSCA_rc_numba.py:323`
+- Location: `solver/BSCA.py:323`
 - Signature: `def _fill_initial_random_greedy_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_random_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10685,14 +10685,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.zeros, np.random.random, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSCARCNumbaCore._fill_initial_deterministic_greedy_row`
+### Method: `BSCACore._fill_initial_deterministic_greedy_row`
 
-- Location: `solver/BSCA_rc_numba.py:332`
+- Location: `solver/BSCA.py:332`
 - Signature: `def _fill_initial_deterministic_greedy_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_deterministic_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10701,14 +10701,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSCARCNumbaCore._fill_initial_lp_rounding_row`
+### Method: `BSCACore._fill_initial_lp_rounding_row`
 
-- Location: `solver/BSCA_rc_numba.py:340`
+- Location: `solver/BSCA.py:340`
 - Signature: `def _fill_initial_lp_rounding_row(self, population: np.ndarray, row: int, threshold: float) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_lp_rounding_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10717,14 +10717,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray, np.zeros, self.item_eval_payload.get, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSCARCNumbaCore._fill_initial_rcl_greedy_row`
+### Method: `BSCACore._fill_initial_rcl_greedy_row`
 
-- Location: `solver/BSCA_rc_numba.py:350`
+- Location: `solver/BSCA.py:350`
 - Signature: `def _fill_initial_rcl_greedy_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_rcl_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10733,14 +10733,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: max, np.zeros, range, int, min, np.ascontiguousarray, np.random.shuffle, math.sqrt, self.cp_list.copy, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSCARCNumbaCore.initial_pop`
+### Method: `BSCACore.initial_pop`
 
-- Location: `solver/BSCA_rc_numba.py:363`
+- Location: `solver/BSCA.py:363`
 - Signature: `def initial_pop(self) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 initial_pop 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10751,12 +10751,12 @@
 - 被呼叫者: np.zeros, min, range, max, int, self._fill_initial_deterministic_greedy_row, self._finish_initial_row, self._fill_initial_lp_rounding_row, self._fill_initial_rcl_greedy_row, self._fill_initial_random_greedy_row, math.ceil, len
 - 主要呼叫者: old/BSCA.py:11 BSCA_V1_25.__init__, old/BSCA.py:140 BSCA.__init__, old/BSCASMA.py:13 BRLSMASCA.__init__, old/BSCASMA.py:456 BRLSMASCATest.__init__, old/BSMA.py:8 BSMA.__init__, solver/BSCA.py:21 BSCACore.__init__, solver/BSCASMA.py:26 BRLSMASCATestCore.__init__, solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__ 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSCARCNumbaCore.sort_pop`
+### Method: `BSCACore.sort_pop`
 
-- Location: `solver/BSCA_rc_numba.py:394`
+- Location: `solver/BSCA.py:394`
 - Signature: `def sort_pop(self) -> tuple[np.ndarray, np.ndarray]`
 - Decorators: `none`
 - 用途: 執行 sort_pop 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10767,12 +10767,12 @@
 - 被呼叫者: np.zeros, _argsort_pop_fit_desc_deterministic, range
 - 主要呼叫者: old/BSCA.py:93 BSCA_V1_25.run, old/BSCA.py:225 BSCA.run, old/BSCASMA.py:386 BRLSMASCA.run, old/BSCASMA.py:717 BRLSMASCATest.run, old/BSMA.py:97 BSMA.run, solver/BSCA.py:118 BSCACore.run, solver/BSCASMA.py:286 BRLSMASCATestCore.run, solver/BSCA_numba.py:273 BSCANumbaCore.run 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSCARCNumbaCore.run`
+### Method: `BSCACore.run`
 
-- Location: `solver/BSCA_rc_numba.py:403`
+- Location: `solver/BSCA.py:403`
 - Signature: `def run(self) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 執行一段模擬、驗證或實驗流程。
@@ -10783,26 +10783,26 @@
 - 被呼叫者: np.random.seed, self.sort_pop, np.ascontiguousarray, np.empty, np.zeros, _bsca_rc_main_loop_numba, int, range, np.asarray, bool, float, math.ceil
 - 主要呼叫者: cli/exp/main.py:32 main, experiment/experiment.py:345 executeExperiment, machine/core.py:221 MachinePool.run, old/main1cb.py:52 main.exe, old/main1gk.py:52 main.exe, old/main1hp.py:51 main.exe, old/main1pb.py:51 main.exe, old/main1pet.py:74 main.exe 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaCore`
+- 所屬物件: `BSCACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Class: `BSCARCNumbaSolver`
+### Class: `BSCASolver`
 
-- Location: `solver/BSCA_rc_numba.py:467`
+- Location: `solver/BSCA.py:467`
 - Bases: `object`
 - Decorators: `dataclass`
-- 用途: 定義 BSCARCNumbaSolver 類型，作為此模組的資料結構、服務物件或測試輔助類別。
+- 用途: 定義 BSCASolver 類型，作為此模組的資料結構、服務物件或測試輔助類別。
 - 輸入/輸出: class 建構、屬性與方法契約請看欄位、`__post_init__` 與方法文件。
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
-- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSCARCNumbaCore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
+- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSCACore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
 - 主要呼叫者: engine/builders.py:19 solverBuilders, tests/test_rc_numba_solvers.py:87 test_rc_numba_solvers_return_valid_solve_result_and_metadata, tests/test_rc_numba_solvers.py:120 test_rc_numba_solvers_are_reproducible_with_same_seed, tests/test_rc_numba_solvers.py:239 test_rc_numba_solvers_reject_invalid_repair_restart_params
 - 資料契約: dataclass 資料契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSCARCNumbaSolver.solve`
+### Method: `BSCASolver.solve`
 
-- Location: `solver/BSCA_rc_numba.py:468`
+- Location: `solver/BSCA.py:468`
 - Signature: `def solve(self, problem: ProblemModel, config: dict[str, Any], rng: np.random.Generator) -> SolveResult`
 - Decorators: `none`
 - 用途: 執行 solve 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -10810,10 +10810,10 @@
 - 輸出: return SolveResult
 - 例外: `ValueError`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSCARCNumbaCore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
+- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSCACore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
 - 主要呼叫者: machine/core.py:171 Machine.run_task, machine/core.py:506 _run_task_process, tests/test_bsca2_solver.py:59 test_bsca2_solver_returns_valid_solve_result, tests/test_bsca2_solver.py:72 test_bsca2_reproducibility_same_seed_same_result, tests/test_bsca2_solver.py:85 test_bsca2_reproducibility_different_seed_can_differ, tests/test_bsca2_solver.py:96 test_bsca2_stop_condition_max_iterations_reached_or_best_known, tests/test_bsca2_solver.py:106 test_bsca2_params_pop_size_from_config_affects_evaluation_count, tests/test_bsca2_solver.py:121 test_bsca2_rejects_invalid_params 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSCARCNumbaSolver`
+- 所屬物件: `BSCASolver`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
 ## `solver/BSMA.py`
@@ -10853,7 +10853,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.arange, range, int, float
-- 主要呼叫者: solver/BSCA.py:109 BSCACore.sort_pop, solver/BSCASMA.py:153 BRLSMASCATestCore.sort_pop, solver/BSCASMA_rl_numba.py:728 BRLSMASCARLNumbaCore.sort_pop_with_ids, solver/BSCASMA_rl_rc_numba.py:3137 BRLSMASCARLRCNumbaCore.sort_pop_with_ids, solver/BSCASMA_test_numba.py:527 BRLSMASCATestNumbaCore.sort_pop_with_ids, solver/BSCA_numba.py:264 BSCANumbaCore.sort_pop, solver/BSCA_rc_numba.py:394 BSCARCNumbaCore.sort_pop, solver/BSMA.py:148 BSMACore.sort_pop 等
+- 主要呼叫者: solver/BSCA.py:109 BSCACore.sort_pop, solver/BSCASMA.py:153 BRLSMASCATestCore.sort_pop, solver/BSCASMA_rl_numba.py:728 BRLSMASCARLNumbaCore.sort_pop_with_ids, solver/HSMSCA.py:3137 HSMSCACore.sort_pop_with_ids, solver/BSCASMA_test_numba.py:527 BRLSMASCATestNumbaCore.sort_pop_with_ids, solver/BSCA_numba.py:264 BSCANumbaCore.sort_pop, solver/BSCA.py:394 BSCACore.sort_pop, solver/BSMA.py:148 BSMACore.sort_pop 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11020,7 +11020,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: values.tobytes, weights.tobytes, capacities.tobytes
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/BSCASMA_rl_rc_numba.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:691 BRLSMASCARLNumbaCore.pseudo_utility, solver/HSMSCA.py:39 _item_eval_cache_key, solver/BSCASMA_test_numba.py:490 BRLSMASCATestNumbaCore.pseudo_utility, solver/BSCA_numba.py:229 BSCANumbaCore.pseudo_utility, solver/BSMA_numba.py:348 BSMANumbaCore.pseudo_utility
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11035,7 +11035,7 @@
 - 例外: `TypeError, ValueError`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: TypeError, ValueError
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__, solver/BSCASMA_rl_rc_numba.py:2588 BRLSMASCARLRCNumbaCore.__init__, solver/BSCASMA_test_numba.py:419 BRLSMASCATestNumbaCore.__init__, solver/BSCA_numba.py:187 BSCANumbaCore.__init__, solver/BSCA_rc_numba.py:180 BSCARCNumbaCore.__init__, solver/BSMA_numba.py:304 BSMANumbaCore.__init__, solver/BSMA_rc_numba.py:229 BSMARCNumbaCore.__init__
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__, solver/HSMSCA.py:2588 HSMSCACore.__init__, solver/BSCASMA_test_numba.py:419 BRLSMASCATestNumbaCore.__init__, solver/BSCA_numba.py:187 BSCANumbaCore.__init__, solver/BSCA.py:180 BSCACore.__init__, solver/BSMA_numba.py:304 BSMANumbaCore.__init__, solver/BSMA.py:229 BSMACore.__init__
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11050,7 +11050,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, ctf_flip_probability, abs, math.exp, math.tanh
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/BSCASMA_rl_rc_numba.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_numba.py:435 _sca_sin_row, solver/BSCASMA_rl_numba.py:459 _sca_cos_row, solver/HSMSCA.py:1036 _guided_probability, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSCASMA_test_numba.py:261 _sca_sin_row, solver/BSCASMA_test_numba.py:285 _sca_cos_row, solver/BSCA_numba.py:113 _bsca_main_loop_numba 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11080,7 +11080,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, range
-- 主要呼叫者: solver/BSCA_numba.py:113 _bsca_main_loop_numba, solver/BSCA_rc_numba.py:33 _bsca_rc_main_loop_numba, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/BSCA_numba.py:113 _bsca_main_loop_numba, solver/BSCA.py:33 _bsca_rc_main_loop_numba, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11095,7 +11095,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/BSCASMA_rl_rc_numba.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:360 _select_two_distinct_indices_excluding, solver/HSMSCA.py:1968 _select_two_distinct_indices_excluding, solver/BSCASMA_test_numba.py:186 _select_two_distinct_indices_excluding, solver/BSMA_numba.py:178 _select_two_distinct_indices_excluding
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11110,7 +11110,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.randint, _map_position_excluding
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/BSCASMA_rl_rc_numba.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:401 _sma_local_row, solver/HSMSCA.py:2009 _sma_local_row, solver/BSCASMA_test_numba.py:227 _sma_local_row, solver/BSMA_numba.py:190 _bsma_main_loop_numba, solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
@@ -11253,7 +11253,7 @@
 - 所屬物件: `BSMANumbaSolver`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-## `solver/BSMA_rc_numba.py`
+## `solver/BSMA.py`
 
 - Lines: `652`
 - Role: 求解器與演算法核心。
@@ -11261,7 +11261,7 @@
 
 ### Function: `_bsma_rc_global_row`
 
-- Location: `solver/BSMA_rc_numba.py:34`
+- Location: `solver/BSMA.py:34`
 - Signature: `def _bsma_rc_global_row(pop_sol: np.ndarray, row: int, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, acc_res: np.ndarray, items: int, dim: int) -> None`
 - Decorators: `njit`
 - 用途: 執行 _bsma_rc_global_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11270,13 +11270,13 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, range, int, np.random.random
-- 主要呼叫者: solver/BSMA_rc_numba.py:63 _bsma_rc_main_loop_numba
+- 主要呼叫者: solver/BSMA.py:63 _bsma_rc_main_loop_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
 ### Function: `_bsma_rc_main_loop_numba`
 
-- Location: `solver/BSMA_rc_numba.py:63`
+- Location: `solver/BSMA.py:63`
 - Signature: `def _bsma_rc_main_loop_numba(pop_sol: np.ndarray, pop_fit: np.ndarray, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, cp_list: np.ndarray, W: np.ndarray, pop_size: int, items: int, dim: int, z: float, glbal_best: float, max_iter: int, rng_seed: int, acc_res: np.ndarray, tmp_sol: np.ndarray, tmp_fit: np.ndarray, idx_work: np.ndarray, gbest_sol: np.ndarray, ctf_id: int, repair_passes: int, repair_swap_limit: int, repair_stats: np.ndarray, bucket: np.ndarray, restart_enabled: bool, restart_window: int, restart_rows: int, restart_strong_p: float, restart_core_p: float, restart_weak_p: float, restart_stats: np.ndarray) -> float`
 - Decorators: `njit`
 - 用途: 執行 _bsma_rc_main_loop_numba 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11285,27 +11285,27 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: njit, np.random.seed, range, np.arctanh, _sort_pop_desc_deterministic_inplace, math.log10, _repair_bscasma_row_v2_inplace, np.random.random, _bsma_rc_global_row, math.tanh, _restart_bscasma_bucket_biased_row_inplace, abs, _select_two_distinct_indices_excluding, _ctf_flip_probability_fast
-- 主要呼叫者: solver/BSMA_rc_numba.py:453 BSMARCNumbaCore.run
+- 主要呼叫者: solver/BSMA.py:453 BSMACore.run
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Class: `BSMARCNumbaCore`
+### Class: `BSMACore`
 
-- Location: `solver/BSMA_rc_numba.py:226`
+- Location: `solver/BSMA.py:226`
 - Bases: `object`
 - Decorators: `none`
-- 用途: 定義 BSMARCNumbaCore 類型，作為此模組的資料結構、服務物件或測試輔助類別。
+- 用途: 定義 BSMACore 類型，作為此模組的資料結構、服務物件或測試輔助類別。
 - 輸入/輸出: class 建構、屬性與方法契約請看欄位、`__post_init__` 與方法文件。
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
 - 被呼叫者: _expect_mkp_problem_tensors, int, bool, float, self.pseudo_utility, np.zeros, self.initial_pop, self.pop_sol.copy, _item_eval_cache_key, type._item_eval_cache.get, np.sum, np.asarray, max, range, min, _argsort_pop_fit_desc_deterministic 等
-- 主要呼叫者: solver/BSMA_rc_numba.py:520 BSMARCNumbaSolver.solve
+- 主要呼叫者: solver/BSMA.py:520 BSMASolver.solve
 - 資料契約: 一般類別契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSMARCNumbaCore.__init__`
+### Method: `BSMACore.__init__`
 
-- Location: `solver/BSMA_rc_numba.py:229`
+- Location: `solver/BSMA.py:229`
 - Signature: `def __init__(self, items: int, dim: int, glbal_best: int, values: np.ndarray, weights: np.ndarray, capacities: np.ndarray, seed: int | None = None, *, pop_size: int, z: float, max_iter: int, ctf_id: int = 0, eval_group_decimals: int = 1, eval_group_shuffle: bool = False, eval_rc_eps: float = 1e-09, eval_x_eps: float = 1e-09, repair_passes: int = 1, repair_swap_limit: int = 0, mixed_init_enabled: bool = False, restart_enabled: bool = False, restart_window: int = 40, restart_ratio: float = 0.25, restart_strong_p: float = 0.85, restart_core_p: float = 0.5, restart_weak_p: float = 0.15) -> None`
 - Decorators: `none`
 - 用途: 執行 __init__ 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11316,12 +11316,12 @@
 - 被呼叫者: _expect_mkp_problem_tensors, int, bool, float, self.pseudo_utility, np.zeros, self.initial_pop, self.pop_sol.copy, np.random.seed, ValueError
 - 主要呼叫者: valid/bsca_population_trace.py:194 _make_old_trace_class, valid/bsca_population_trace.py:196 _make_old_trace_class.OldTraceBSCA.__init__, valid/bsca_population_trace.py:291 NewTraceBSCA.__init__, valid/bscasma_population_trace.py:217 _make_old_trace_class, valid/bscasma_population_trace.py:219 _make_old_trace_class.OldTraceBSCASMATest.__init__, valid/bscasma_population_trace.py:335 NewTraceBSCASMATest.__init__, valid/bsma_population_trace.py:192 _make_old_trace_class, valid/bsma_population_trace.py:194 _make_old_trace_class.OldTraceBSMA.__init__ 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSMARCNumbaCore.pseudo_utility`
+### Method: `BSMACore.pseudo_utility`
 
-- Location: `solver/BSMA_rc_numba.py:327`
+- Location: `solver/BSMA.py:327`
 - Signature: `def pseudo_utility(self) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 pseudo_utility 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11332,12 +11332,12 @@
 - 被呼叫者: _item_eval_cache_key, type._item_eval_cache.get, bool, int, time.perf_counter, _build_lp_rc_item_eval_payload, _shuffle_efficiency_groups, np.ascontiguousarray, np.asarray, np.asarray.copy, type
 - 主要呼叫者: old/BSCA.py:11 BSCA_V1_25.__init__, old/BSCA.py:140 BSCA.__init__, old/BSCASMA.py:13 BRLSMASCA.__init__, old/BSCASMA.py:456 BRLSMASCATest.__init__, old/BSMA.py:8 BSMA.__init__, solver/BSCA.py:21 BSCACore.__init__, solver/BSCASMA.py:26 BRLSMASCATestCore.__init__, solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__ 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSMARCNumbaCore._finish_initial_row`
+### Method: `BSMACore._finish_initial_row`
 
-- Location: `solver/BSMA_rc_numba.py:370`
+- Location: `solver/BSMA.py:370`
 - Signature: `def _finish_initial_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _finish_initial_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11346,14 +11346,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.sum, np.multiply
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSMARCNumbaCore._fill_initial_random_greedy_row`
+### Method: `BSMACore._fill_initial_random_greedy_row`
 
-- Location: `solver/BSMA_rc_numba.py:373`
+- Location: `solver/BSMA.py:373`
 - Signature: `def _fill_initial_random_greedy_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_random_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11362,14 +11362,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: np.zeros, np.random.random, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSMARCNumbaCore._fill_initial_deterministic_greedy_row`
+### Method: `BSMACore._fill_initial_deterministic_greedy_row`
 
-- Location: `solver/BSMA_rc_numba.py:382`
+- Location: `solver/BSMA.py:382`
 - Signature: `def _fill_initial_deterministic_greedy_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_deterministic_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11378,14 +11378,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.zeros, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSMARCNumbaCore._fill_initial_lp_rounding_row`
+### Method: `BSMACore._fill_initial_lp_rounding_row`
 
-- Location: `solver/BSMA_rc_numba.py:390`
+- Location: `solver/BSMA.py:390`
 - Signature: `def _fill_initial_lp_rounding_row(self, population: np.ndarray, row: int, threshold: float) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_lp_rounding_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11394,14 +11394,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: np.asarray, np.zeros, self.item_eval_payload.get, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSMARCNumbaCore._fill_initial_rcl_greedy_row`
+### Method: `BSMACore._fill_initial_rcl_greedy_row`
 
-- Location: `solver/BSMA_rc_numba.py:400`
+- Location: `solver/BSMA.py:400`
 - Signature: `def _fill_initial_rcl_greedy_row(self, population: np.ndarray, row: int) -> None`
 - Decorators: `none`
 - 用途: 執行 _fill_initial_rcl_greedy_row 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11410,14 +11410,14 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
 - 被呼叫者: max, np.zeros, range, int, min, np.ascontiguousarray, np.random.shuffle, math.sqrt, self.cp_list.copy, np.all
-- 主要呼叫者: solver/BSCASMA_rl_rc_numba.py:3107 BRLSMASCARLRCNumbaCore.initial_pop, solver/BSCA_rc_numba.py:363 BSCARCNumbaCore.initial_pop, solver/BSMA_rc_numba.py:413 BSMARCNumbaCore.initial_pop
+- 主要呼叫者: solver/HSMSCA.py:3107 HSMSCACore.initial_pop, solver/BSCA.py:363 BSCACore.initial_pop, solver/BSMA.py:413 BSMACore.initial_pop
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: private helper，外部呼叫應優先使用所在模組公開入口。
 
-### Method: `BSMARCNumbaCore.initial_pop`
+### Method: `BSMACore.initial_pop`
 
-- Location: `solver/BSMA_rc_numba.py:413`
+- Location: `solver/BSMA.py:413`
 - Signature: `def initial_pop(self) -> np.ndarray`
 - Decorators: `none`
 - 用途: 執行 initial_pop 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11428,12 +11428,12 @@
 - 被呼叫者: np.zeros, min, range, max, int, self._fill_initial_deterministic_greedy_row, self._finish_initial_row, self._fill_initial_lp_rounding_row, self._fill_initial_rcl_greedy_row, self._fill_initial_random_greedy_row, math.ceil, len
 - 主要呼叫者: old/BSCA.py:11 BSCA_V1_25.__init__, old/BSCA.py:140 BSCA.__init__, old/BSCASMA.py:13 BRLSMASCA.__init__, old/BSCASMA.py:456 BRLSMASCATest.__init__, old/BSMA.py:8 BSMA.__init__, solver/BSCA.py:21 BSCACore.__init__, solver/BSCASMA.py:26 BRLSMASCATestCore.__init__, solver/BSCASMA_rl_numba.py:626 BRLSMASCARLNumbaCore.__init__ 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSMARCNumbaCore.sort_pop`
+### Method: `BSMACore.sort_pop`
 
-- Location: `solver/BSMA_rc_numba.py:444`
+- Location: `solver/BSMA.py:444`
 - Signature: `def sort_pop(self) -> tuple[np.ndarray, np.ndarray]`
 - Decorators: `none`
 - 用途: 執行 sort_pop 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11444,12 +11444,12 @@
 - 被呼叫者: np.zeros, _argsort_pop_fit_desc_deterministic, range
 - 主要呼叫者: old/BSCA.py:93 BSCA_V1_25.run, old/BSCA.py:225 BSCA.run, old/BSCASMA.py:386 BRLSMASCA.run, old/BSCASMA.py:717 BRLSMASCATest.run, old/BSMA.py:97 BSMA.run, solver/BSCA.py:118 BSCACore.run, solver/BSCASMA.py:286 BRLSMASCATestCore.run, solver/BSCA_numba.py:273 BSCANumbaCore.run 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSMARCNumbaCore.run`
+### Method: `BSMACore.run`
 
-- Location: `solver/BSMA_rc_numba.py:453`
+- Location: `solver/BSMA.py:453`
 - Signature: `def run(self) -> tuple[np.ndarray, int]`
 - Decorators: `none`
 - 用途: 執行一段模擬、驗證或實驗流程。
@@ -11460,26 +11460,26 @@
 - 被呼叫者: np.random.seed, self.sort_pop, np.ascontiguousarray, np.empty, np.zeros, _bsma_rc_main_loop_numba, int, range, np.asarray, float, bool, math.ceil
 - 主要呼叫者: cli/exp/main.py:32 main, experiment/experiment.py:345 executeExperiment, machine/core.py:221 MachinePool.run, old/main1cb.py:52 main.exe, old/main1gk.py:52 main.exe, old/main1hp.py:51 main.exe, old/main1pb.py:51 main.exe, old/main1pet.py:74 main.exe 等
 - 資料契約: 有回傳型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaCore`
+- 所屬物件: `BSMACore`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Class: `BSMARCNumbaSolver`
+### Class: `BSMASolver`
 
-- Location: `solver/BSMA_rc_numba.py:519`
+- Location: `solver/BSMA.py:519`
 - Bases: `object`
 - Decorators: `dataclass`
-- 用途: 定義 BSMARCNumbaSolver 類型，作為此模組的資料結構、服務物件或測試輔助類別。
+- 用途: 定義 BSMASolver 類型，作為此模組的資料結構、服務物件或測試輔助類別。
 - 輸入/輸出: class 建構、屬性與方法契約請看欄位、`__post_init__` 與方法文件。
 - 例外: `ValueError`
 - 副作用: 類別定義本身無直接副作用；建構與方法副作用請看各方法。
-- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSMARCNumbaCore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
+- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSMACore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
 - 主要呼叫者: engine/builders.py:19 solverBuilders, tests/test_rc_numba_solvers.py:87 test_rc_numba_solvers_return_valid_solve_result_and_metadata, tests/test_rc_numba_solvers.py:120 test_rc_numba_solvers_are_reproducible_with_same_seed, tests/test_rc_numba_solvers.py:239 test_rc_numba_solvers_reject_invalid_repair_restart_params
 - 資料契約: dataclass 資料契約；欄位與 invariant 以 `__post_init__`、屬性與方法驗證為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
-### Method: `BSMARCNumbaSolver.solve`
+### Method: `BSMASolver.solve`
 
-- Location: `solver/BSMA_rc_numba.py:520`
+- Location: `solver/BSMA.py:520`
 - Signature: `def solve(self, problem: ProblemModel, config: dict[str, Any], rng: np.random.Generator) -> SolveResult`
 - Decorators: `none`
 - 用途: 執行 solve 對應的局部邏輯；詳細語意需搭配呼叫端與資料契約理解。
@@ -11487,10 +11487,10 @@
 - 輸出: return SolveResult
 - 例外: `ValueError`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSMARCNumbaCore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
+- 被呼叫者: config.get, int, float, _coerce_bool_param, parse_ctf_kind, np.random.seed, time.perf_counter, BSMACore, core.run, SolveResult, stop_condition.get, ValueError, isinstance, raw_params.get, rng.integers, str 等
 - 主要呼叫者: machine/core.py:171 Machine.run_task, machine/core.py:506 _run_task_process, tests/test_bsca2_solver.py:59 test_bsca2_solver_returns_valid_solve_result, tests/test_bsca2_solver.py:72 test_bsca2_reproducibility_same_seed_same_result, tests/test_bsca2_solver.py:85 test_bsca2_reproducibility_different_seed_can_differ, tests/test_bsca2_solver.py:96 test_bsca2_stop_condition_max_iterations_reached_or_best_known, tests/test_bsca2_solver.py:106 test_bsca2_params_pop_size_from_config_affects_evaluation_count, tests/test_bsca2_solver.py:121 test_bsca2_rejects_invalid_params 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
-- 所屬物件: `BSMARCNumbaSolver`
+- 所屬物件: `BSMASolver`
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
 ## `solver/__init__.py`
@@ -12109,7 +12109,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: SolverRegistry, registry.register, isinstance, registry.create, BRLSMASCARLNumbaSolver, BRLSMASCARLRCNumbaSolver, BRLSMASCATestNumbaSolver
+- 被呼叫者: SolverRegistry, registry.register, isinstance, registry.create, BRLSMASCARLNumbaSolver, HSMSCASolver, BRLSMASCATestNumbaSolver
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12259,7 +12259,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, BRLSMASCARLRCNumbaSolver, _build_problem, _build_numba_config, solver.solve, isinstance, np.random.default_rng, sum
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, HSMSCASolver, _build_problem, _build_numba_config, solver.solve, isinstance, np.random.default_rng, sum
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12274,7 +12274,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, BRLSMASCARLRCNumbaSolver, _build_problem, _build_numba_config, solver.solve, np.array_equal, np.random.default_rng
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, HSMSCASolver, _build_problem, _build_numba_config, solver.solve, np.array_equal, np.random.default_rng
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12289,7 +12289,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, _build_problem, np.random.seed, BRLSMASCARLRCNumbaCore, np.array_equal, np.sort, np.arange
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, _build_problem, np.random.seed, HSMSCACore, np.array_equal, np.sort, np.arange
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12334,7 +12334,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: pytest.mark.parametrize, BRLSMASCARLRCNumbaSolver, _build_problem, _build_numba_config, solver.solve, np.all, np.random.default_rng, set, method.endswith, result.best_solution.tolist
+- 被呼叫者: pytest.mark.parametrize, HSMSCASolver, _build_problem, _build_numba_config, solver.solve, np.all, np.random.default_rng, set, method.endswith, result.best_solution.tolist
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12349,7 +12349,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, _build_problem, BRLSMASCARLRCNumbaCore, np.array_equal
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, _build_problem, HSMSCACore, np.array_equal
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12394,7 +12394,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, _build_problem, BRLSMASCARLRCNumbaCore, np.array_equal, np.sort, np.arange
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, _build_problem, HSMSCACore, np.array_equal, np.sort, np.arange
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12409,7 +12409,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, np.array, BRLSMASCARLRCNumbaCore, monkeypatch.setattr, core.initial_pop, np.all
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, np.array, HSMSCACore, monkeypatch.setattr, core.initial_pop, np.all
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12424,7 +12424,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, BRLSMASCARLRCNumbaSolver, _build_problem, _build_numba_config, solver.solve, np.array_equal, np.random.default_rng
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, HSMSCASolver, _build_problem, _build_numba_config, solver.solve, np.array_equal, np.random.default_rng
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12439,7 +12439,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, _build_problem, BRLSMASCARLRCNumbaCore, np.array_equal, np.all
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, _build_problem, HSMSCACore, np.array_equal, np.all
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12454,7 +12454,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
-- 被呼叫者: BRLSMASCARLRCNumbaCore._cp_list_cache.clear, np.array, BRLSMASCARLRCNumbaCore, core.run, np.array_equal, np.all, np.zeros
+- 被呼叫者: HSMSCACore._cp_list_cache.clear, np.array, HSMSCACore, core.run, np.array_equal, np.all, np.zeros
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12514,7 +12514,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaSolver, _build_problem, _build_numba_config, solver.solve, np.array_equal, np.all, np.random.default_rng, set, result_a.best_solution.tolist
+- 被呼叫者: HSMSCASolver, _build_problem, _build_numba_config, solver.solve, np.array_equal, np.all, np.random.default_rng, set, result_a.best_solution.tolist
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12574,7 +12574,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaSolver, _build_problem, np.random.default_rng, pytest.raises, solver.solve
+- 被呼叫者: HSMSCASolver, _build_problem, np.random.default_rng, pytest.raises, solver.solve
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12589,7 +12589,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaSolver, _build_problem, np.random.default_rng, pytest.raises, solver.solve
+- 被呼叫者: HSMSCASolver, _build_problem, np.random.default_rng, pytest.raises, solver.solve
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -12604,7 +12604,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: BRLSMASCARLRCNumbaSolver, _build_problem, np.random.default_rng, pytest.raises, solver.solve
+- 被呼叫者: HSMSCASolver, _build_problem, np.random.default_rng, pytest.raises, solver.solve
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -15582,7 +15582,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: pytest.mark.parametrize, BSMARCNumbaCore._item_eval_cache.clear, BSCARCNumbaCore._item_eval_cache.clear, _build_problem, _config, solver.solve, np.all, isinstance, np.random.default_rng, set, int, result.best_solution.tolist, BSMARCNumbaSolver, BSCARCNumbaSolver
+- 被呼叫者: pytest.mark.parametrize, BSMACore._item_eval_cache.clear, BSCACore._item_eval_cache.clear, _build_problem, _config, solver.solve, np.all, isinstance, np.random.default_rng, set, int, result.best_solution.tolist, BSMASolver, BSCASolver
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -15597,7 +15597,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: pytest.mark.parametrize, _build_problem, _config, solver.solve, np.array_equal, np.random.default_rng, BSMARCNumbaSolver, BSCARCNumbaSolver
+- 被呼叫者: pytest.mark.parametrize, _build_problem, _config, solver.solve, np.array_equal, np.random.default_rng, BSMASolver, BSCASolver
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -15657,7 +15657,7 @@
 - 輸出: 無明確 return；通常回傳 None。
 - 例外: `未在本體內直接 raise`
 - 副作用: 消耗 RNG 狀態。
-- 被呼叫者: pytest.mark.parametrize, _build_problem, _config, np.random.default_rng, pytest.raises, solver.solve, BSMARCNumbaSolver, BSCARCNumbaSolver
+- 被呼叫者: pytest.mark.parametrize, _build_problem, _config, np.random.default_rng, pytest.raises, solver.solve, BSMASolver, BSCASolver
 - 主要呼叫者: 未在靜態掃描中找到明確呼叫者，可能由 CLI、pytest、註冊表、反射或外部呼叫。
 - 資料契約: 型別主要由呼叫端與測試約束；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
@@ -17659,7 +17659,7 @@
 - 例外: `ValueError`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: params.get, str.strip, CTF_ID_BY_NAME.get, ValueError, join, str
-- 主要呼叫者: solver/BSCA.py:169 BSCASolver.solve, solver/BSCASMA.py:340 BRLSMASCATestSolver.solve, solver/BSCASMA_rl_numba.py:819 BRLSMASCARLNumbaSolver.solve, solver/BSCASMA_rl_rc_numba.py:3307 BRLSMASCARLRCNumbaSolver.solve, solver/BSCASMA_test_numba.py:599 BRLSMASCATestNumbaSolver.solve, solver/BSCA_numba.py:325 BSCANumbaSolver.solve, solver/BSCA_rc_numba.py:468 BSCARCNumbaSolver.solve, solver/BSMA.py:246 BSMASolver.solve 等
+- 主要呼叫者: solver/BSCA.py:169 BSCASolver.solve, solver/BSCASMA.py:340 BRLSMASCATestSolver.solve, solver/BSCASMA_rl_numba.py:819 BRLSMASCARLNumbaSolver.solve, solver/HSMSCA.py:3307 HSMSCASolver.solve, solver/BSCASMA_test_numba.py:599 BRLSMASCATestNumbaSolver.solve, solver/BSCA_numba.py:325 BSCANumbaSolver.solve, solver/BSCA.py:468 BSCASolver.solve, solver/BSMA.py:246 BSMASolver.solve 等
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 
@@ -17680,7 +17680,7 @@
 - 例外: `未在本體內直接 raise`
 - 副作用: 未從靜態呼叫中看到明顯外部副作用。
 - 被呼叫者: njit, abs, math.exp, math.tanh, math.erf, math.atan, math.sqrt
-- 主要呼叫者: solver/BSCASMA_rl_numba.py:101 _ctf_flip_probability_fast, solver/BSCASMA_rl_rc_numba.py:995 _ctf_flip_probability_fast, solver/BSCASMA_test_numba.py:97 _ctf_flip_probability_fast, solver/BSCA_numba.py:42 _ctf_flip_probability_fast, solver/BSMA_numba.py:60 _ctf_flip_probability_fast, tests/test_continuous_to_binary.py:32 test_flip_matches_numba
+- 主要呼叫者: solver/BSCASMA_rl_numba.py:101 _ctf_flip_probability_fast, solver/HSMSCA.py:995 _ctf_flip_probability_fast, solver/BSCASMA_test_numba.py:97 _ctf_flip_probability_fast, solver/BSCA_numba.py:42 _ctf_flip_probability_fast, solver/BSMA_numba.py:60 _ctf_flip_probability_fast, tests/test_continuous_to_binary.py:32 test_flip_matches_numba
 - 資料契約: 有回傳型別註記、有參數型別註記；實際可接受值以函式內驗證與測試為準。
 - 注意事項: 修改前需檢查呼叫端、測試與輸出格式是否依賴目前行為。
 

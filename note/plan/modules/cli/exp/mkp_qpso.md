@@ -13,7 +13,7 @@
 
 ## 主要資料結構與資料契約
 
-- evaluator 只接受一個 target variant：`brlsmasca_rl_rc_numba/param_20`。
+- evaluator 只接受一個 target variant：`hsmsca/param_20`。
 - `evaluation.base_line` 中必須存在 `name == "qpso"` 且 `mean` 非空的 baseline 條目。
 - target variant 的 projected summary 必須滿足：
   - `total_runs > 0`
@@ -26,7 +26,7 @@
 ## 資料流與控制流
 
 1. `_qpso_mean(...)` 從 `evaluation.base_line` 中找到 `qpso` baseline 的 `mean`。
-2. `_target_variant(...)` 在 `variant_summaries` 中找 `brlsmasca_rl_rc_numba/param_20`。
+2. `_target_variant(...)` 在 `variant_summaries` 中找 `hsmsca/param_20`。
 3. `_summary_failure(...)` 檢查 target summary 是否可作為平均目標值比較。
 4. evaluator 取 `target.summary.overall.avg_objective`，與 QPSO mean 做 `>=` 比較。
 5. `_gte(...)` 用 `FLOAT_TOLERANCE` 處理浮點相等情況，避免接近值因二進位誤差被錯判失敗。
@@ -55,7 +55,7 @@
 
 ### `mkp_qpso_mean_gte_evaluator(input_data)`
 
-- 目的：要求 `brlsmasca_rl_rc_numba/param_20` 的 projected `avg_objective` 至少達到 QPSO baseline mean。
+- 目的：要求 `hsmsca/param_20` 的 projected `avg_objective` 至少達到 QPSO baseline mean。
 - 控制流：先取 baseline `qpso` mean，再找 target variant，確認 summary 有效後做 `>=` 比較。
 - 角色：這是 `cli.exp` evaluator 中少數直接比 `Mean` 而不是 `Pdev` 的規則。
 

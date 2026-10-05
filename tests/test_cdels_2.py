@@ -7,8 +7,8 @@ import pytest
 
 from mkp.problem.scvrp import load_legacy_scvrp_problem
 from mkp.solver.CDELS import CDELS
-from mkp.solver.CDELS_workspace import (
-    CDELSWorkspace,
+from mkp.solver.CDELS_2 import (
+    CDELS2,
     _CDELSFlatListRoutesPrototype,
     _CDELSFixedRoutesPrototype,
 )
@@ -289,7 +289,7 @@ def _solve(core, *, transitions: int = 2):
 
 
 def test_workspace_is_initialized_before_population_and_reuses_buffers() -> None:
-    core = CDELSWorkspace(_problem(), seed=1)
+    core = CDELS2(_problem(), seed=1)
 
     mutation_buffer = core.workspace.mutation_customers
     crossover_buffer = core.workspace.crossover_closed
@@ -320,7 +320,7 @@ def test_workspace_is_initialized_before_population_and_reuses_buffers() -> None
 
 
 def test_workspace_population_uses_compact_state_dtypes() -> None:
-    core = CDELSWorkspace(_problem(), seed=1)
+    core = CDELS2(_problem(), seed=1)
     generation = core.initialize_population()
     all_buffers = (
         list(generation.individuals)
@@ -343,7 +343,7 @@ def test_workspace_population_uses_compact_state_dtypes() -> None:
 
 
 def test_population_numeric_state_uses_two_contiguous_backing_arrays() -> None:
-    core = CDELSWorkspace(_problem(), seed=1)
+    core = CDELS2(_problem(), seed=1)
     generation = core.initialize_population()
     workspace = core.workspace
     all_buffers = (
@@ -395,7 +395,7 @@ def test_population_numeric_state_uses_two_contiguous_backing_arrays() -> None:
 
 
 def test_copy_individual_into_reuses_all_mutant_state_containers() -> None:
-    core = CDELSWorkspace(_problem(), seed=1)
+    core = CDELS2(_problem(), seed=1)
     source = core.initialize_population().individuals[0]
     destination = core.workspace.mutant
     destination_id = id(destination)
@@ -425,7 +425,7 @@ def test_copy_individual_into_reuses_all_mutant_state_containers() -> None:
 
 def test_workspace_two_transitions_match_cdels_bit_for_bit() -> None:
     baseline = _solve(CDELS(_problem(), seed=1))
-    workspace = _solve(CDELSWorkspace(_problem(), seed=1))
+    workspace = _solve(CDELS2(_problem(), seed=1))
 
     assert workspace.process_trace_sha256 == baseline.process_trace_sha256
     assert [
@@ -464,7 +464,7 @@ def test_workspace_two_transitions_match_cdels_bit_for_bit() -> None:
 
 
 def test_population_pool_rotates_references_without_new_individuals() -> None:
-    core = CDELSWorkspace(_problem(), seed=1)
+    core = CDELS2(_problem(), seed=1)
     generation = core.initialize_population()
     workspace = core.workspace
 
@@ -521,7 +521,7 @@ def test_population_pool_rotates_references_without_new_individuals() -> None:
 
 def test_population_pool_six_transitions_match_cdels_bit_for_bit() -> None:
     baseline = _solve(CDELS(_problem(), seed=1), transitions=6)
-    workspace = _solve(CDELSWorkspace(_problem(), seed=1), transitions=6)
+    workspace = _solve(CDELS2(_problem(), seed=1), transitions=6)
 
     assert workspace.process_trace_sha256 == baseline.process_trace_sha256
     assert [item.canonical_digest for item in workspace.process_trace] == [
@@ -534,7 +534,7 @@ def test_population_pool_six_transitions_match_cdels_bit_for_bit() -> None:
 @pytest.mark.slow
 def test_population_pool_matches_through_first_cooling_boundary() -> None:
     baseline = _solve(CDELS(_problem(), seed=1), transitions=111)
-    workspace = _solve(CDELSWorkspace(_problem(), seed=1), transitions=111)
+    workspace = _solve(CDELS2(_problem(), seed=1), transitions=111)
 
     assert workspace.process_trace_sha256 == baseline.process_trace_sha256
     assert workspace.final_temperature.hex() == baseline.final_temperature.hex()

@@ -59,88 +59,88 @@
 | `solver/BSCASMA_rl_numba.py` | method | `BRLSMASCARLNumbaCore.run` | 740 |  |
 | `solver/BSCASMA_rl_numba.py` | class | `BRLSMASCARLNumbaSolver` | 818 | dataclass |
 | `solver/BSCASMA_rl_numba.py` | method | `BRLSMASCARLNumbaSolver.solve` | 819 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_cp_list_cache_key` | 27 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_item_eval_cache_key` | 39 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_coerce_bool_param` | 62 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_safe_efficiency` | 76 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_sort_items_by_bucket_efficiency` | 85 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_efficiency_group_count` | 90 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_shuffle_efficiency_groups` | 108 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_dual_efficiency_fallback` | 132 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_build_lp_rc_item_eval_payload` | 167 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_robust_minmax` | 227 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_clean_efficiency_for_score` | 247 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_bucket_score` | 258 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_build_core_score_cp_payload` | 266 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_repair_solution_by_order` | 306 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_greedy_solution_by_order` | 341 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_randomized_probe_solution` | 368 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_freq_samples_and_rho` | 401 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_build_freq_gated_v2_payload` | 418 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_normalize_score` | 597 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_safe_ratio_for_score` | 601 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_lagrangian_multipliers_lite` | 609 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_score_values_for_method` | 640 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_build_named_score_cp_payload` | 679 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_build_frequency_cp_payload` | 707 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_solve_lp_bound_with_fixed_item` | 836 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_build_sbl_lite_cp_payload` | 857 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_parse_named_score_item_eval_method` | 921 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_is_supported_item_eval_method` | 928 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_sort_bscasma_rl_desc_deterministic_inplace` | 934 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_update_sma_weight_inplace` | 977 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_ctf_flip_probability_fast` | 995 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_clip01` | 1009 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_clip_symmetric_half` | 1018 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_guided_bucket_bias` | 1027 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_guided_probability` | 1036 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_init_row_resource_from_bits` | 1056 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_resource_excluding_item_inplace` | 1073 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_guided_slack_score` | 1086 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_set_guided_binary_bit_and_update_resource` | 1103 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_repair_bscasma_row_inplace` | 1120 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_repair_bscasma_row_dynamic_drop_inplace` | 1176 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_repair_bscasma_swap_once_inplace` | 1254 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_repair_bscasma_row_v2_inplace` | 1293 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_copy_row_to_work` | 1387 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_restore_work_to_row` | 1393 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_local_search_bscasma_row_inplace` | 1407 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_restart_bscasma_bucket_biased_row_inplace` | 1518 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_archive_hamming_distance` | 1566 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_archive_contains_vector` | 1582 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_archive_add_vector` | 1601 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_archive_add_row` | 1630 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_archive_select_donor` | 1655 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_path_relink_bscasma_inplace` | 1679 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_state_bin` | 1779 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_init_ones_count` | 1788 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_init_density_state` | 1798 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_copy_row_bits` | 1823 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_update_density_state_for_row` | 1829 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_population_density_from_counts` | 1882 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_state_for_row` | 1902 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_select_q_action_non_global` | 1921 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_update_q_value` | 1942 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_map_position_excluding` | 1961 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_select_two_distinct_indices_excluding` | 1968 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_sma_global_row` | 1980 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_sma_local_row` | 2009 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_sca_sin_row` | 2065 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_sca_cos_row` | 2111 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | function | `_bscasma_rl_main_loop_numba` | 2157 | njit |
-| `solver/BSCASMA_rl_rc_numba.py` | class | `BRLSMASCARLRCNumbaCore` | 2585 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore.__init__` | 2588 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore.pseudo_utility` | 2870 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore._finish_initial_row` | 3061 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore._fill_initial_random_greedy_row` | 3066 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore._fill_initial_deterministic_greedy_row` | 3075 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore._fill_initial_lp_rounding_row` | 3083 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore._fill_initial_rcl_greedy_row` | 3093 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore.initial_pop` | 3107 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore.sort_pop_with_ids` | 3137 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaCore.run` | 3149 |  |
-| `solver/BSCASMA_rl_rc_numba.py` | class | `BRLSMASCARLRCNumbaSolver` | 3306 | dataclass |
-| `solver/BSCASMA_rl_rc_numba.py` | method | `BRLSMASCARLRCNumbaSolver.solve` | 3307 |  |
+| `solver/HSMSCA.py` | function | `_cp_list_cache_key` | 27 |  |
+| `solver/HSMSCA.py` | function | `_item_eval_cache_key` | 39 |  |
+| `solver/HSMSCA.py` | function | `_coerce_bool_param` | 62 |  |
+| `solver/HSMSCA.py` | function | `_safe_efficiency` | 76 |  |
+| `solver/HSMSCA.py` | function | `_sort_items_by_bucket_efficiency` | 85 |  |
+| `solver/HSMSCA.py` | function | `_efficiency_group_count` | 90 |  |
+| `solver/HSMSCA.py` | function | `_shuffle_efficiency_groups` | 108 |  |
+| `solver/HSMSCA.py` | function | `_dual_efficiency_fallback` | 132 |  |
+| `solver/HSMSCA.py` | function | `_build_lp_rc_item_eval_payload` | 167 |  |
+| `solver/HSMSCA.py` | function | `_robust_minmax` | 227 |  |
+| `solver/HSMSCA.py` | function | `_clean_efficiency_for_score` | 247 |  |
+| `solver/HSMSCA.py` | function | `_bucket_score` | 258 |  |
+| `solver/HSMSCA.py` | function | `_build_core_score_cp_payload` | 266 |  |
+| `solver/HSMSCA.py` | function | `_repair_solution_by_order` | 306 |  |
+| `solver/HSMSCA.py` | function | `_greedy_solution_by_order` | 341 |  |
+| `solver/HSMSCA.py` | function | `_randomized_probe_solution` | 368 |  |
+| `solver/HSMSCA.py` | function | `_freq_samples_and_rho` | 401 |  |
+| `solver/HSMSCA.py` | function | `_build_freq_gated_v2_payload` | 418 |  |
+| `solver/HSMSCA.py` | function | `_normalize_score` | 597 |  |
+| `solver/HSMSCA.py` | function | `_safe_ratio_for_score` | 601 |  |
+| `solver/HSMSCA.py` | function | `_lagrangian_multipliers_lite` | 609 |  |
+| `solver/HSMSCA.py` | function | `_score_values_for_method` | 640 |  |
+| `solver/HSMSCA.py` | function | `_build_named_score_cp_payload` | 679 |  |
+| `solver/HSMSCA.py` | function | `_build_frequency_cp_payload` | 707 |  |
+| `solver/HSMSCA.py` | function | `_solve_lp_bound_with_fixed_item` | 836 |  |
+| `solver/HSMSCA.py` | function | `_build_sbl_lite_cp_payload` | 857 |  |
+| `solver/HSMSCA.py` | function | `_parse_named_score_item_eval_method` | 921 |  |
+| `solver/HSMSCA.py` | function | `_is_supported_item_eval_method` | 928 |  |
+| `solver/HSMSCA.py` | function | `_sort_bscasma_rl_desc_deterministic_inplace` | 934 | njit |
+| `solver/HSMSCA.py` | function | `_update_sma_weight_inplace` | 977 | njit |
+| `solver/HSMSCA.py` | function | `_ctf_flip_probability_fast` | 995 | njit |
+| `solver/HSMSCA.py` | function | `_clip01` | 1009 | njit |
+| `solver/HSMSCA.py` | function | `_clip_symmetric_half` | 1018 | njit |
+| `solver/HSMSCA.py` | function | `_guided_bucket_bias` | 1027 | njit |
+| `solver/HSMSCA.py` | function | `_guided_probability` | 1036 | njit |
+| `solver/HSMSCA.py` | function | `_init_row_resource_from_bits` | 1056 | njit |
+| `solver/HSMSCA.py` | function | `_resource_excluding_item_inplace` | 1073 | njit |
+| `solver/HSMSCA.py` | function | `_guided_slack_score` | 1086 | njit |
+| `solver/HSMSCA.py` | function | `_set_guided_binary_bit_and_update_resource` | 1103 | njit |
+| `solver/HSMSCA.py` | function | `_repair_bscasma_row_inplace` | 1120 | njit |
+| `solver/HSMSCA.py` | function | `_repair_bscasma_row_dynamic_drop_inplace` | 1176 | njit |
+| `solver/HSMSCA.py` | function | `_repair_bscasma_swap_once_inplace` | 1254 | njit |
+| `solver/HSMSCA.py` | function | `_repair_bscasma_row_v2_inplace` | 1293 | njit |
+| `solver/HSMSCA.py` | function | `_copy_row_to_work` | 1387 | njit |
+| `solver/HSMSCA.py` | function | `_restore_work_to_row` | 1393 | njit |
+| `solver/HSMSCA.py` | function | `_local_search_bscasma_row_inplace` | 1407 | njit |
+| `solver/HSMSCA.py` | function | `_restart_bscasma_bucket_biased_row_inplace` | 1518 | njit |
+| `solver/HSMSCA.py` | function | `_archive_hamming_distance` | 1566 | njit |
+| `solver/HSMSCA.py` | function | `_archive_contains_vector` | 1582 | njit |
+| `solver/HSMSCA.py` | function | `_archive_add_vector` | 1601 | njit |
+| `solver/HSMSCA.py` | function | `_archive_add_row` | 1630 | njit |
+| `solver/HSMSCA.py` | function | `_archive_select_donor` | 1655 | njit |
+| `solver/HSMSCA.py` | function | `_path_relink_bscasma_inplace` | 1679 | njit |
+| `solver/HSMSCA.py` | function | `_state_bin` | 1779 | njit |
+| `solver/HSMSCA.py` | function | `_init_ones_count` | 1788 | njit |
+| `solver/HSMSCA.py` | function | `_init_density_state` | 1798 | njit |
+| `solver/HSMSCA.py` | function | `_copy_row_bits` | 1823 | njit |
+| `solver/HSMSCA.py` | function | `_update_density_state_for_row` | 1829 | njit |
+| `solver/HSMSCA.py` | function | `_population_density_from_counts` | 1882 | njit |
+| `solver/HSMSCA.py` | function | `_state_for_row` | 1902 | njit |
+| `solver/HSMSCA.py` | function | `_select_q_action_non_global` | 1921 | njit |
+| `solver/HSMSCA.py` | function | `_update_q_value` | 1942 | njit |
+| `solver/HSMSCA.py` | function | `_map_position_excluding` | 1961 | njit |
+| `solver/HSMSCA.py` | function | `_select_two_distinct_indices_excluding` | 1968 | njit |
+| `solver/HSMSCA.py` | function | `_sma_global_row` | 1980 | njit |
+| `solver/HSMSCA.py` | function | `_sma_local_row` | 2009 | njit |
+| `solver/HSMSCA.py` | function | `_sca_sin_row` | 2065 | njit |
+| `solver/HSMSCA.py` | function | `_sca_cos_row` | 2111 | njit |
+| `solver/HSMSCA.py` | function | `_bscasma_rl_main_loop_numba` | 2157 | njit |
+| `solver/HSMSCA.py` | class | `HSMSCACore` | 2585 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore.__init__` | 2588 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore.pseudo_utility` | 2870 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore._finish_initial_row` | 3061 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore._fill_initial_random_greedy_row` | 3066 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore._fill_initial_deterministic_greedy_row` | 3075 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore._fill_initial_lp_rounding_row` | 3083 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore._fill_initial_rcl_greedy_row` | 3093 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore.initial_pop` | 3107 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore.sort_pop_with_ids` | 3137 |  |
+| `solver/HSMSCA.py` | method | `HSMSCACore.run` | 3149 |  |
+| `solver/HSMSCA.py` | class | `HSMSCASolver` | 3306 | dataclass |
+| `solver/HSMSCA.py` | method | `HSMSCASolver.solve` | 3307 |  |
 | `solver/BSCASMA_test_numba.py` | function | `_cp_list_cache_key` | 27 |  |
 | `solver/BSCASMA_test_numba.py` | function | `_sort_bscasma_desc_deterministic_inplace` | 40 | njit |
 | `solver/BSCASMA_test_numba.py` | function | `_update_sma_weight_inplace` | 79 | njit |
@@ -175,20 +175,20 @@
 | `solver/BSCA_numba.py` | method | `BSCANumbaCore.run` | 273 |  |
 | `solver/BSCA_numba.py` | class | `BSCANumbaSolver` | 322 | dataclass |
 | `solver/BSCA_numba.py` | method | `BSCANumbaSolver.solve` | 325 |  |
-| `solver/BSCA_rc_numba.py` | function | `_bsca_rc_main_loop_numba` | 33 | njit |
-| `solver/BSCA_rc_numba.py` | class | `BSCARCNumbaCore` | 177 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore.__init__` | 180 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore.pseudo_utility` | 277 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore._finish_initial_row` | 320 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore._fill_initial_random_greedy_row` | 323 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore._fill_initial_deterministic_greedy_row` | 332 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore._fill_initial_lp_rounding_row` | 340 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore._fill_initial_rcl_greedy_row` | 350 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore.initial_pop` | 363 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore.sort_pop` | 394 |  |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaCore.run` | 403 |  |
-| `solver/BSCA_rc_numba.py` | class | `BSCARCNumbaSolver` | 467 | dataclass |
-| `solver/BSCA_rc_numba.py` | method | `BSCARCNumbaSolver.solve` | 468 |  |
+| `solver/BSCA.py` | function | `_bsca_rc_main_loop_numba` | 33 | njit |
+| `solver/BSCA.py` | class | `BSCACore` | 177 |  |
+| `solver/BSCA.py` | method | `BSCACore.__init__` | 180 |  |
+| `solver/BSCA.py` | method | `BSCACore.pseudo_utility` | 277 |  |
+| `solver/BSCA.py` | method | `BSCACore._finish_initial_row` | 320 |  |
+| `solver/BSCA.py` | method | `BSCACore._fill_initial_random_greedy_row` | 323 |  |
+| `solver/BSCA.py` | method | `BSCACore._fill_initial_deterministic_greedy_row` | 332 |  |
+| `solver/BSCA.py` | method | `BSCACore._fill_initial_lp_rounding_row` | 340 |  |
+| `solver/BSCA.py` | method | `BSCACore._fill_initial_rcl_greedy_row` | 350 |  |
+| `solver/BSCA.py` | method | `BSCACore.initial_pop` | 363 |  |
+| `solver/BSCA.py` | method | `BSCACore.sort_pop` | 394 |  |
+| `solver/BSCA.py` | method | `BSCACore.run` | 403 |  |
+| `solver/BSCA.py` | class | `BSCASolver` | 467 | dataclass |
+| `solver/BSCA.py` | method | `BSCASolver.solve` | 468 |  |
 | `solver/BSMA.py` | function | `_digest_float_prefix` | 20 |  |
 | `solver/BSMA.py` | function | `_argsort_pop_fit_desc_deterministic` | 25 |  |
 | `solver/BSMA.py` | class | `BSMACore` | 44 |  |
@@ -216,21 +216,21 @@
 | `solver/BSMA_numba.py` | method | `BSMANumbaCore.run` | 392 |  |
 | `solver/BSMA_numba.py` | class | `BSMANumbaSolver` | 444 | dataclass |
 | `solver/BSMA_numba.py` | method | `BSMANumbaSolver.solve` | 447 |  |
-| `solver/BSMA_rc_numba.py` | function | `_bsma_rc_global_row` | 34 | njit |
-| `solver/BSMA_rc_numba.py` | function | `_bsma_rc_main_loop_numba` | 63 | njit |
-| `solver/BSMA_rc_numba.py` | class | `BSMARCNumbaCore` | 226 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore.__init__` | 229 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore.pseudo_utility` | 327 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore._finish_initial_row` | 370 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore._fill_initial_random_greedy_row` | 373 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore._fill_initial_deterministic_greedy_row` | 382 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore._fill_initial_lp_rounding_row` | 390 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore._fill_initial_rcl_greedy_row` | 400 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore.initial_pop` | 413 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore.sort_pop` | 444 |  |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaCore.run` | 453 |  |
-| `solver/BSMA_rc_numba.py` | class | `BSMARCNumbaSolver` | 519 | dataclass |
-| `solver/BSMA_rc_numba.py` | method | `BSMARCNumbaSolver.solve` | 520 |  |
+| `solver/BSMA.py` | function | `_bsma_rc_global_row` | 34 | njit |
+| `solver/BSMA.py` | function | `_bsma_rc_main_loop_numba` | 63 | njit |
+| `solver/BSMA.py` | class | `BSMACore` | 226 |  |
+| `solver/BSMA.py` | method | `BSMACore.__init__` | 229 |  |
+| `solver/BSMA.py` | method | `BSMACore.pseudo_utility` | 327 |  |
+| `solver/BSMA.py` | method | `BSMACore._finish_initial_row` | 370 |  |
+| `solver/BSMA.py` | method | `BSMACore._fill_initial_random_greedy_row` | 373 |  |
+| `solver/BSMA.py` | method | `BSMACore._fill_initial_deterministic_greedy_row` | 382 |  |
+| `solver/BSMA.py` | method | `BSMACore._fill_initial_lp_rounding_row` | 390 |  |
+| `solver/BSMA.py` | method | `BSMACore._fill_initial_rcl_greedy_row` | 400 |  |
+| `solver/BSMA.py` | method | `BSMACore.initial_pop` | 413 |  |
+| `solver/BSMA.py` | method | `BSMACore.sort_pop` | 444 |  |
+| `solver/BSMA.py` | method | `BSMACore.run` | 453 |  |
+| `solver/BSMA.py` | class | `BSMASolver` | 519 | dataclass |
+| `solver/BSMA.py` | method | `BSMASolver.solve` | 520 |  |
 | `solver/registry.py` | class | `Solver` | 12 |  |
 | `solver/registry.py` | method | `Solver.solve` | 13 |  |
 | `solver/registry.py` | class | `SolverRegistry` | 20 |  |

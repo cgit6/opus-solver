@@ -12,16 +12,16 @@ from mkp.tools.solver_config_loader import SolverConfigLoader
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_cdels_and_workspace_experiment_are_registered() -> None:
+def test_cdels_and_cdels_2_experiment_are_registered() -> None:
     builders = solverBuilders()
 
     assert "cdels" in builders
-    assert "cdels_workspace" in builders
+    assert "cdels_2" in builders
     assert "scvrp_legacy_sa" not in builders
     assert builders["cdels"]().__class__.__name__ == "CDELSSolver"
     assert (
-        builders["cdels_workspace"]().__class__.__name__
-        == "CDELSWorkspaceSolver"
+        builders["cdels_2"]().__class__.__name__
+        == "CDELS2Solver"
     )
 
 
@@ -80,21 +80,21 @@ print(json.dumps({
     )
 
 
-def test_cdels_solver_configs_exist_for_baseline_and_workspace() -> None:
+def test_cdels_solver_configs_exist_for_baseline_and_cdels_2() -> None:
     solver_root = REPO_ROOT / "configs/solvers"
 
     assert (solver_root / "cdels.yaml").is_file()
-    assert (solver_root / "cdels_workspace.yaml").is_file()
+    assert (solver_root / "cdels_2.yaml").is_file()
     assert not (solver_root / "scvrp_legacy_sa.yaml").exists()
 
 
-def test_workspace_config_resolves_to_registered_workspace_solver() -> None:
+def test_cdels_2_config_resolves_to_registered_solver() -> None:
     solver_root = REPO_ROOT / "configs/solvers"
     config = SolverConfigLoader(solver_root).load(
-        "cdels_workspace",
+        "cdels_2",
         param_set_index=0,
     )
 
     solver = solverBuilders()[config["solver_id"]]()
-    assert config["solver_class"] == "CDELSWorkspaceSolver"
+    assert config["solver_class"] == "CDELS2Solver"
     assert solver.__class__.__name__ == config["solver_class"]

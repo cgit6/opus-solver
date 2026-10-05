@@ -50,7 +50,7 @@
 
 - 上游：`engine.builders`、`solver.registry`。
 - 參考基準：`BSCASMA_test_numba.py`。
-- 下游：`BSCASMA_rl_rc_numba.py` 延續這個 RL 框架，再加入 RC/guided/local search 等增強。
+- 下游：`HSMSCA.py` 延續這個 RL 框架，再加入 RC/guided/local search 等增強。
 
 ## 核心函式與 helper 說明
 

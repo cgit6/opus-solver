@@ -13,7 +13,7 @@ from numba import njit
 
 from ..engine.repository import ProblemRepository
 from ..problem import ProblemModel, buildProblemRegistry, problemBuilders
-from ..solver.BSCASMA_rl_rc_numba import _build_lp_rc_item_eval_payload
+from ..solver.HSMSCA import _build_lp_rc_item_eval_payload
 
 
 DEFAULT_PROBLEMS = (

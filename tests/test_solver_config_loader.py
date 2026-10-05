@@ -470,10 +470,10 @@ params:
 def test_load_bscasma_rl_rc_numba_param_20_from_default_configs() -> None:
     loader = SolverConfigLoader()
 
-    config = loader.load("brlsmasca_rl_rc_numba", param_set_index=20)
+    config = loader.load("hsmsca", param_set_index=20)
 
-    assert config["solver_id"] == "brlsmasca_rl_rc_numba"
-    assert config["solver_class"] == "BRLSMASCARLRCNumbaSolver"
+    assert config["solver_id"] == "hsmsca"
+    assert config["solver_class"] == "HSMSCASolver"
     assert config["params"] == {
         "pop_size": 20,
         "z": 0.01,

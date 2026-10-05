@@ -1,5 +1,5 @@
-solver_id: bsca_rc_numba
-solver_class: BSCARCNumbaSolver
+solver_id: bsca
+solver_class: BSCASolver
 capabilities:
   problem_types: [mkp]
   encodings: [binary]

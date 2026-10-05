@@ -6,14 +6,14 @@
 |---|---|---:|---|---|
 | `brlsmasca` | `BRLSMASCATestSolver` | 1 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/brlsmasca.yaml` |
 | `brlsmasca_rl_numba` | `BRLSMASCARLNumbaSolver` | 27 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/brlsmasca_rl_numba.yaml` |
-| `brlsmasca_rl_rc_numba` | `BRLSMASCARLRCNumbaSolver` | 27 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/brlsmasca_rl_rc_numba.yaml` |
+| `hsmsca` | `HSMSCASolver` | 27 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/hsmsca.yaml` |
 | `brlsmasca_test_numba` | `BRLSMASCATestNumbaSolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/brlsmasca_test_numba.yaml` |
 | `bsca` | `BSCASolver` | 1 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsca.yaml` |
 | `bsca_numba` | `BSCANumbaSolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsca_numba.yaml` |
-| `bsca_rc_numba` | `BSCARCNumbaSolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsca_rc_numba.yaml` |
+| `bsca` | `BSCASolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsca.yaml` |
 | `bsma` | `BSMASolver` | 3 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsma.yaml` |
 | `bsma_numba` | `BSMANumbaSolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsma_numba.yaml` |
-| `bsma_rc_numba` | `BSMARCNumbaSolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsma_rc_numba.yaml` |
+| `bsma` | `BSMASolver` | 9 | problem_types=['mkp'], encodings=['binary'], directions=['max'] | `configs/solvers/bsma.yaml` |
 
 ## Problem YAML Counts
 

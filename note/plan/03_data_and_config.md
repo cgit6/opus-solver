@@ -174,14 +174,14 @@ solver YAML 位於 `configs/solvers/*.yaml`，由 `tools.solver_config_loader.So
 
 - `brlsmasca`: `1` param sets, path `configs/solvers/brlsmasca.yaml`
 - `brlsmasca_rl_numba`: `27` param sets, path `configs/solvers/brlsmasca_rl_numba.yaml`
-- `brlsmasca_rl_rc_numba`: `27` param sets, path `configs/solvers/brlsmasca_rl_rc_numba.yaml`
+- `hsmsca`: `27` param sets, path `configs/solvers/hsmsca.yaml`
 - `brlsmasca_test_numba`: `9` param sets, path `configs/solvers/brlsmasca_test_numba.yaml`
 - `bsca`: `1` param sets, path `configs/solvers/bsca.yaml`
 - `bsca_numba`: `9` param sets, path `configs/solvers/bsca_numba.yaml`
-- `bsca_rc_numba`: `9` param sets, path `configs/solvers/bsca_rc_numba.yaml`
+- `bsca`: `9` param sets, path `configs/solvers/bsca.yaml`
 - `bsma`: `3` param sets, path `configs/solvers/bsma.yaml`
 - `bsma_numba`: `9` param sets, path `configs/solvers/bsma_numba.yaml`
-- `bsma_rc_numba`: `9` param sets, path `configs/solvers/bsma_rc_numba.yaml`
+- `bsma`: `9` param sets, path `configs/solvers/bsma.yaml`
 
 ## `cli/exp/exp_cfg.yaml`
 

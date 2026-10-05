@@ -5,7 +5,7 @@ from typing import Any
 
 from ...experiment import FAIL, PASS, RoundEvalDecision, RoundEvalInput, VariantSummary
 
-TARGET_SOLVER_ID = "brlsmasca_rl_rc_numba"
+TARGET_SOLVER_ID = "hsmsca"
 TARGET_PARAM_SET_INDEX = 20
 FLOAT_TOLERANCE = 1e-12
 

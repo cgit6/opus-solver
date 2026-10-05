@@ -18,9 +18,9 @@ PDEV_COMPARISON_TOLERANCE = 1e-12
 ALGORITHM_BY_SOLVER_ID = {
     # RC solvers are the active implementations. Legacy IDs remain accepted so
     # historical experiment output can still be evaluated.
-    "bsma_rc_numba": "bsma",
-    "bsca_rc_numba": "bsca",
-    "brlsmasca_rl_rc_numba": "bscasma",
+    "bsma": "bsma",
+    "bsca": "bsca",
+    "hsmsca": "bscasma",
     "bsma_numba": "bsma",
     "bsca_numba": "bsca",
     "brlsmasca_rl_numba": "bscasma",

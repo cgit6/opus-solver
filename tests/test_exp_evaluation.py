@@ -185,7 +185,7 @@ def test_mkp_qpso_mean_gte_passes_when_target_mean_equals_qpso() -> None:
             ),
             variants=(
                 _variant_summary(
-                    solver_id="brlsmasca_rl_rc_numba",
+                    solver_id="hsmsca",
                     param_set_index=20,
                     params={},
                     pdev=0.0,
@@ -209,7 +209,7 @@ def test_mkp_qpso_mean_gte_passes_when_target_mean_exceeds_qpso() -> None:
             ),
             variants=(
                 _variant_summary(
-                    solver_id="brlsmasca_rl_rc_numba",
+                    solver_id="hsmsca",
                     param_set_index=20,
                     params={},
                     pdev=-2.0,
@@ -232,7 +232,7 @@ def test_mkp_qpso_mean_gte_fails_when_target_mean_is_below_qpso() -> None:
             ),
             variants=(
                 _variant_summary(
-                    solver_id="brlsmasca_rl_rc_numba",
+                    solver_id="hsmsca",
                     param_set_index=20,
                     params={},
                     pdev=1.0,
@@ -255,7 +255,7 @@ def test_mkp_qpso_mean_gte_fails_when_qpso_mean_is_missing() -> None:
             ),
             variants=(
                 _variant_summary(
-                    solver_id="brlsmasca_rl_rc_numba",
+                    solver_id="hsmsca",
                     param_set_index=20,
                     params={},
                     pdev=0.0,
@@ -277,7 +277,7 @@ def test_mkp_qpso_mean_gte_fails_when_target_summary_is_invalid() -> None:
             ),
             variants=(
                 _variant_summary(
-                    solver_id="brlsmasca_rl_rc_numba",
+                    solver_id="hsmsca",
                     param_set_index=20,
                     params={},
                     pdev=0.0,

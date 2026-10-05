@@ -54,7 +54,7 @@
 ## 與其他模組的關係
 
 - 上游：`engine.builders`、`solver.registry`。
-- 下游：`BSMA_rc_numba.py` 重用這裡的 tensor 檢查、CTF 與排序 helper。
+- 下游：`BSMA.py` 重用這裡的 tensor 檢查、CTF 與排序 helper。
 - 參考基準：`BSMA.py`。
 
 ## 核心函式與 helper 說明

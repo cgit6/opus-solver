@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from ..solver.BSCA_rc_numba import BSCARCNumbaSolver
-from ..solver.BSCASMA_rl_rc_numba import BRLSMASCARLRCNumbaSolver
-from ..solver.BSMA_rc_numba import BSMARCNumbaSolver
+from ..solver.BSCA import BSCASolver
+from ..solver.BSMA import BSMASolver
 from ..solver.CDELS import CDELSSolver
-from ..solver.CDELS_workspace import CDELSWorkspaceSolver
+from ..solver.CDELS_2 import CDELS2Solver
+from ..solver.HSMSCA import HSMSCASolver
 from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
 
 
@@ -14,9 +14,9 @@ from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
 def solverBuilders() -> dict[str, SolverBuilder]:
     return {
         "stub_solver": lambda: StubMaxIterationsSolver(),
-        "bsma_rc_numba": lambda: BSMARCNumbaSolver(),
-        "bsca_rc_numba": lambda: BSCARCNumbaSolver(),
-        "brlsmasca_rl_rc_numba": lambda: BRLSMASCARLRCNumbaSolver(),
+        "bsma": lambda: BSMASolver(),
+        "bsca": lambda: BSCASolver(),
+        "hsmsca": lambda: HSMSCASolver(),
         "cdels": lambda: CDELSSolver(),
-        "cdels_workspace": lambda: CDELSWorkspaceSolver(),
+        "cdels_2": lambda: CDELS2Solver(),
     }

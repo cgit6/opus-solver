@@ -94,7 +94,7 @@
 - [`tools/continuous_to_binary.py`](modules/tools/continuous_to_binary.md)：Python 側 CTF 名稱、順序與 `ctf_id` 契約。
 - [`tools/ctf_numba.py`](modules/tools/ctf_numba.md)：Numba hot-loop 專用的 `ctf_id -> probability` 分派。
 - [`tools/mkp_item_eval_experiment.py`](modules/tools/mkp_item_eval_experiment.md)：MKP item-evaluation 變體批次比較工具。
-- [`tools/mkp_rc_feature_ablation.py`](modules/tools/mkp_rc_feature_ablation.md)：`brlsmasca_rl_rc_numba` feature ablation 工具。
+- [`tools/mkp_rc_feature_ablation.py`](modules/tools/mkp_rc_feature_ablation.md)：`hsmsca` feature ablation 工具。
 - [`tools/mkp_score_scaffold.py`](modules/tools/mkp_score_scaffold.md)：score-layer random+repair scaffold。
 
 ### Solver 演算法層
@@ -102,14 +102,14 @@
 - [`solver/registry.py`](modules/solver/registry.md)：solver protocol、builder registry 與 stub solver。
 - [`solver/BSMA.py`](modules/solver/BSMA.md)：BSMA 純 Python 基線。
 - [`solver/BSMA_numba.py`](modules/solver/BSMA_numba.md)：BSMA Numba 主線。
-- [`solver/BSMA_rc_numba.py`](modules/solver/BSMA_rc_numba.md)：BSMA 的 RC / repair / restart 版。
+- [`solver/BSMA.py`](modules/solver/BSMA.md)：BSMA 的 RC / repair / restart 版。
 - [`solver/BSCA.py`](modules/solver/BSCA.md)：BSCA 純 Python 基線。
 - [`solver/BSCA_numba.py`](modules/solver/BSCA_numba.md)：BSCA Numba 主線。
-- [`solver/BSCA_rc_numba.py`](modules/solver/BSCA_rc_numba.md)：BSCA 的 RC / repair / restart 版。
+- [`solver/BSCA.py`](modules/solver/BSCA.md)：BSCA 的 RC / repair / restart 版。
 - [`solver/BSCASMA.py`](modules/solver/BSCASMA.md)：混合 SMA/SCA 測試策略基線。
 - [`solver/BSCASMA_test_numba.py`](modules/solver/BSCASMA_test_numba.md)：混合測試策略 Numba 版。
 - [`solver/BSCASMA_rl_numba.py`](modules/solver/BSCASMA_rl_numba.md)：混合 RL/Q-learning 版。
-- [`solver/BSCASMA_rl_rc_numba.py`](modules/solver/BSCASMA_rl_rc_numba.md)：RC、guided binary、local search、archive/path relinking 最完整版本。
+- [`solver/HSMSCA.py`](modules/solver/HSMSCA.md)：RC、guided binary、local search、archive/path relinking 最完整版本。
 - [`solver/__init__.py`](modules/solver/__init__.md)：solver package 標記。
 
 ### RNG 與轉換層

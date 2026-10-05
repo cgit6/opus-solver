@@ -1,4 +1,4 @@
-"""BSCA Numba variant with LP reduced-cost item evaluation and Repair 2.0."""
+"""BSMA solver with Numba, LP reduced-cost item evaluation, and Repair 2.0."""
 
 from __future__ import annotations
 
@@ -13,7 +13,8 @@ from numba import njit
 from ..engine.models import SolveResult
 from ..problem import ProblemModel
 from ..tools.continuous_to_binary import parse_ctf_kind
-from .BSCASMA_rl_rc_numba import (
+from ..tools.ctf_numba import ctf_flip_probability
+from .HSMSCA import (
     _build_lp_rc_item_eval_payload,
     _coerce_bool_param,
     _item_eval_cache_key,
@@ -21,33 +22,161 @@ from .BSCASMA_rl_rc_numba import (
     _restart_bscasma_bucket_biased_row_inplace,
     _shuffle_efficiency_groups,
 )
-from ._mkp_numba_common import (
-    _ctf_flip_probability_fast,
-    _argsort_pop_fit_desc_deterministic,
-    _expect_mkp_problem_tensors,
-    _sort_pop_desc_deterministic_inplace,
-)
+
+
+def _argsort_pop_fit_desc_deterministic(pop_fit: np.ndarray, pop_size: int) -> np.ndarray:
+    """Return deterministic descending-fitness indices (lower index wins ties)."""
+    idx = np.arange(pop_size, dtype=np.int64)
+    for i in range(pop_size):
+        best = i
+        for j in range(i + 1, pop_size):
+            candidate = int(idx[j])
+            current = int(idx[best])
+            if float(pop_fit[candidate]) > float(pop_fit[current]) or (
+                float(pop_fit[candidate]) == float(pop_fit[current]) and candidate < current
+            ):
+                best = j
+        idx[i], idx[best] = idx[best], idx[i]
+    return idx
+
+
+def _expect_mkp_problem_tensors(
+    values: np.ndarray,
+    weights: np.ndarray,
+    capacities: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Validate the int64 C-contiguous tensor contract provided by ProblemModel."""
+    for name, array in (("values", values), ("weights", weights), ("capacities", capacities)):
+        if array.dtype != np.int64:
+            raise TypeError(f"{name}: expected np.int64 from ProblemModel, got {array.dtype}")
+        if not array.flags.c_contiguous:
+            raise ValueError(f"{name}: must be C-contiguous")
+    return values, weights, capacities
 
 
 @njit(cache=True)
-def _bsca_rc_main_loop_numba(
+def _ctf_flip_probability_fast(ctf_id: int, x: float) -> float:
+    if ctf_id == 0:
+        return abs(math.tanh(x))
+    if ctf_id == 1:
+        if x >= 0.0:
+            return 1.0 / (1.0 + math.exp(-x))
+        et = math.exp(x)
+        return et / (1.0 + et)
+    if ctf_id == 9:
+        return abs(x) ** 1.6
+    return ctf_flip_probability(ctf_id, x)
+
+
+@njit(cache=True)
+def _sort_pop_desc_deterministic_inplace(
+    pop_sol: np.ndarray,
+    pop_fit: np.ndarray,
+    tmp_sol: np.ndarray,
+    tmp_fit: np.ndarray,
+    idx_work: np.ndarray,
+    pop_size: int,
+    items: int,
+) -> None:
+    """Sort population by descending fitness, with the original row index as tie-breaker."""
+    for i in range(pop_size):
+        idx_work[i] = i
+
+    for i in range(pop_size):
+        best = i
+        for j in range(i + 1, pop_size):
+            candidate = idx_work[j]
+            current = idx_work[best]
+            candidate_fit = pop_fit[candidate]
+            current_fit = pop_fit[current]
+            if candidate_fit > current_fit or (
+                candidate_fit == current_fit and candidate < current
+            ):
+                best = j
+        tmp_idx = idx_work[i]
+        idx_work[i] = idx_work[best]
+        idx_work[best] = tmp_idx
+
+    for i in range(pop_size):
+        source = idx_work[i]
+        for j in range(items):
+            tmp_sol[i, j] = pop_sol[source, j]
+        tmp_fit[i] = pop_fit[source]
+
+    for i in range(pop_size):
+        for j in range(items):
+            pop_sol[i, j] = tmp_sol[i, j]
+        pop_fit[i] = tmp_fit[i]
+
+
+@njit(cache=True)
+def _map_position_excluding(pos: int, excluded: int) -> int:
+    if pos >= excluded:
+        return pos + 1
+    return pos
+
+
+@njit(cache=True)
+def _select_two_distinct_indices_excluding(pop_size: int, excluded: int) -> tuple[int, int]:
+    first_pos = np.random.randint(0, pop_size - 1)
+    second_pos = np.random.randint(0, pop_size - 2)
+    if second_pos >= first_pos:
+        second_pos += 1
+    return (
+        _map_position_excluding(first_pos, excluded),
+        _map_position_excluding(second_pos, excluded),
+    )
+
+
+@njit(cache=True)
+def _bsma_rc_global_row(
+    pop_sol: np.ndarray,
+    row: int,
+    weights: np.ndarray,
+    capacities: np.ndarray,
+    cp_list: np.ndarray,
+    acc_res: np.ndarray,
+    items: int,
+    dim: int,
+) -> None:
+    for j in range(items):
+        pop_sol[row, j] = 0.0
+    for d in range(dim):
+        acc_res[d] = 0.0
+    for pos in range(items):
+        jj = int(cp_list[pos])
+        if np.random.random() < 0.5:
+            ok = True
+            for d in range(dim):
+                if acc_res[d] + weights[jj, d] > capacities[d]:
+                    ok = False
+                    break
+            if ok:
+                pop_sol[row, jj] = 1.0
+                for d in range(dim):
+                    acc_res[d] += weights[jj, d]
+
+
+@njit(cache=True)
+def _bsma_rc_main_loop_numba(
     pop_sol: np.ndarray,
     pop_fit: np.ndarray,
     values: np.ndarray,
     weights: np.ndarray,
     capacities: np.ndarray,
     cp_list: np.ndarray,
+    W: np.ndarray,
     pop_size: int,
     items: int,
     dim: int,
-    a: float,
-    glbal_best: int,
+    z: float,
+    glbal_best: float,
     max_iter: int,
     rng_seed: int,
+    acc_res: np.ndarray,
     tmp_sol: np.ndarray,
     tmp_fit: np.ndarray,
     idx_work: np.ndarray,
-    acc_res: np.ndarray,
     gbest_sol: np.ndarray,
     ctf_id: int,
     repair_passes: int,
@@ -68,30 +197,50 @@ def _bsca_rc_main_loop_numba(
     gbest_fit = pop_fit[0]
     for j in range(items):
         gbest_sol[j] = pop_sol[0, j]
-
-    mf = float(max_iter)
-    two_pi = 2.0 * math.pi
     stagnation_iters = 0
+
     for iter_idx in range(max_iter):
-        iteration_improved = False
-        r1 = a - a * (float(iter_idx) / mf)
+        worst_fit = pop_fit[pop_size - 1]
+        best_fit = pop_fit[0]
+        s_val = best_fit - worst_fit
+        if s_val <= 0.0:
+            s_val = 0.0001
+
         for i in range(pop_size):
-            for j in range(items):
-                r2 = two_pi * np.random.random()
-                r3 = 2.0 * np.random.random()
-                r4 = np.random.random()
-                if r4 < 0.5:
-                    pop_sol[i, j] = pop_sol[i, j] + (
-                        abs(r1 * math.sin(r2)) * r3 * gbest_sol[j] - pop_sol[i, j]
-                    )
-                else:
-                    pop_sol[i, j] = pop_sol[i, j] + (
-                        abs(r1 * math.cos(r2)) * r3 * gbest_sol[j] - pop_sol[i, j]
-                    )
-                if np.random.random() < _ctf_flip_probability_fast(ctf_id, pop_sol[i, j]):
-                    pop_sol[i, j] = 1.0
-                else:
-                    pop_sol[i, j] = 0.0
+            ratio = (best_fit - pop_fit[i]) / s_val + 1.0
+            logr = math.log10(ratio)
+            if i < pop_size / 2:
+                for j in range(items):
+                    W[i, j] = 1.0 + np.random.random() * logr
+            else:
+                for j in range(items):
+                    W[i, j] = 1.0 - np.random.random() * logr
+
+        a = np.arctanh(-1.0 * ((iter_idx + 1) / max_iter) + 1.0)
+        b = 1.0 - (iter_idx + 1) / max_iter
+        a_span = 2.0 * a
+        b_span = 2.0 * b
+
+        for i in range(pop_size):
+            if np.random.random() < z:
+                _bsma_rc_global_row(pop_sol, i, weights, capacities, cp_list, acc_res, items, dim)
+            else:
+                p = math.tanh(abs(pop_fit[i] - gbest_fit))
+                for j in range(items):
+                    r = np.random.random()
+                    vb_j = -a + a_span * np.random.random()
+                    vc_j = -b + b_span * np.random.random()
+                    a_idx, b_idx = _select_two_distinct_indices_excluding(pop_size, i)
+                    if r < p:
+                        pop_sol[i, j] = gbest_sol[j] + vb_j * (
+                            W[i, j] * pop_sol[a_idx, j] - pop_sol[b_idx, j]
+                        )
+                    else:
+                        pop_sol[i, j] = vc_j * pop_sol[i, j]
+                    if np.random.random() < _ctf_flip_probability_fast(ctf_id, pop_sol[i, j]):
+                        pop_sol[i, j] = 1.0
+                    else:
+                        pop_sol[i, j] = 0.0
 
             _repair_bscasma_row_v2_inplace(
                 pop_sol,
@@ -110,21 +259,19 @@ def _bsca_rc_main_loop_numba(
                 repair_drop_mode,
                 drop_score,
             )
-            if pop_fit[i] > gbest_fit:
-                gbest_fit = pop_fit[i]
-                for j in range(items):
-                    gbest_sol[j] = pop_sol[i, j]
-                iteration_improved = True
-            if gbest_fit == float(glbal_best):
-                return gbest_fit
 
         _sort_pop_desc_deterministic_inplace(
             pop_sol, pop_fit, tmp_sol, tmp_fit, idx_work, pop_size, items
         )
-        if iteration_improved:
+        if pop_fit[0] > gbest_fit:
+            gbest_fit = pop_fit[0]
+            for j in range(items):
+                gbest_sol[j] = pop_sol[0, j]
             stagnation_iters = 0
         else:
             stagnation_iters += 1
+        if gbest_fit == glbal_best:
+            return gbest_fit
 
         if restart_enabled and stagnation_iters >= restart_window:
             first_restart_row = pop_size - restart_rows
@@ -171,7 +318,7 @@ def _bsca_rc_main_loop_numba(
             restart_stats[0] += 1
             restart_stats[1] += pop_size - first_restart_row
             stagnation_iters = 0
-            if gbest_fit == float(glbal_best):
+            if gbest_fit == glbal_best:
                 return gbest_fit
             _sort_pop_desc_deterministic_inplace(
                 pop_sol, pop_fit, tmp_sol, tmp_fit, idx_work, pop_size, items
@@ -180,7 +327,7 @@ def _bsca_rc_main_loop_numba(
     return gbest_fit
 
 
-class BSCARCNumbaCore:
+class BSMACore:
     _item_eval_cache: dict[Any, dict[str, Any]] = {}
 
     def __init__(
@@ -194,7 +341,7 @@ class BSCARCNumbaCore:
         seed: int | None = None,
         *,
         pop_size: int,
-        a: float,
+        z: float,
         max_iter: int,
         ctf_id: int = 0,
         eval_group_decimals: int = 1,
@@ -244,10 +391,10 @@ class BSCARCNumbaCore:
 
         if max_iter <= 0:
             raise ValueError("max_iter must be > 0")
-        if pop_size <= 0:
-            raise ValueError("pop_size must be > 0")
-        if a <= 0:
-            raise ValueError("a must be > 0")
+        if pop_size < 3:
+            raise ValueError("pop_size must be >= 3")
+        if not (0.0 < z <= 1.0):
+            raise ValueError("z must satisfy 0 < z <= 1")
         if self.eval_group_decimals < 0:
             raise ValueError("eval_group_decimals must be >= 0")
         if self.eval_rc_eps < 0.0:
@@ -274,7 +421,8 @@ class BSCARCNumbaCore:
         self.pop_size = int(pop_size)
         self.max_iter = int(max_iter)
         self.cp_list = self.pseudo_utility()
-        self.a = float(a)
+        self.z = float(z)
+        self.W = np.zeros([self.pop_size, self.items])
         self.pop_fit = np.zeros([self.pop_size], dtype=int)
         self.pop_sol = self.initial_pop()
         self.Gbest_sol = self.pop_sol[0].copy()
@@ -412,10 +560,11 @@ class BSCARCNumbaCore:
         pop_sol = np.ascontiguousarray(self.pop_sol, dtype=np.float64)
         pop_fit = np.ascontiguousarray(self.pop_fit, dtype=np.float64)
         ps, it, dm = self.pop_size, self.items, self.dim
+        W = np.empty((ps, it), dtype=np.float64)
+        acc_res = np.zeros(dm, dtype=np.float64)
         tmp_sol = np.empty((ps, it), dtype=np.float64)
         tmp_fit = np.empty(ps, dtype=np.float64)
         idx_work = np.empty(ps, dtype=np.int64)
-        acc_res = np.zeros(dm, dtype=np.float64)
         gbest_sol = np.empty(it, dtype=np.float64)
         repair_stats = np.zeros(1, dtype=np.int64)
         drop_score = np.ones(it, dtype=np.float64)
@@ -428,24 +577,25 @@ class BSCARCNumbaCore:
             restart_rows = self.pop_size
         rng_seed = int(self.seed) if self.seed is not None else 0
 
-        gfit = _bsca_rc_main_loop_numba(
+        gfit = _bsma_rc_main_loop_numba(
             pop_sol,
             pop_fit,
             self.values,
             self.weights,
             self.capacities,
             self.cp_list,
+            W,
             ps,
             it,
             dm,
-            self.a,
-            int(self.glbal_best),
+            self.z,
+            float(self.glbal_best),
             self.max_iter,
             rng_seed,
+            acc_res,
             tmp_sol,
             tmp_fit,
             idx_work,
-            acc_res,
             gbest_sol,
             self.ctf_id,
             int(self.repair_passes),
@@ -473,11 +623,11 @@ class BSCARCNumbaCore:
 
 
 @dataclass
-class BSCARCNumbaSolver:
+class BSMASolver:
     def solve(self, problem: ProblemModel, config: dict[str, Any], rng: np.random.Generator) -> SolveResult:
         stop_condition = config.get("stop_condition", {})
         if stop_condition.get("type") != "max_iterations":
-            raise ValueError("bsca_rc_numba only supports stop_condition.type=max_iterations")
+            raise ValueError("bsma only supports stop_condition.type=max_iterations")
         max_iterations = int(stop_condition.get("max_iterations", 0))
         if max_iterations <= 0:
             raise ValueError("max_iterations must be > 0")
@@ -486,7 +636,7 @@ class BSCARCNumbaSolver:
         if not isinstance(raw_params, dict):
             raise ValueError("params must be a mapping when present")
         pop_size = int(raw_params.get("pop_size", 20))
-        a = float(raw_params.get("a", 2.0))
+        z = float(raw_params.get("z", 0.08))
         eval_group_decimals = int(raw_params.get("eval_group_decimals", 1))
         eval_group_shuffle = _coerce_bool_param(
             raw_params.get("eval_group_shuffle", False),
@@ -509,10 +659,10 @@ class BSCARCNumbaSolver:
         restart_strong_p = float(raw_params.get("restart_strong_p", 0.85))
         restart_core_p = float(raw_params.get("restart_core_p", 0.50))
         restart_weak_p = float(raw_params.get("restart_weak_p", 0.15))
-        if pop_size <= 0:
-            raise ValueError("params.pop_size must be > 0")
-        if a <= 0:
-            raise ValueError("params.a must be > 0")
+        if pop_size < 3:
+            raise ValueError("params.pop_size must be >= 3")
+        if not (0.0 < z <= 1.0):
+            raise ValueError("params.z must satisfy 0 < z <= 1")
         if eval_group_decimals < 0:
             raise ValueError("params.eval_group_decimals must be >= 0")
         if eval_rc_eps < 0.0:
@@ -539,7 +689,7 @@ class BSCARCNumbaSolver:
         run_seed = int(config.get("run_seed", rng.integers(0, np.iinfo(np.int32).max)))
         np.random.seed(run_seed)
         t_alg0 = time.perf_counter()
-        core = BSCARCNumbaCore(
+        core = BSMACore(
             problem.items,
             problem.dim,
             problem.best_known,
@@ -548,7 +698,7 @@ class BSCARCNumbaSolver:
             problem.capacities,
             seed=run_seed,
             pop_size=pop_size,
-            a=a,
+            z=z,
             max_iter=int(max_iterations),
             ctf_id=ctf_id,
             eval_group_decimals=eval_group_decimals,
@@ -572,7 +722,7 @@ class BSCARCNumbaSolver:
 
         return SolveResult(
             problem_id=problem.problem_id,
-            solver_id=str(config.get("solver_id", "bsca_rc_numba")),
+            solver_id=str(config.get("solver_id", "bsma")),
             run_seed=run_seed,
             best_solution=np.asarray(best_sol, dtype=np.int64),
             best_objective=int(best_fit),
@@ -604,6 +754,6 @@ class BSCARCNumbaSolver:
                 "eff_group_count": int(core.eff_group_count),
                 "numba": True,
                 "rc": True,
-                "a": float(a),
+                "z": float(z),
             },
         )

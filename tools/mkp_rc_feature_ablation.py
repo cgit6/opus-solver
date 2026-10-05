@@ -85,7 +85,7 @@ def _load_qpso_means(path: Path = Path("cli/exp/exp_cfg.yaml")) -> dict[str, flo
 
 
 def _load_base_config(max_iterations: int) -> dict[str, Any]:
-    config = SolverConfigLoader().load("brlsmasca_rl_rc_numba", param_set_index=20)
+    config = SolverConfigLoader().load("hsmsca", param_set_index=20)
     config = copy.deepcopy(config)
     config["stop_condition"] = dict(config["stop_condition"])
     config["stop_condition"]["max_iterations"] = int(max_iterations)

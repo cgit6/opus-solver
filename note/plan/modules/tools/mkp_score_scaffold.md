@@ -58,7 +58,7 @@
 
 ## 與其他模組的關係
 
-- 依賴 [`solver/BSCASMA_rl_rc_numba.py`](../solver/BSCASMA_rl_rc_numba.md) 的 `_build_lp_rc_item_eval_payload(...)`，因此與 solver 內部結構高度耦合。
+- 依賴 [`solver/HSMSCA.py`](../solver/HSMSCA.md) 的 `_build_lp_rc_item_eval_payload(...)`，因此與 solver 內部結構高度耦合。
 - 與 [`tools/mkp_item_eval_experiment.py`](mkp_item_eval_experiment.md) 相比，它刻意抽掉完整 solver 搜尋，只保留 score + repair 層。
 - 與 [`tools/mkp_rc_feature_ablation.py`](mkp_rc_feature_ablation.md) 一起構成演算法分析鏈：前者看 feature gate，這裡看 scoring scaffold。
 

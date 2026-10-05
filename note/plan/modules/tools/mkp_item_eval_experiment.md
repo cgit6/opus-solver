@@ -2,7 +2,7 @@
 
 ## 模組責任
 
-`tools/mkp_item_eval_experiment.py` 是 MKP item-evaluation 變體的批次比較工具。它用固定基底 solver `brlsmasca_rl_rc_numba` 的 param set `20`，在多個 OR dataset/問題/seed 上比較不同 item scoring 或 feature toggle 的效果，並輸出可續跑的 `runs.jsonl` 與彙總排名。
+`tools/mkp_item_eval_experiment.py` 是 MKP item-evaluation 變體的批次比較工具。它用固定基底 solver `hsmsca` 的 param set `20`，在多個 OR dataset/問題/seed 上比較不同 item scoring 或 feature toggle 的效果，並輸出可續跑的 `runs.jsonl` 與彙總排名。
 
 ## 公開入口/主要類型
 
@@ -66,7 +66,7 @@
 ## 與其他模組的關係
 
 - 依賴 [`engine/builders.py`](../engine/builders.md) 與 [`problem/builders.py`](../problem/builders.md) 建立標準 registry。
-- 依賴 [`tools/solver_config_loader.py`](solver_config_loader.md) 讀 `brlsmasca_rl_rc_numba` param set `20`。
+- 依賴 [`tools/solver_config_loader.py`](solver_config_loader.md) 讀 `hsmsca` param set `20`。
 - 與 [`tools/mkp_score_scaffold.py`](mkp_score_scaffold.md)、[`tools/mkp_rc_feature_ablation.py`](mkp_rc_feature_ablation.md) 共同構成 MKP 演算法分析支援鏈，但焦點是「完整 solver 變體比較」，不是隨機 scaffold。
 
 ## 對應函式索引與閱讀順序

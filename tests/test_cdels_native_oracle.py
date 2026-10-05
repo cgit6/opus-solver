@@ -16,7 +16,7 @@ import pytest
 from mkp.problem.scvrp import load_legacy_scvrp_problem
 from mkp.rng.msvc_legacy import MSVC_RAND_MAX, MsvcLegacyRand
 from mkp.solver.CDELS import CDELS
-from mkp.solver.CDELS_workspace import CDELSWorkspace
+from mkp.solver.CDELS_2 import CDELS2
 import mkp.tools.scvrp_native_oracle as legacy_kernel_module
 from mkp.tools.scvrp_native_oracle import (
     SCVRPLegacyKernelError,
@@ -1702,10 +1702,10 @@ def test_python_new_generation_matches_native_population_column_by_column(
         assert native["trace"][-1]["best"]["cost"] == 367
 
 
-def test_workspace_generation_matches_native_population_column_by_column(
+def test_cdels_2_generation_matches_native_population_column_by_column(
     native_kernel: Path,
 ) -> None:
-    """Workspace 版本也必須直接通過 C++ oracle，不能只比對 Python 基準。"""
+    """CDELS 2 也必須直接通過 C++ oracle，不能只比對 Python 基準。"""
     problem = _problem()
     native = run_scvrp_legacy_generation_probe(
         problem,
@@ -1721,7 +1721,7 @@ def test_workspace_generation_matches_native_population_column_by_column(
         executable=native_kernel,
         timeout=20.0,
     )
-    core = CDELSWorkspace(problem, seed=1)
+    core = CDELS2(problem, seed=1)
     generation = core.initialize_population()
     _assert_generation_matches_native(
         native["trace"][0],
