@@ -29,7 +29,7 @@ import json
 import math
 import struct
 import time
-from typing import Any, Callable, Literal, Sequence
+from typing import Any, Callable, ClassVar, Literal, Sequence
 
 import numpy as np
 
@@ -2983,6 +2983,10 @@ class CDELSSolverError(RuntimeError):
 class CDELS2Solver:
     """讓 Engine 以標準介面執行加入 Workspace 的 CDELS 副本。"""
 
+    core_class: ClassVar[type[CDELS2]] = CDELS2
+    execution_backend: ClassVar[str] = "python"
+    solver_id: ClassVar[str] = CDELS_2_SOLVER_ID
+
     def solve(
         self,
         problem: Problem,
@@ -2995,9 +2999,12 @@ class CDELS2Solver:
             raise TypeError(
                 "CDELS2Solver only supports SCVRPProblem"
             )
-        adapter = _parse_adapter_config(config)
+        adapter = _parse_adapter_config(
+            config,
+            expected_solver_id=self.solver_id,
+        )
 
-        algorithm = CDELS2(problem, seed=adapter.run_seed)
+        algorithm = self.core_class(problem, seed=adapter.run_seed)
         started = time.perf_counter()
         output = algorithm.solve(
             termination_mode=adapter.termination_mode,
@@ -3072,7 +3079,7 @@ class CDELS2Solver:
         return SolveResult(
             problem_id=problem.problem_id,
             solver_id=str(
-                config.get("solver_id", CDELS_2_SOLVER_ID)
+                config.get("solver_id", self.solver_id)
             ),
             run_seed=adapter.run_seed,
             best_solution=encoded,
@@ -3086,7 +3093,7 @@ class CDELS2Solver:
             metadata={
                 "compatibility_profile": COMPATIBILITY_PROFILE,
                 "de_technique": DE_TECHNIQUE,
-                "execution_backend": "python",
+                "execution_backend": self.execution_backend,
                 "termination_mode": adapter.termination_mode,
                 "stop_cause": output.stop_cause,
                 "population_size": population_size,
@@ -3108,7 +3115,11 @@ class CDELS2Solver:
         )
 
 
-def _parse_adapter_config(config: dict[str, Any]) -> _CDELSAdapterConfig:
+def _parse_adapter_config(
+    config: dict[str, Any],
+    *,
+    expected_solver_id: str = CDELS_2_SOLVER_ID,
+) -> _CDELSAdapterConfig:
     """嚴格解析設定，避免拼錯欄位時默默改變可重現結果。"""
     if not isinstance(config, dict):
         raise TypeError("config must be a mapping")
@@ -3120,10 +3131,10 @@ def _parse_adapter_config(config: dict[str, Any]) -> _CDELSAdapterConfig:
     if run_seed > 0xFFFF_FFFF:
         raise ValueError("run_seed must fit in an unsigned 32-bit integer")
 
-    solver_id = str(config.get("solver_id", CDELS_2_SOLVER_ID))
-    if solver_id != CDELS_2_SOLVER_ID:
+    solver_id = str(config.get("solver_id", expected_solver_id))
+    if solver_id != expected_solver_id:
         raise ValueError(
-            f"solver_id must be {CDELS_2_SOLVER_ID!r}"
+            f"solver_id must be {expected_solver_id!r}"
         )
 
     stop_condition = config.get("stop_condition")

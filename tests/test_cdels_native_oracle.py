@@ -17,6 +17,9 @@ from mkp.problem.scvrp import load_legacy_scvrp_problem
 from mkp.rng.msvc_legacy import MSVC_RAND_MAX, MsvcLegacyRand
 from mkp.solver.CDELS import CDELS
 from mkp.solver.CDELS_2 import CDELS2
+from mkp.solver.CDELS_2_numba import CDELS2Numba
+from mkp.solver.CDELS_numba import CDELSNumba
+from mkp.solver.CDELS_packed_numba import CDELSPackedNumba
 import mkp.tools.scvrp_native_oracle as legacy_kernel_module
 from mkp.tools.scvrp_native_oracle import (
     SCVRPLegacyKernelError,
@@ -1736,6 +1739,63 @@ def test_cdels_2_generation_matches_native_population_column_by_column(
         generation,
         core,
         stage="workspace_generation_2",
+    )
+
+
+def test_numba_generations_match_native_population_column_by_column(
+    native_kernel: Path,
+) -> None:
+    """兩個 Numba core 都直接對 C++ oracle，不只透過 Python 基準。"""
+    problem = _problem()
+    native = run_scvrp_legacy_generation_probe(
+        problem,
+        SCVRPLegacyKernelRequest(
+            seed=1,
+            termination_mode="fixed_iterations",
+            limit=1,
+            start_temperature=1.0,
+            cooling_rate=0.95,
+            iterations_per_temperature=110,
+            probe_new_generation=True,
+        ),
+        executable=native_kernel,
+        timeout=20.0,
+    )
+    for core_type, stage_prefix in (
+        (CDELSNumba, "numba"),
+        (CDELS2Numba, "workspace_numba"),
+    ):
+        core = core_type(problem, seed=1)
+        generation = core.initialize_population()
+        _assert_generation_matches_native(
+            native["trace"][0],
+            generation,
+            core,
+            stage=f"{stage_prefix}_generation_1",
+        )
+        generation = core._new_generation(generation, 1.0)
+        _assert_generation_matches_native(
+            native["trace"][1],
+            generation,
+            core,
+            stage=f"{stage_prefix}_generation_2",
+        )
+
+    packed = CDELSPackedNumba(problem, seed=1)
+    packed_initial = packed.initialize_population()
+    packed._pack_generation(packed_initial)
+    _assert_generation_matches_native(
+        native["trace"][0],
+        packed._unpack_generation(),
+        packed,
+        stage="packed_numba_generation_1",
+    )
+    packed._advance_packed_generation(1.0)
+    _assert_generation_matches_native(
+        native["trace"][1],
+        packed._unpack_generation(),
+        packed,
+        stage="packed_numba_generation_2",
     )
 
 
