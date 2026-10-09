@@ -11,6 +11,7 @@ from mkp.solver.CDELS_numba import CDELSNumba
 from mkp.solver.CDELS_packed_numba import (
     CDELSPackedNumba,
     _packed_generation_numba,
+    _packed_generations_numba,
 )
 
 
@@ -111,19 +112,22 @@ def test_packed_solve_matches_numba_for_111_transitions_with_full_trace() -> Non
     assert packed.rng_draw_count == reference.rng_draw_count
 
 
-def test_packed_solve_without_trace_has_same_final_population() -> None:
+@pytest.mark.parametrize("transition_count", (7, 111, 221))
+def test_packed_solve_without_trace_has_same_final_population(
+    transition_count: int,
+) -> None:
     problem = _problem()
     reference_core = CDELSNumba(problem, seed=30)
     packed_core = CDELSPackedNumba(problem, seed=30)
     reference = reference_core.solve(
         termination_mode="fixed_iterations",
-        limit=7,
-        max_transitions=7,
+        limit=transition_count,
+        max_transitions=transition_count,
     )
     packed = packed_core.solve(
         termination_mode="fixed_iterations",
-        limit=7,
-        max_transitions=7,
+        limit=transition_count,
+        max_transitions=transition_count,
     )
 
     assert packed_core.process_trace_generation(packed.generation) == (
@@ -132,6 +136,53 @@ def test_packed_solve_without_trace_has_same_final_population() -> None:
     assert packed.result == reference.result
     assert packed.rng_state == reference.rng_state
     assert packed.rng_draw_count == reference.rng_draw_count
+
+
+def test_packed_batched_solve_preserves_legacy_safety_stop() -> None:
+    problem = _problem()
+    reference_core = CDELSNumba(problem, seed=1)
+    packed_core = CDELSPackedNumba(problem, seed=1)
+    solve_args = {
+        "termination_mode": "legacy_temperature_stagnation",
+        "limit": 100,
+        "iterations_per_temperature": 110,
+        "max_transitions": 111,
+    }
+    reference = reference_core.solve(**solve_args)
+    packed = packed_core.solve(**solve_args)
+
+    assert packed.stop_cause == reference.stop_cause == "max_transitions"
+    assert packed_core.process_trace_generation(packed.generation) == (
+        reference_core.process_trace_generation(reference.generation)
+    )
+    assert packed.final_temperature.hex() == reference.final_temperature.hex()
+    assert packed.rng_state == reference.rng_state
+    assert packed.rng_draw_count == reference.rng_draw_count
+
+
+@pytest.mark.parametrize("transition_count", (1, 2, 7, 110))
+def test_packed_batch_matches_repeated_single_generations(
+    transition_count: int,
+) -> None:
+    problem = _problem()
+    repeated = CDELSPackedNumba(problem, seed=1)
+    batched = CDELSPackedNumba(problem, seed=1)
+    repeated_initial = repeated.initialize_population()
+    batched_initial = batched.initialize_population()
+    repeated._pack_generation(repeated_initial)
+    batched._pack_generation(batched_initial)
+
+    for _ in range(transition_count):
+        repeated._advance_packed_generation(1.0)
+    batched._advance_packed_generations(1.0, transition_count)
+
+    assert batched.process_trace_generation(batched._unpack_generation()) == (
+        repeated.process_trace_generation(repeated._unpack_generation())
+    )
+    assert batched.rng.state == repeated.rng.state
+    assert batched.rng.draw_count == repeated.rng.draw_count
+    assert batched._next_generation_id == repeated._next_generation_id
+    assert _packed_generations_numba.nopython_signatures
 
 
 @pytest.mark.slow

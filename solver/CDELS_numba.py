@@ -886,7 +886,7 @@ def _strong_drop_numba(
     return int(cost), feasible
 
 
-@njit(cache=True)
+@njit(cache=True, inline="always")
 def _msvc_rand_numba(state: int, draw_count: int) -> tuple[int, int, int]:
     """抽出一個 MSVC ``rand()``；state/draw count 必須由呼叫端保存。"""
     state = (state * 214_013 + 2_531_011) & 0xFFFF_FFFF
@@ -894,7 +894,7 @@ def _msvc_rand_numba(state: int, draw_count: int) -> tuple[int, int, int]:
     return state, draw_count, (state >> 16) & 0x7FFF
 
 
-@njit(cache=True)
+@njit(cache=True, inline="always")
 def _msvc_rand_mod_numba(
     state: int,
     draw_count: int,
@@ -1476,7 +1476,7 @@ def _local_search_numba(
     )
 
 
-@njit(cache=True)
+@njit(cache=True, inline="always")
 def _accept_trial_by_sa_numba(
     target_cost: int,
     trial_cost: int,
@@ -1513,7 +1513,7 @@ def _accept_trial_by_sa_numba(
     return accepted, state, draw_count, unused_delta_exp
 
 
-@njit(cache=True)
+@njit(cache=True, inline="always")
 def _select_trial_by_sa_numba(
     target_cost: int,
     target_feasible: bool,
@@ -1562,7 +1562,7 @@ def _select_trial_by_sa_numba(
     )
 
 
-@njit(cache=True)
+@njit(cache=True, inline="always")
 def _select_mutation_indices_numba(
     population_size: int,
     target_index: int,

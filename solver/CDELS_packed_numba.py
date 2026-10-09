@@ -175,6 +175,19 @@ def _packed_generation_numba(
     best_cost = int(elite_costs[0])
 
     for target_index in range(population_size):
+        # 同一 target 的 row view 只建立一次。舊寫法在 crossover、兩次
+        # reevaluate 與 local search 的每個呼叫點都重新建立相同 view。
+        target_route_customers = current_route_customers[target_index]
+        target_route_offsets = current_route_offsets[target_index]
+        target_positions = current_positions[target_index]
+        target_transfer_mask = current_transfer_mask[target_index]
+        trial_route_customers = next_route_customers[target_index]
+        trial_route_offsets = next_route_offsets[target_index]
+        trial_positions = next_positions[target_index]
+        trial_transfer_mask = next_transfer_mask[target_index]
+        trial_route_capacities = next_route_capacities[target_index]
+        trial_transfer_capacities = next_transfer_capacities[target_index]
+
         r1, _, r3, state, draw_count = _select_mutation_indices_numba(
             population_size,
             target_index,
@@ -226,16 +239,16 @@ def _packed_generation_numba(
         )
 
         state, draw_count = _crossover_numba(
-            current_route_customers[target_index],
-            current_route_offsets[target_index],
-            current_positions[target_index],
-            current_transfer_mask[target_index],
+            target_route_customers,
+            target_route_offsets,
+            target_positions,
+            target_transfer_mask,
             mutant_route_customers,
             mutant_route_offsets,
-            next_route_customers[target_index],
-            next_route_offsets[target_index],
-            next_positions[target_index],
-            next_route_capacities[target_index],
+            trial_route_customers,
+            trial_route_offsets,
+            trial_positions,
+            trial_route_capacities,
             customers_closed,
             crossover_rate,
             state,
@@ -250,17 +263,17 @@ def _packed_generation_numba(
             trial_feasible,
             _,
         ) = _reevaluate_packed_numba(
-            next_route_customers[target_index],
-            next_route_offsets[target_index],
-            next_transfer_mask[target_index],
+            trial_route_customers,
+            trial_route_offsets,
+            trial_transfer_mask,
             demands,
             distances,
             fixed_route_for_customer,
             fixed_route_capacities,
             capacity,
             transfer_cost_once,
-            next_route_capacities[target_index],
-            next_transfer_capacities[target_index],
+            trial_route_capacities,
+            trial_transfer_capacities,
         )
         transfer_total_capacity = (
             transfer_vehicle_count * capacity - transferred_demand
@@ -280,12 +293,12 @@ def _packed_generation_numba(
             fixed_route_capacities,
             capacity,
             transfer_cost_once,
-            next_route_customers[target_index],
-            next_route_offsets[target_index],
-            next_positions[target_index],
-            next_transfer_mask[target_index],
-            next_route_capacities[target_index],
-            next_transfer_capacities[target_index],
+            trial_route_customers,
+            trial_route_offsets,
+            trial_positions,
+            trial_transfer_mask,
+            trial_route_capacities,
+            trial_transfer_capacities,
             possible_routes,
             transfer_customers,
             trial_cost,
@@ -305,17 +318,17 @@ def _packed_generation_numba(
             trial_feasible,
             _,
         ) = _reevaluate_packed_numba(
-            next_route_customers[target_index],
-            next_route_offsets[target_index],
-            next_transfer_mask[target_index],
+            trial_route_customers,
+            trial_route_offsets,
+            trial_transfer_mask,
             demands,
             distances,
             fixed_route_for_customer,
             fixed_route_capacities,
             capacity,
             transfer_cost_once,
-            next_route_capacities[target_index],
-            next_transfer_capacities[target_index],
+            trial_route_capacities,
+            trial_transfer_capacities,
         )
         next_costs[target_index] = trial_cost
         next_feasible[target_index] = 1 if trial_feasible else 0
@@ -408,6 +421,158 @@ def _packed_generation_numba(
             )
 
     return next_best_index, feasible_solutions, state, draw_count
+
+
+@njit(cache=True)
+def _packed_generations_numba(
+    current_route_customers: np.ndarray,
+    current_route_offsets: np.ndarray,
+    current_positions: np.ndarray,
+    current_transfer_mask: np.ndarray,
+    current_costs: np.ndarray,
+    current_feasible: np.ndarray,
+    current_route_capacities: np.ndarray,
+    current_transfer_capacities: np.ndarray,
+    current_transfer_vehicle_count: np.ndarray,
+    current_transfer_total_capacity: np.ndarray,
+    next_route_customers: np.ndarray,
+    next_route_offsets: np.ndarray,
+    next_positions: np.ndarray,
+    next_transfer_mask: np.ndarray,
+    next_costs: np.ndarray,
+    next_feasible: np.ndarray,
+    next_route_capacities: np.ndarray,
+    next_transfer_capacities: np.ndarray,
+    next_transfer_vehicle_count: np.ndarray,
+    next_transfer_total_capacity: np.ndarray,
+    elite_route_customers: np.ndarray,
+    elite_route_offsets: np.ndarray,
+    elite_positions: np.ndarray,
+    elite_transfer_mask: np.ndarray,
+    elite_costs: np.ndarray,
+    elite_feasible: np.ndarray,
+    elite_route_capacities: np.ndarray,
+    elite_transfer_capacities: np.ndarray,
+    elite_transfer_vehicle_count: np.ndarray,
+    elite_transfer_total_capacity: np.ndarray,
+    best_index: int,
+    distances: np.ndarray,
+    demands: np.ndarray,
+    fixed_route_for_customer: np.ndarray,
+    fixed_route_capacities: np.ndarray,
+    capacity: int,
+    transfer_cost_once: int,
+    temperature: float,
+    state: int,
+    draw_count: int,
+    mutant_route_customers: np.ndarray,
+    mutant_route_offsets: np.ndarray,
+    mutant_positions: np.ndarray,
+    mutant_route_capacities: np.ndarray,
+    customers_possible: np.ndarray,
+    possible_routes: np.ndarray,
+    transfer_customers: np.ndarray,
+    customers_closed: np.ndarray,
+    perturbed_components_max: int,
+    crossover_rate: float,
+    transition_count: int,
+) -> tuple[int, int, int, int, bool]:
+    """在同一個 Numba 呼叫內連跑多代；每代仍完全依序處理所有 target。"""
+    feasible_solutions = 0
+    for _ in range(transition_count):
+        best_index, feasible_solutions, state, draw_count = (
+            _packed_generation_numba(
+                current_route_customers,
+                current_route_offsets,
+                current_positions,
+                current_transfer_mask,
+                current_costs,
+                current_feasible,
+                current_route_capacities,
+                current_transfer_capacities,
+                current_transfer_vehicle_count,
+                current_transfer_total_capacity,
+                next_route_customers,
+                next_route_offsets,
+                next_positions,
+                next_transfer_mask,
+                next_costs,
+                next_feasible,
+                next_route_capacities,
+                next_transfer_capacities,
+                next_transfer_vehicle_count,
+                next_transfer_total_capacity,
+                elite_route_customers,
+                elite_route_offsets,
+                elite_positions,
+                elite_transfer_mask,
+                elite_costs,
+                elite_feasible,
+                elite_route_capacities,
+                elite_transfer_capacities,
+                elite_transfer_vehicle_count,
+                elite_transfer_total_capacity,
+                best_index,
+                distances,
+                demands,
+                fixed_route_for_customer,
+                fixed_route_capacities,
+                capacity,
+                transfer_cost_once,
+                temperature,
+                state,
+                draw_count,
+                mutant_route_customers,
+                mutant_route_offsets,
+                mutant_positions,
+                mutant_route_capacities,
+                customers_possible,
+                possible_routes,
+                transfer_customers,
+                customers_closed,
+                perturbed_components_max,
+                crossover_rate,
+            )
+        )
+        current_route_customers, next_route_customers = (
+            next_route_customers,
+            current_route_customers,
+        )
+        current_route_offsets, next_route_offsets = (
+            next_route_offsets,
+            current_route_offsets,
+        )
+        current_positions, next_positions = next_positions, current_positions
+        current_transfer_mask, next_transfer_mask = (
+            next_transfer_mask,
+            current_transfer_mask,
+        )
+        current_costs, next_costs = next_costs, current_costs
+        current_feasible, next_feasible = next_feasible, current_feasible
+        current_route_capacities, next_route_capacities = (
+            next_route_capacities,
+            current_route_capacities,
+        )
+        current_transfer_capacities, next_transfer_capacities = (
+            next_transfer_capacities,
+            current_transfer_capacities,
+        )
+        current_transfer_vehicle_count, next_transfer_vehicle_count = (
+            next_transfer_vehicle_count,
+            current_transfer_vehicle_count,
+        )
+        current_transfer_total_capacity, next_transfer_total_capacity = (
+            next_transfer_total_capacity,
+            current_transfer_total_capacity,
+        )
+
+    return (
+        best_index,
+        feasible_solutions,
+        state,
+        draw_count,
+        transition_count % 2 == 0,
+    )
 
 
 @dataclass
@@ -660,11 +825,26 @@ class CDELSPackedNumba(CDELSNumba):
                 if remaining <= 0:
                     break
                 iterations_this_level = min(iterations_this_level, remaining)
+            elif transitions + iterations_this_level > max_transitions:
+                iterations_this_level = max_transitions - transitions
 
-            for _ in range(iterations_this_level):
-                self._advance_packed_generation(temperature)
-                transitions += 1
-                if trace or process_trace:
+            if not trace and not process_trace:
+                # 沒有逐代觀測需求時，同一溫度區段只跨一次 Numba 邊界。
+                self._advance_packed_generations(
+                    temperature,
+                    iterations_this_level,
+                )
+                transitions += iterations_this_level
+                fixed_target_reached = (
+                    termination_mode == "fixed_iterations"
+                    and transitions >= limit
+                )
+                if transitions >= max_transitions and not fixed_target_reached:
+                    safety_limit_reached = True
+            else:
+                for _ in range(iterations_this_level):
+                    self._advance_packed_generation(temperature)
+                    transitions += 1
                     observable_generation = self._unpack_generation()
                     if trace:
                         snapshots.append(
@@ -677,13 +857,16 @@ class CDELSPackedNumba(CDELSNumba):
                             )
                         )
 
-                fixed_target_reached = (
-                    termination_mode == "fixed_iterations"
-                    and transitions >= limit
-                )
-                if transitions >= max_transitions and not fixed_target_reached:
-                    safety_limit_reached = True
-                    break
+                    fixed_target_reached = (
+                        termination_mode == "fixed_iterations"
+                        and transitions >= limit
+                    )
+                    if (
+                        transitions >= max_transitions
+                        and not fixed_target_reached
+                    ):
+                        safety_limit_reached = True
+                        break
 
             if (
                 not safety_limit_reached
@@ -908,6 +1091,88 @@ class CDELSPackedNumba(CDELSNumba):
         self._packed_best_index = int(best_index)
         self._packed_feasible_solutions = int(feasible_solutions)
         self._packed_generation_id = self._take_generation_id()
+        self.rng._state = int(rng_state)
+        self.rng._draw_count = int(rng_draw_count)
+
+    def _advance_packed_generations(
+        self,
+        temperature: float,
+        transition_count: int,
+    ) -> None:
+        """無 trace 快速路徑：一次跨越 Python/Numba 邊界連跑多代。"""
+        if transition_count <= 0:
+            raise ValueError("transition_count must be > 0")
+        current = self._packed_current
+        next_population = self._packed_next
+        elite = self._packed_elite
+        (
+            best_index,
+            feasible_solutions,
+            rng_state,
+            rng_draw_count,
+            current_is_original,
+        ) = _packed_generations_numba(
+            current.route_customers,
+            current.route_offsets,
+            current.positions,
+            current.transfer_mask,
+            current.costs,
+            current.feasible,
+            current.route_capacities_free,
+            current.transfer_capacities_free,
+            current.transfer_vehicle_count,
+            current.transfer_total_capacity_free,
+            next_population.route_customers,
+            next_population.route_offsets,
+            next_population.positions,
+            next_population.transfer_mask,
+            next_population.costs,
+            next_population.feasible,
+            next_population.route_capacities_free,
+            next_population.transfer_capacities_free,
+            next_population.transfer_vehicle_count,
+            next_population.transfer_total_capacity_free,
+            elite.route_customers,
+            elite.route_offsets,
+            elite.positions,
+            elite.transfer_mask,
+            elite.costs,
+            elite.feasible,
+            elite.route_capacities_free,
+            elite.transfer_capacities_free,
+            elite.transfer_vehicle_count,
+            elite.transfer_total_capacity_free,
+            int(self._packed_best_index),
+            self.problem.distance_matrix,
+            self.problem.demands,
+            self.problem.fixed_route_for_customer,
+            self.problem.fixed_route_capacities,
+            int(self.problem.capacity),
+            int(self.problem.transfer_cost_once),
+            float(temperature),
+            int(self.rng.state),
+            int(self.rng.draw_count),
+            self._mutant_route_customers,
+            self._mutant_route_offsets,
+            self._mutant_positions,
+            self._mutant_route_capacities,
+            self._customers_possible,
+            self._possible_routes,
+            self._transfer_customers,
+            self._customers_closed,
+            int((self.problem.n_customers / 2.0) * CDELS_F),
+            float(CDELS_CR),
+            int(transition_count),
+        )
+        if not current_is_original:
+            self._packed_current, self._packed_next = (
+                self._packed_next,
+                self._packed_current,
+            )
+        self._packed_best_index = int(best_index)
+        self._packed_feasible_solutions = int(feasible_solutions)
+        self._packed_generation_id += int(transition_count)
+        self._next_generation_id += int(transition_count)
         self.rng._state = int(rng_state)
         self.rng._draw_count = int(rng_draw_count)
 
