@@ -1,0 +1,8 @@
+problem_id: f14
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 2
+objective_id: f14_shekel_foxholes
+lower_bounds: -65.536
+upper_bounds: 65.536
+best_known: 0.9980038377944493

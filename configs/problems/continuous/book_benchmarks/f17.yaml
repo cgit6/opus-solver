@@ -1,0 +1,9 @@
+problem_id: f17
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 2
+objective_id: f17_branin
+# The archive plot uses [-5, 5]^2 and excludes known minimizers; use the benchmark domain.
+lower_bounds: [-5, 0]
+upper_bounds: [10, 15]
+best_known: 0.39788735772973816

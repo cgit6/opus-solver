@@ -1,0 +1,10 @@
+problem_id: pressure_vessel
+dataset: book_engineering
+problem_type: continuous
+dimension: 4
+objective_id: pressure_vessel_cost
+# Preserve the archive constraint formula for result compatibility. It omits length from the volume term.
+constraint_id: pressure_vessel_book_constraints
+lower_bounds: [0, 0, 10, 10]
+upper_bounds: [100, 100, 100, 100]
+best_known: null

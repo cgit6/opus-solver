@@ -1,0 +1,9 @@
+problem_id: three_bar_truss
+dataset: book_engineering
+problem_type: continuous
+dimension: 2
+objective_id: three_bar_truss_weight
+constraint_id: three_bar_truss_constraints
+lower_bounds: [0.001, 0.001]
+upper_bounds: [1, 1]
+best_known: null

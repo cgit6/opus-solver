@@ -1,0 +1,8 @@
+problem_id: f18
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 2
+objective_id: f18_goldstein_price
+lower_bounds: -2
+upper_bounds: 2
+best_known: 3

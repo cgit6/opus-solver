@@ -1,0 +1,9 @@
+problem_id: f11
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+# Correct archive off-by-one: divisors are sqrt(1)..sqrt(dimension).
+objective_id: f11_griewank_corrected
+lower_bounds: -600
+upper_bounds: 600
+best_known: 0

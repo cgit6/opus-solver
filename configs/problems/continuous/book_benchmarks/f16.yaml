@@ -1,0 +1,8 @@
+problem_id: f16
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 2
+objective_id: f16_six_hump_camel
+lower_bounds: -5
+upper_bounds: 5
+best_known: -1.031628453489877

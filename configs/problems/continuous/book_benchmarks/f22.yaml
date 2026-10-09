@@ -1,0 +1,8 @@
+problem_id: f22
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 4
+objective_id: f22_shekel_7
+lower_bounds: 0
+upper_bounds: 10
+best_known: -10.4029405668187

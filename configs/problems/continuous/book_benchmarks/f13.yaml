@@ -1,0 +1,8 @@
+problem_id: f13
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+objective_id: f13_penalized_2
+lower_bounds: -50
+upper_bounds: 50
+best_known: 0

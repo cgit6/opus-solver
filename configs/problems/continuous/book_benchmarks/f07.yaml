@@ -1,0 +1,9 @@
+problem_id: f07
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+# The archive adds unseeded random noise. The registered problem is its reproducible deterministic component.
+objective_id: f07_weighted_quartic_deterministic
+lower_bounds: -1.28
+upper_bounds: 1.28
+best_known: 0

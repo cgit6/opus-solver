@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .builders import buildProblemRegistry, problemBuilders
+from .continuous import ContinuousProblem
 from .interface import Direction, Problem
 from .mkp import MKPProblem
 from .registry import ProblemRegistry, ProblemTypeSpec
@@ -19,6 +20,7 @@ __all__ = [
     "ScalarObjective",
     "Problem",
     "ProblemModel",
+    "ContinuousProblem",
     "MKPProblem",
     "SCVRPEvaluation",
     "SCVRPProblem",

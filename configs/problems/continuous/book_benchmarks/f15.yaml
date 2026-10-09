@@ -1,0 +1,8 @@
+problem_id: f15
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 4
+objective_id: f15_kowalik
+lower_bounds: -5
+upper_bounds: 5
+best_known: 0.0003074859878054

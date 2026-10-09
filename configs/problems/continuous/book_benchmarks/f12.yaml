@@ -1,0 +1,9 @@
+problem_id: f12
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+# Correct archive grouping so the paired middle terms reduce to one scalar objective.
+objective_id: f12_penalized_1_corrected
+lower_bounds: -50
+upper_bounds: 50
+best_known: 0

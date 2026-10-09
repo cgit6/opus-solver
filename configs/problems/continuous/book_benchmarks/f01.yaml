@@ -1,0 +1,8 @@
+problem_id: f01
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+objective_id: sphere
+lower_bounds: -100
+upper_bounds: 100
+best_known: 0

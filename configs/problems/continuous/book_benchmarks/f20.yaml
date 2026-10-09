@@ -1,0 +1,9 @@
+problem_id: f20
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 6
+# Correct the archive Hartmann-6 constant 0.1415 to 0.1451.
+objective_id: f20_hartmann_6_corrected
+lower_bounds: 0
+upper_bounds: 1
+best_known: -3.322368011415515

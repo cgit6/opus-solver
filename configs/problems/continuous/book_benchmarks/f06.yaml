@@ -1,0 +1,9 @@
+problem_id: f06
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+# Preserve the archive formula sum(abs(x + 0.5)^2); it is not the usual floor-based Step function.
+objective_id: f06_book_shifted_quadratic
+lower_bounds: -100
+upper_bounds: 100
+best_known: 0

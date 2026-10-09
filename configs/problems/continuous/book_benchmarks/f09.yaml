@@ -1,0 +1,8 @@
+problem_id: f09
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+objective_id: f09_rastrigin
+lower_bounds: -5.12
+upper_bounds: 5.12
+best_known: 0

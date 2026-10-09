@@ -1,0 +1,8 @@
+problem_id: f08
+dataset: book_benchmarks
+problem_type: continuous
+dimension: 30
+objective_id: f08_schwefel_226
+lower_bounds: -500
+upper_bounds: 500
+best_known: -12569.48661816488

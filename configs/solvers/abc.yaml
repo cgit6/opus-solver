@@ -1,0 +1,16 @@
+solver_id: abc
+solver_class: ABCSolver
+capabilities:
+  problem_types: [continuous]
+  encodings: [real_vector]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  # 對應書中 Sphere 範例的 MaxIter。
+  max_iterations: 100
+params:
+  - compatibility_profile: book_archive_abc_v1
+    # 對應書中 Sphere 範例的 pop。
+    population_size: 50
+    # 工程題 main.py 對不可行解回傳的 10E32。
+    constraint_penalty: 1.0e33
