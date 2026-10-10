@@ -193,6 +193,48 @@ GOA_ENGINEERING_CASES: dict[str, BookGOAEngineeringCase] = {
 }
 
 
+@dataclass(frozen=True)
+class BookGSAEngineeringCase:
+    algorithm_member_suffix: str
+    main_member_suffix: str
+    population_size: int
+    dimension: int
+    max_iterations: int
+    lower_bounds: tuple[float, ...]
+    upper_bounds: tuple[float, ...]
+
+
+GSA_ENGINEERING_CASES: dict[str, BookGSAEngineeringCase] = {
+    "pressure_vessel": BookGSAEngineeringCase(
+        algorithm_member_suffix="/chapter9/9.3.2/GSA.py",
+        main_member_suffix="/chapter9/9.3.2/main.py",
+        population_size=50,
+        dimension=4,
+        max_iterations=500,
+        lower_bounds=(0.0, 0.0, 10.0, 10.0),
+        upper_bounds=(100.0, 100.0, 100.0, 100.0),
+    ),
+    "three_bar_truss": BookGSAEngineeringCase(
+        algorithm_member_suffix="/chapter9/9.3.3/GSA.py",
+        main_member_suffix="/chapter9/9.3.3/main.py",
+        population_size=30,
+        dimension=2,
+        max_iterations=100,
+        lower_bounds=(0.001, 0.001),
+        upper_bounds=(1.0, 1.0),
+    ),
+    "tension_compression_spring": BookGSAEngineeringCase(
+        algorithm_member_suffix="/chapter9/9.3.4/GSA.py",
+        main_member_suffix="/chapter9/9.3.4/main.py",
+        population_size=30,
+        dimension=3,
+        max_iterations=100,
+        lower_bounds=(0.05, 0.25, 2.0),
+        upper_bounds=(2.0, 1.3, 15.0),
+    ),
+}
+
+
 class _LegacyNumpyProxy:
     """Restore the old ``np.math`` alias while forwarding every other NumPy name."""
 
@@ -918,6 +960,100 @@ def run_goa_engineering_archive_oracle(
         "algorithm": "GOA",
         "problem_id": problem_id,
         "compatibility_profile": "book_archive_goa_v1",
+        "algorithm_member": algorithm_member,
+        "algorithm_source_sha256": algorithm_source_sha256,
+        "objective_member": objective_member,
+        "objective_source_sha256": objective_source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": case.population_size,
+            "dimension": case.dimension,
+            "max_iterations": iteration_count,
+            "lower_bounds": [float(value).hex() for value in lower_bounds],
+            "upper_bounds": [float(value).hex() for value in upper_bounds],
+        },
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "evaluation_count": evaluation_count,
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def load_gsa_engineering_archive_objective(
+    archive: Path,
+    problem_id: str,
+) -> tuple[Callable[[np.ndarray], float], str, str]:
+    """Return the untouched Golden Sine chapter engineering objective."""
+
+    try:
+        case = GSA_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown GSA engineering problem_id: {problem_id!r}") from exc
+    objective, member, source_sha256 = _load_archive_function(
+        archive,
+        member_suffix=case.main_member_suffix,
+        function_name="fun",
+    )
+    return objective, member, source_sha256
+
+
+def run_gsa_engineering_archive_oracle(
+    archive: Path,
+    *,
+    problem_id: str,
+    seed: int,
+    max_iterations: int | None = None,
+) -> dict[str, Any]:
+    """Run a complete Golden Sine engineering example from chapter 9."""
+
+    try:
+        case = GSA_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown GSA engineering problem_id: {problem_id!r}") from exc
+    objective, objective_member, objective_source_sha256 = load_gsa_engineering_archive_objective(
+        archive,
+        problem_id,
+    )
+    namespace, algorithm_member, algorithm_source_sha256 = _load_algorithm_namespace(
+        archive,
+        "GSA",
+        member_suffix=case.algorithm_member_suffix,
+    )
+    iteration_count = case.max_iterations if max_iterations is None else int(max_iterations)
+    if iteration_count <= 0:
+        raise ValueError("max_iterations must be > 0")
+
+    evaluation_count = 0
+
+    def counted_objective(candidate: np.ndarray) -> float:
+        nonlocal evaluation_count
+        evaluation_count += 1
+        return objective(candidate)
+
+    lower_bounds = np.asarray(case.lower_bounds, dtype=np.float64)
+    upper_bounds = np.asarray(case.upper_bounds, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        best_score, best_position, curve = namespace["GSA"](
+            case.population_size,
+            case.dimension,
+            lower_bounds,
+            upper_bounds,
+            iteration_count,
+            counted_objective,
+        )
+    return {
+        "schema": "book-continuous-engineering-oracle.v1",
+        "algorithm": "GSA",
+        "problem_id": problem_id,
+        "compatibility_profile": "book_archive_gsa_v1",
         "algorithm_member": algorithm_member,
         "algorithm_source_sha256": algorithm_source_sha256,
         "objective_member": objective_member,

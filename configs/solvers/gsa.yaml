@@ -1,0 +1,16 @@
+solver_id: gsa
+solver_class: GSASolver
+capabilities:
+  problem_types: [continuous]
+  encodings: [real_vector]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  # 書中 Sphere 範例的 MaxIter。
+  max_iterations: 100
+params:
+  - compatibility_profile: book_archive_gsa_v1
+    # 書中 Sphere 與壓力容器範例的 population size。
+    population_size: 50
+    # 與工程題原始碼的 10E32 相同。
+    constraint_penalty: 1.0e33

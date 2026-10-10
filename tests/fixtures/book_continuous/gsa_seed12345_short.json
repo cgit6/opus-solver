@@ -1,0 +1,44 @@
+{
+  "compatibility_profile": "book_archive_gsa_v1",
+  "parameters": {
+    "dimension": 2,
+    "lower_bound": "-0x1.4000000000000p+3",
+    "max_iterations": 3,
+    "objective_id": "sphere",
+    "population_size": 8,
+    "seed": 12345,
+    "upper_bound": "0x1.4000000000000p+3"
+  },
+  "result": {
+    "best_position": {
+      "dtype": "<f8",
+      "float_hex": [
+        "-0x1.5c79530873339p-4",
+        "-0x1.07fa54b74a631p-3"
+      ],
+      "sha256": "bac7f64e6d14b5547db7b98c2f9584633397c82ebed9584962603f4e4fc95dc7",
+      "shape": [1, 2]
+    },
+    "best_score": {
+      "dtype": "<f8",
+      "float_hex": ["0x1.86cad3a9d1658p-6"],
+      "sha256": "c9884b2f5f9b9d3ddebdc8263eb0bbcd87c76de2a4b1154cbe4209e581f7b3b2",
+      "shape": [1]
+    },
+    "curve": {
+      "dtype": "<f8",
+      "float_hex": [
+        "0x1.fbe28d6df933ap-2",
+        "0x1.2f3af94478e8ep-4",
+        "0x1.86cad3a9d1658p-6"
+      ],
+      "sha256": "d40f822f283a813063971873ac2e8723cfadb6f9793f28c1df769464a0bf1700",
+      "shape": [3, 1]
+    },
+    "numpy_rng_state_sha256": "63445e0c5c041c442b2e379e4b71a8bf1a2b3d7db98d5c04ee0d3d8a6126dfe2",
+    "python_rng_state_sha256": "518a9972c9e489bf800b8b5a69a86344b2bebf25e4f86b3b959d369c6331739b"
+  },
+  "schema": "book-continuous-gsa-golden.v1",
+  "source_sha256": "52365beb1b0297bfc089240efdf19b80c07ffd70e015658dd9068aa822784cae",
+  "trace_sha256": "85ddbc12ba52df3cc32482370deb375f8881b1941ca4161ab47c419be99d8017"
+}
