@@ -1,0 +1,15 @@
+solver_id: goa
+solver_class: GOASolver
+capabilities:
+  problem_types: [continuous]
+  encodings: [real_vector]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  # Sphere 範例的 MaxIter。
+  max_iterations: 100
+params:
+  - compatibility_profile: book_archive_goa_v1
+    # Sphere 與壓力容器範例的 pop；其他工程題原始設定另行由測試固定。
+    population_size: 50
+    constraint_penalty: 1.0e33
