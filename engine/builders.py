@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from ..solver.ABC import ABCSolver
+from ..solver.BOA import BOASolver
 from ..solver.BSCA import BSCASolver
 from ..solver.BSMA import BSMASolver
 from ..solver.CDELS import CDELSSolver
@@ -19,6 +20,7 @@ def solverBuilders() -> dict[str, SolverBuilder]:
     return {
         "stub_solver": lambda: StubMaxIterationsSolver(),
         "abc": lambda: ABCSolver(),
+        "boa": lambda: BOASolver(),
         "bsma": lambda: BSMASolver(),
         "bsca": lambda: BSCASolver(),
         "hsmsca": lambda: HSMSCASolver(),

@@ -1,0 +1,44 @@
+{
+  "compatibility_profile": "book_archive_boa_base_v1",
+  "parameters": {
+    "dimension": 2,
+    "lower_bound": "-0x1.4000000000000p+3",
+    "max_iterations": 3,
+    "objective_id": "sphere",
+    "population_size": 8,
+    "seed": 12345,
+    "upper_bound": "0x1.4000000000000p+3"
+  },
+  "result": {
+    "best_position": {
+      "dtype": "<f8",
+      "float_hex": [
+        "0x1.297503e66ae58p+0",
+        "0x1.a3a50af0039a2p+0"
+      ],
+      "sha256": "301efc68fa6231edbd2d8789eafb7df94ec2fd8721557c13a31f151430bae154",
+      "shape": [1, 2]
+    },
+    "best_score": {
+      "dtype": "<f8",
+      "float_hex": ["0x1.0261992f7e971p+2"],
+      "sha256": "2712340723ec7b8f31269ea8325d2bf64fc5dab82e49e464cd338d696d18dea5",
+      "shape": [1]
+    },
+    "curve": {
+      "dtype": "<f8",
+      "float_hex": [
+        "0x1.1245ef83c7c6fp+2",
+        "0x1.1245ef83c7c6fp+2",
+        "0x1.0261992f7e971p+2"
+      ],
+      "sha256": "b77add2b12aa54e7586690ac28b9231caf9b158f77ff72cb6292694de8a380fc",
+      "shape": [3, 1]
+    },
+    "numpy_rng_state_sha256": "3dba7f963ef6811ccfb353da80a7447f190235bfd5882e60884ece67544d8288",
+    "python_rng_state_sha256": "dac690dbe81c7079ff0354fe5a6d02c65d381a60531542b5ea0e7a6c1e83475d"
+  },
+  "schema": "book-continuous-boa-golden.v1",
+  "source_sha256": "f422bbef1c6b12f0ce76f1354bfb954f90877fa8bfc0d695302029054a3a6975",
+  "trace_sha256": "3957fbc34d46655e90688f86d4b77c0d70618e5288ea0135e2829efe2418332e"
+}

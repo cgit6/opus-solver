@@ -13,7 +13,10 @@ import contextlib
 import hashlib
 import io
 import json
+import math
 import random
+import warnings
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 from zipfile import ZipFile
@@ -32,14 +35,135 @@ _ABC_TRACED_FUNCTIONS = (
     "SortPosition",
     "RouletteWheelSelection",
 )
+_BOA_TRACED_FUNCTIONS = (
+    "initialization",
+    "BorderCheck",
+    "CaculateFitness",
+)
+_GOA_TRACED_FUNCTIONS = (
+    "initialization",
+    "BorderCheck",
+    "CaculateFitness",
+    "SortFitness",
+    "SortPosition",
+    "distance",
+    "S_func",
+)
+
+BOA_PROFILE_MEMBER_SUFFIXES = {
+    "book_archive_boa_base_v1": "/chapter4/4.3.1/BOA.py",
+    "book_archive_boa_spring_v1": "/chapter4/4.3.4/BOA.py",
+}
+GOA_PROFILE_MEMBER_SUFFIXES = {
+    "book_archive_goa_v1": "/chapter3/3.3.1/GOA.py",
+}
 
 
-def _load_algorithm_namespace(archive: Path, algorithm: str) -> tuple[dict[str, Any], str, str]:
+@dataclass(frozen=True)
+class BookABCEngineeringCase:
+    """Parameters written in the corresponding chapter 2 ``main.py``."""
+
+    main_member_suffix: str
+    population_size: int
+    dimension: int
+    max_iterations: int
+    lower_bounds: tuple[float, ...]
+    upper_bounds: tuple[float, ...]
+
+
+ABC_ENGINEERING_CASES: dict[str, BookABCEngineeringCase] = {
+    "pressure_vessel": BookABCEngineeringCase(
+        main_member_suffix="/chapter2/2.3.2/main.py",
+        population_size=50,
+        dimension=4,
+        max_iterations=500,
+        lower_bounds=(0.0, 0.0, 10.0, 10.0),
+        upper_bounds=(100.0, 100.0, 100.0, 100.0),
+    ),
+    "three_bar_truss": BookABCEngineeringCase(
+        main_member_suffix="/chapter2/2.3.3/main.py",
+        population_size=30,
+        dimension=2,
+        max_iterations=100,
+        lower_bounds=(0.001, 0.001),
+        upper_bounds=(1.0, 1.0),
+    ),
+    "tension_compression_spring": BookABCEngineeringCase(
+        main_member_suffix="/chapter2/2.3.4/main.py",
+        population_size=30,
+        dimension=3,
+        max_iterations=100,
+        lower_bounds=(0.05, 0.25, 2.0),
+        upper_bounds=(2.0, 1.3, 15.0),
+    ),
+}
+
+
+@dataclass(frozen=True)
+class BookBOAEngineeringCase:
+    main_member_suffix: str
+    compatibility_profile: str
+    population_size: int
+    dimension: int
+    max_iterations: int
+    lower_bounds: tuple[float, ...]
+    upper_bounds: tuple[float, ...]
+
+
+BOA_ENGINEERING_CASES: dict[str, BookBOAEngineeringCase] = {
+    "pressure_vessel": BookBOAEngineeringCase(
+        main_member_suffix="/chapter4/4.3.2/main.py",
+        compatibility_profile="book_archive_boa_base_v1",
+        population_size=50,
+        dimension=4,
+        max_iterations=500,
+        lower_bounds=(0.0, 0.0, 10.0, 10.0),
+        upper_bounds=(100.0, 100.0, 100.0, 100.0),
+    ),
+    "three_bar_truss": BookBOAEngineeringCase(
+        main_member_suffix="/chapter4/4.3.3/main.py",
+        compatibility_profile="book_archive_boa_base_v1",
+        population_size=30,
+        dimension=2,
+        max_iterations=100,
+        lower_bounds=(0.001, 0.001),
+        upper_bounds=(1.0, 1.0),
+    ),
+    "tension_compression_spring": BookBOAEngineeringCase(
+        main_member_suffix="/chapter4/4.3.4/main.py",
+        compatibility_profile="book_archive_boa_spring_v1",
+        population_size=30,
+        dimension=3,
+        max_iterations=100,
+        lower_bounds=(0.05, 0.25, 2.0),
+        upper_bounds=(2.0, 1.3, 15.0),
+    ),
+}
+
+
+class _LegacyNumpyProxy:
+    """Restore the old ``np.math`` alias while forwarding every other NumPy name."""
+
+    math = math
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(np, name)
+
+
+def _load_algorithm_namespace(
+    archive: Path,
+    algorithm: str,
+    *,
+    member_suffix: str | None = None,
+) -> tuple[dict[str, Any], str, str]:
     target_name = f"{algorithm}.py"
     with ZipFile(archive) as zip_file:
         members = [name for name in zip_file.namelist() if Path(name).name == target_name]
+        if member_suffix is not None:
+            members = [name for name in members if name.endswith(member_suffix)]
         if not members:
-            raise FileNotFoundError(f"{target_name} was not found in {archive}")
+            location = target_name if member_suffix is None else member_suffix
+            raise FileNotFoundError(f"{location} was not found in {archive}")
         variants: dict[str, tuple[str, bytes]] = {}
         for member in members:
             source_bytes = zip_file.read(member)
@@ -76,6 +200,44 @@ def _load_algorithm_namespace(archive: Path, algorithm: str) -> tuple[dict[str, 
     safe_module = ast.fix_missing_locations(ast.Module(body=safe_body, type_ignores=[]))
     exec(compile(safe_module, member, "exec"), namespace)
     return namespace, member, source_sha256
+
+
+def _load_archive_function(
+    archive: Path,
+    *,
+    member_suffix: str,
+    function_name: str,
+) -> tuple[Callable[..., Any], str, str]:
+    """Load one function without executing imports, plotting, or the source main block."""
+
+    with ZipFile(archive) as zip_file:
+        members = [name for name in zip_file.namelist() if name.endswith(member_suffix)]
+        if len(members) != 1:
+            raise ValueError(
+                f"expected exactly one archive member ending in {member_suffix!r}, found {len(members)}"
+            )
+        member = members[0]
+        source_bytes = zip_file.read(member)
+    source_sha256 = hashlib.sha256(source_bytes).hexdigest()
+    tree = ast.parse(source_bytes.decode("utf-8"), filename=member)
+    function_nodes = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == function_name
+    ]
+    if len(function_nodes) != 1:
+        raise ValueError(
+            f"expected exactly one {function_name!r} function in archive member {member}"
+        )
+    safe_module = ast.fix_missing_locations(
+        ast.Module(body=[function_nodes[0]], type_ignores=[])
+    )
+    # The pressure-vessel source targets an older NumPy where ``np.math`` was
+    # an alias for Python's math module. NumPy 2 removed that alias, so the
+    # read-only oracle restores only the old namespace behavior.
+    namespace: dict[str, Any] = {"np": _LegacyNumpyProxy()}
+    exec(compile(safe_module, member, "exec"), namespace)
+    return namespace[function_name], member, source_sha256
 
 
 def _array_record(value: Any) -> dict[str, Any]:
@@ -119,6 +281,33 @@ def _event(name: str, **values: Any) -> dict[str, Any]:
 
 def _install_abc_trace(namespace: dict[str, Any], trace: list[dict[str, Any]]) -> None:
     for function_name in _ABC_TRACED_FUNCTIONS:
+        original = namespace[function_name]
+
+        def wrapped(*args: Any, _name: str = function_name, _original: Callable[..., Any] = original, **kwargs: Any) -> Any:
+            result = _original(*args, **kwargs)
+            if isinstance(result, tuple):
+                trace.append(_event(_name, **{f"result_{index}": item for index, item in enumerate(result)}))
+            else:
+                trace.append(_event(_name, result=result))
+            return result
+
+        namespace[function_name] = wrapped
+
+
+def _install_boa_trace(namespace: dict[str, Any], trace: list[dict[str, Any]]) -> None:
+    for function_name in _BOA_TRACED_FUNCTIONS:
+        original = namespace[function_name]
+
+        def wrapped(*args: Any, _name: str = function_name, _original: Callable[..., Any] = original, **kwargs: Any) -> Any:
+            result = _original(*args, **kwargs)
+            trace.append(_event(_name, result=result))
+            return result
+
+        namespace[function_name] = wrapped
+
+
+def _install_goa_trace(namespace: dict[str, Any], trace: list[dict[str, Any]]) -> None:
+    for function_name in _GOA_TRACED_FUNCTIONS:
         original = namespace[function_name]
 
         def wrapped(*args: Any, _name: str = function_name, _original: Callable[..., Any] = original, **kwargs: Any) -> Any:
@@ -182,6 +371,334 @@ def run_abc_archive_oracle(
             "best_score": _array_record(best_score),
             "best_position": _array_record(best_position),
             "curve": _array_record(curve),
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def run_boa_archive_oracle(
+    archive: Path,
+    *,
+    compatibility_profile: str,
+    seed: int,
+    population_size: int,
+    dimension: int,
+    max_iterations: int,
+    lower_bound: float,
+    upper_bound: float,
+    objective_id: str = "sphere",
+) -> dict[str, Any]:
+    """Execute one explicit BOA source profile with both legacy RNGs seeded."""
+
+    try:
+        member_suffix = BOA_PROFILE_MEMBER_SUFFIXES[compatibility_profile]
+    except KeyError as exc:
+        raise ValueError(f"unknown BOA compatibility profile: {compatibility_profile!r}") from exc
+    namespace, archive_member, source_sha256 = _load_algorithm_namespace(
+        archive,
+        "BOA",
+        member_suffix=member_suffix,
+    )
+    trace: list[dict[str, Any]] = []
+    _install_boa_trace(namespace, trace)
+    raw_objective = get_continuous_objective(objective_id).evaluate
+
+    def traced_objective(candidate: np.ndarray) -> float:
+        value = raw_objective(candidate)
+        trace.append(_event("objective", candidate=candidate, result=value))
+        return value
+
+    lower_bounds = np.full(dimension, lower_bound, dtype=np.float64)
+    upper_bounds = np.full(dimension, upper_bound, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with warnings.catch_warnings():
+        # ``np.matrix`` belongs to the archived implementation.  Its modern
+        # deprecation warning is unrelated to numerical compatibility.
+        warnings.simplefilter("ignore", PendingDeprecationWarning)
+        with contextlib.redirect_stdout(stdout):
+            best_score, best_position, curve = namespace["BOA"](
+                population_size,
+                dimension,
+                lower_bounds,
+                upper_bounds,
+                max_iterations,
+                traced_objective,
+            )
+    return {
+        "schema": "book-continuous-oracle.v1",
+        "algorithm": "BOA",
+        "compatibility_profile": compatibility_profile,
+        "archive_member": archive_member,
+        "source_sha256": source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": population_size,
+            "dimension": dimension,
+            "max_iterations": max_iterations,
+            "lower_bound": float(lower_bound).hex(),
+            "upper_bound": float(upper_bound).hex(),
+            "objective_id": objective_id,
+        },
+        "trace": trace,
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def run_goa_archive_oracle(
+    archive: Path,
+    *,
+    compatibility_profile: str,
+    seed: int,
+    population_size: int,
+    dimension: int,
+    max_iterations: int,
+    lower_bound: float,
+    upper_bound: float,
+    objective_id: str = "sphere",
+) -> dict[str, Any]:
+    """Execute the GOA source while tracing its inner social-force helpers."""
+
+    try:
+        member_suffix = GOA_PROFILE_MEMBER_SUFFIXES[compatibility_profile]
+    except KeyError as exc:
+        raise ValueError(f"unknown GOA compatibility profile: {compatibility_profile!r}") from exc
+    namespace, archive_member, source_sha256 = _load_algorithm_namespace(
+        archive,
+        "GOA",
+        member_suffix=member_suffix,
+    )
+    trace: list[dict[str, Any]] = []
+    _install_goa_trace(namespace, trace)
+    raw_objective = get_continuous_objective(objective_id).evaluate
+
+    def traced_objective(candidate: np.ndarray) -> float:
+        value = raw_objective(candidate)
+        trace.append(_event("objective", candidate=candidate, result=value))
+        return value
+
+    lower_bounds = np.full(dimension, lower_bound, dtype=np.float64)
+    upper_bounds = np.full(dimension, upper_bound, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        best_score, best_position, curve = namespace["GOA"](
+            population_size,
+            dimension,
+            lower_bounds,
+            upper_bounds,
+            max_iterations,
+            traced_objective,
+        )
+    return {
+        "schema": "book-continuous-oracle.v1",
+        "algorithm": "GOA",
+        "compatibility_profile": compatibility_profile,
+        "archive_member": archive_member,
+        "source_sha256": source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": population_size,
+            "dimension": dimension,
+            "max_iterations": max_iterations,
+            "lower_bound": float(lower_bound).hex(),
+            "upper_bound": float(upper_bound).hex(),
+            "objective_id": objective_id,
+        },
+        "trace": trace,
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def load_abc_engineering_archive_objective(
+    archive: Path,
+    problem_id: str,
+) -> tuple[Callable[[np.ndarray], float], str, str]:
+    """Return the untouched engineering ``fun`` body from the matching book example."""
+
+    try:
+        case = ABC_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown ABC engineering problem_id: {problem_id!r}") from exc
+    objective, member, source_sha256 = _load_archive_function(
+        archive,
+        member_suffix=case.main_member_suffix,
+        function_name="fun",
+    )
+    return objective, member, source_sha256
+
+
+def run_abc_engineering_archive_oracle(
+    archive: Path,
+    *,
+    problem_id: str,
+    seed: int,
+    max_iterations: int | None = None,
+) -> dict[str, Any]:
+    """Run one engineering example using its original objective and ABC definitions."""
+
+    try:
+        case = ABC_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown ABC engineering problem_id: {problem_id!r}") from exc
+    objective, objective_member, objective_source_sha256 = load_abc_engineering_archive_objective(
+        archive,
+        problem_id,
+    )
+    namespace, algorithm_member, algorithm_source_sha256 = _load_algorithm_namespace(archive, "ABC")
+    iteration_count = case.max_iterations if max_iterations is None else int(max_iterations)
+    if iteration_count <= 0:
+        raise ValueError("max_iterations must be > 0")
+
+    lower_bounds = np.asarray(case.lower_bounds, dtype=np.float64)
+    upper_bounds = np.asarray(case.upper_bounds, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        best_score, best_position, curve = namespace["ABC"](
+            case.population_size,
+            case.dimension,
+            lower_bounds,
+            upper_bounds,
+            iteration_count,
+            objective,
+        )
+    return {
+        "schema": "book-continuous-engineering-oracle.v1",
+        "algorithm": "ABC",
+        "problem_id": problem_id,
+        "algorithm_member": algorithm_member,
+        "algorithm_source_sha256": algorithm_source_sha256,
+        "objective_member": objective_member,
+        "objective_source_sha256": objective_source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": case.population_size,
+            "dimension": case.dimension,
+            "max_iterations": iteration_count,
+            "lower_bounds": [float(value).hex() for value in lower_bounds],
+            "upper_bounds": [float(value).hex() for value in upper_bounds],
+        },
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def load_boa_engineering_archive_objective(
+    archive: Path,
+    problem_id: str,
+) -> tuple[Callable[[np.ndarray], float], str, str]:
+    """Return the untouched BOA chapter engineering objective."""
+
+    try:
+        case = BOA_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown BOA engineering problem_id: {problem_id!r}") from exc
+    objective, member, source_sha256 = _load_archive_function(
+        archive,
+        member_suffix=case.main_member_suffix,
+        function_name="fun",
+    )
+    return objective, member, source_sha256
+
+
+def run_boa_engineering_archive_oracle(
+    archive: Path,
+    *,
+    problem_id: str,
+    seed: int,
+    max_iterations: int | None = None,
+) -> dict[str, Any]:
+    """Run a complete BOA engineering example with its exact source profile."""
+
+    try:
+        case = BOA_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown BOA engineering problem_id: {problem_id!r}") from exc
+    objective, objective_member, objective_source_sha256 = load_boa_engineering_archive_objective(
+        archive,
+        problem_id,
+    )
+    algorithm_suffix = BOA_PROFILE_MEMBER_SUFFIXES[case.compatibility_profile]
+    namespace, algorithm_member, algorithm_source_sha256 = _load_algorithm_namespace(
+        archive,
+        "BOA",
+        member_suffix=algorithm_suffix,
+    )
+    iteration_count = case.max_iterations if max_iterations is None else int(max_iterations)
+    if iteration_count <= 0:
+        raise ValueError("max_iterations must be > 0")
+
+    evaluation_count = 0
+
+    def counted_objective(candidate: np.ndarray) -> float:
+        nonlocal evaluation_count
+        evaluation_count += 1
+        return objective(candidate)
+
+    lower_bounds = np.asarray(case.lower_bounds, dtype=np.float64)
+    upper_bounds = np.asarray(case.upper_bounds, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", PendingDeprecationWarning)
+        with contextlib.redirect_stdout(stdout):
+            best_score, best_position, curve = namespace["BOA"](
+                case.population_size,
+                case.dimension,
+                lower_bounds,
+                upper_bounds,
+                iteration_count,
+                counted_objective,
+            )
+    return {
+        "schema": "book-continuous-engineering-oracle.v1",
+        "algorithm": "BOA",
+        "problem_id": problem_id,
+        "compatibility_profile": case.compatibility_profile,
+        "algorithm_member": algorithm_member,
+        "algorithm_source_sha256": algorithm_source_sha256,
+        "objective_member": objective_member,
+        "objective_source_sha256": objective_source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": case.population_size,
+            "dimension": case.dimension,
+            "max_iterations": iteration_count,
+            "lower_bounds": [float(value).hex() for value in lower_bounds],
+            "upper_bounds": [float(value).hex() for value in upper_bounds],
+        },
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "evaluation_count": evaluation_count,
             "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
             "python_rng_state_sha256": _python_rng_state_sha256(),
         },

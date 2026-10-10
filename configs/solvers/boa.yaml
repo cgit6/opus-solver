@@ -1,0 +1,22 @@
+solver_id: boa
+solver_class: BOASolver
+capabilities:
+  problem_types: [continuous]
+  encodings: [real_vector]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  max_iterations: 100
+parameter_groups:
+  - key: book_base_pop50
+    params:
+      # Sphere 與壓力容器原始範例的 BOA 版本。
+      compatibility_profile: book_archive_boa_base_v1
+      population_size: 50
+      constraint_penalty: 1.0e33
+  - key: book_spring_pop30
+    params:
+      # 拉壓彈簧範例使用另一組功率指數與感知形態。
+      compatibility_profile: book_archive_boa_spring_v1
+      population_size: 30
+      constraint_penalty: 1.0e33
