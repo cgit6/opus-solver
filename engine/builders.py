@@ -14,6 +14,7 @@ from ..solver.CDELS_packed_numba import CDELSPackedNumbaSolver
 from ..solver.GOA import GOASolver
 from ..solver.GSA import GSASolver
 from ..solver.HSMSCA import HSMSCASolver
+from ..solver.MFO import MFOSolver
 from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
 
 
@@ -25,6 +26,7 @@ def solverBuilders() -> dict[str, SolverBuilder]:
         "boa": lambda: BOASolver(),
         "goa": lambda: GOASolver(),
         "gsa": lambda: GSASolver(),
+        "mfo": lambda: MFOSolver(),
         "bsma": lambda: BSMASolver(),
         "bsca": lambda: BSCASolver(),
         "hsmsca": lambda: HSMSCASolver(),
