@@ -1,0 +1,16 @@
+solver_id: cdels_cvrp
+solver_class: CDELSCVRPSolver
+capabilities:
+  problem_types: [cvrp]
+  encodings: [cvrp_routes]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  max_iterations: 11220
+params:
+  - algorithm_profile: cdels_cvrp_v1
+    de_technique: rand_1_exp
+    termination_mode: fixed_iterations
+    start_temperature: 1.0
+    cooling_rate: 0.95
+    iterations_per_temperature: 110

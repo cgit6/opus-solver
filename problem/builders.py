@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .continuous import continuousProblemSpec
+from .cvrp import cvrpProblemSpec
 from .mkp import mkpProblemSpec
 from .registry import ProblemRegistry, ProblemTypeSpec
 from .scvrp import scvrpProblemSpec
@@ -11,6 +12,7 @@ def problemBuilders() -> dict[str, ProblemTypeSpec]:
     """Built-in optimization problem definitions."""
     return {
         "continuous": continuousProblemSpec(),
+        "cvrp": cvrpProblemSpec(),
         "mkp": mkpProblemSpec(),
         "scvrp": scvrpProblemSpec(),
         "tsp": tspProblemSpec(),

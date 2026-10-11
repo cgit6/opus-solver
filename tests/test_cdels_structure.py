@@ -12,13 +12,18 @@ from mkp.tools.solver_config_loader import SolverConfigLoader
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_cdels_and_cdels_2_experiment_are_registered() -> None:
+def test_cdels_variants_are_registered() -> None:
     builders = solverBuilders()
 
     assert "cdels" in builders
     assert "cdels_2" in builders
+    assert "cdels_cvrp" in builders
     assert "scvrp_legacy_sa" not in builders
     assert builders["cdels"]().__class__.__name__ == "CDELSSolver"
+    assert (
+        builders["cdels_cvrp"]().__class__.__name__
+        == "CDELSCVRPSolver"
+    )
     assert (
         builders["cdels_2"]().__class__.__name__
         == "CDELS2Solver"
@@ -85,6 +90,7 @@ def test_cdels_solver_configs_exist_for_baseline_and_cdels_2() -> None:
 
     assert (solver_root / "cdels.yaml").is_file()
     assert (solver_root / "cdels_2.yaml").is_file()
+    assert (solver_root / "cdels_cvrp.yaml").is_file()
     assert not (solver_root / "scvrp_legacy_sa.yaml").exists()
 
 
@@ -97,4 +103,21 @@ def test_cdels_2_config_resolves_to_registered_solver() -> None:
 
     solver = solverBuilders()[config["solver_id"]]()
     assert config["solver_class"] == "CDELS2Solver"
+    assert solver.__class__.__name__ == config["solver_class"]
+
+
+def test_cdels_cvrp_config_resolves_to_registered_solver() -> None:
+    solver_root = REPO_ROOT / "configs/solvers"
+    config = SolverConfigLoader(solver_root).load(
+        "cdels_cvrp",
+        param_set_index=0,
+    )
+
+    solver = solverBuilders()[config["solver_id"]]()
+    assert config["solver_class"] == "CDELSCVRPSolver"
+    assert config["capabilities"] == {
+        "problem_types": ["cvrp"],
+        "encodings": ["cvrp_routes"],
+        "directions": ["min"],
+    }
     assert solver.__class__.__name__ == config["solver_class"]

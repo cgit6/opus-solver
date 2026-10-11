@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .builders import buildProblemRegistry, problemBuilders
 from .continuous import ContinuousProblem
+from .cvrp import CVRPEvaluation, CVRPProblem
 from .interface import Direction, Problem
 from .mkp import MKPProblem
 from .registry import ProblemRegistry, ProblemTypeSpec
@@ -21,6 +22,8 @@ __all__ = [
     "Problem",
     "ProblemModel",
     "ContinuousProblem",
+    "CVRPEvaluation",
+    "CVRPProblem",
     "MKPProblem",
     "SCVRPEvaluation",
     "SCVRPProblem",
