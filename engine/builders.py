@@ -18,6 +18,7 @@ from ..solver.MFO import MFOSolver
 from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
 from ..solver.SMA import SMASolver
 from ..solver.SOA import SOASolver
+from ..solver.SSA import SSASolver
 
 
 # 註冊新求解
@@ -31,6 +32,7 @@ def solverBuilders() -> dict[str, SolverBuilder]:
         "mfo": lambda: MFOSolver(),
         "sma": lambda: SMASolver(),
         "soa": lambda: SOASolver(),
+        "ssa": lambda: SSASolver(),
         "bsma": lambda: BSMASolver(),
         "bsca": lambda: BSCASolver(),
         "hsmsca": lambda: HSMSCASolver(),

@@ -77,6 +77,13 @@ _SOA_TRACED_FUNCTIONS = (
     "SortFitness",
     "SortPosition",
 )
+_SSA_TRACED_FUNCTIONS = (
+    "initialization",
+    "BorderCheck",
+    "CaculateFitness",
+    "SortFitness",
+    "SortPosition",
+)
 
 BOA_PROFILE_MEMBER_SUFFIXES = {
     "book_archive_boa_base_v1": "/chapter4/4.3.1/BOA.py",
@@ -96,6 +103,9 @@ SMA_PROFILE_MEMBER_SUFFIXES = {
 }
 SOA_PROFILE_MEMBER_SUFFIXES = {
     "book_archive_soa_v1": "/chapter6/6.3.1/SOA.py",
+}
+SSA_PROFILE_MEMBER_SUFFIXES = {
+    "book_archive_ssa_v1": "/chapter7/7.3.1/SSA.py",
 }
 
 
@@ -391,6 +401,48 @@ SOA_ENGINEERING_CASES: dict[str, BookSOAEngineeringCase] = {
 }
 
 
+@dataclass(frozen=True)
+class BookSSAEngineeringCase:
+    algorithm_member_suffix: str
+    main_member_suffix: str
+    population_size: int
+    dimension: int
+    max_iterations: int
+    lower_bounds: tuple[float, ...]
+    upper_bounds: tuple[float, ...]
+
+
+SSA_ENGINEERING_CASES: dict[str, BookSSAEngineeringCase] = {
+    "pressure_vessel": BookSSAEngineeringCase(
+        algorithm_member_suffix="/chapter7/7.3.2/SSA.py",
+        main_member_suffix="/chapter7/7.3.2/main.py",
+        population_size=50,
+        dimension=4,
+        max_iterations=500,
+        lower_bounds=(0.0, 0.0, 10.0, 10.0),
+        upper_bounds=(100.0, 100.0, 100.0, 100.0),
+    ),
+    "three_bar_truss": BookSSAEngineeringCase(
+        algorithm_member_suffix="/chapter7/7.3.3/SSA.py",
+        main_member_suffix="/chapter7/7.3.3/main.py",
+        population_size=30,
+        dimension=2,
+        max_iterations=100,
+        lower_bounds=(0.001, 0.001),
+        upper_bounds=(1.0, 1.0),
+    ),
+    "tension_compression_spring": BookSSAEngineeringCase(
+        algorithm_member_suffix="/chapter7/7.3.4/SSA.py",
+        main_member_suffix="/chapter7/7.3.4/main.py",
+        population_size=30,
+        dimension=3,
+        max_iterations=100,
+        lower_bounds=(0.05, 0.25, 2.0),
+        upper_bounds=(2.0, 1.3, 15.0),
+    ),
+}
+
+
 class _LegacyNumpyProxy:
     """Restore the old ``np.math`` alias while forwarding every other NumPy name."""
 
@@ -620,6 +672,21 @@ def _install_sma_trace(namespace: dict[str, Any], trace: list[dict[str, Any]]) -
 
 def _install_soa_trace(namespace: dict[str, Any], trace: list[dict[str, Any]]) -> None:
     for function_name in _SOA_TRACED_FUNCTIONS:
+        original = namespace[function_name]
+
+        def wrapped(*args: Any, _name: str = function_name, _original: Callable[..., Any] = original, **kwargs: Any) -> Any:
+            result = _original(*args, **kwargs)
+            if isinstance(result, tuple):
+                trace.append(_event(_name, **{f"result_{index}": item for index, item in enumerate(result)}))
+            else:
+                trace.append(_event(_name, result=result))
+            return result
+
+        namespace[function_name] = wrapped
+
+
+def _install_ssa_trace(namespace: dict[str, Any], trace: list[dict[str, Any]]) -> None:
+    for function_name in _SSA_TRACED_FUNCTIONS:
         original = namespace[function_name]
 
         def wrapped(*args: Any, _name: str = function_name, _original: Callable[..., Any] = original, **kwargs: Any) -> Any:
@@ -1111,6 +1178,79 @@ def run_soa_archive_oracle(
     return {
         "schema": "book-continuous-oracle.v1",
         "algorithm": "SOA",
+        "compatibility_profile": compatibility_profile,
+        "archive_member": archive_member,
+        "source_sha256": source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": population_size,
+            "dimension": dimension,
+            "max_iterations": max_iterations,
+            "lower_bound": float(lower_bound).hex(),
+            "upper_bound": float(upper_bound).hex(),
+            "objective_id": objective_id,
+        },
+        "trace": trace,
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def run_ssa_archive_oracle(
+    archive: Path,
+    *,
+    compatibility_profile: str,
+    seed: int,
+    population_size: int,
+    dimension: int,
+    max_iterations: int,
+    lower_bound: float,
+    upper_bound: float,
+    objective_id: str = "sphere",
+) -> dict[str, Any]:
+    """Execute the chapter 7 Sparrow Search Algorithm source."""
+
+    try:
+        member_suffix = SSA_PROFILE_MEMBER_SUFFIXES[compatibility_profile]
+    except KeyError as exc:
+        raise ValueError(f"unknown SSA compatibility profile: {compatibility_profile!r}") from exc
+    namespace, archive_member, source_sha256 = _load_algorithm_namespace(
+        archive,
+        "SSA",
+        member_suffix=member_suffix,
+    )
+    trace: list[dict[str, Any]] = []
+    _install_ssa_trace(namespace, trace)
+    raw_objective = get_continuous_objective(objective_id).evaluate
+
+    def traced_objective(candidate: np.ndarray) -> float:
+        value = raw_objective(candidate)
+        trace.append(_event("objective", candidate=candidate, result=value))
+        return value
+
+    lower_bounds = np.full(dimension, lower_bound, dtype=np.float64)
+    upper_bounds = np.full(dimension, upper_bound, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        best_score, best_position, curve = namespace["SSA"](
+            population_size,
+            dimension,
+            lower_bounds,
+            upper_bounds,
+            max_iterations,
+            traced_objective,
+        )
+    return {
+        "schema": "book-continuous-oracle.v1",
+        "algorithm": "SSA",
         "compatibility_profile": compatibility_profile,
         "archive_member": archive_member,
         "source_sha256": source_sha256,
@@ -1760,6 +1900,100 @@ def run_soa_engineering_archive_oracle(
         "algorithm": "SOA",
         "problem_id": problem_id,
         "compatibility_profile": "book_archive_soa_v1",
+        "algorithm_member": algorithm_member,
+        "algorithm_source_sha256": algorithm_source_sha256,
+        "objective_member": objective_member,
+        "objective_source_sha256": objective_source_sha256,
+        "parameters": {
+            "seed": seed,
+            "population_size": case.population_size,
+            "dimension": case.dimension,
+            "max_iterations": iteration_count,
+            "lower_bounds": [float(value).hex() for value in lower_bounds],
+            "upper_bounds": [float(value).hex() for value in upper_bounds],
+        },
+        "result": {
+            "best_score": _array_record(best_score),
+            "best_position": _array_record(best_position),
+            "curve": _array_record(curve),
+            "evaluation_count": evaluation_count,
+            "numpy_rng_state_sha256": _numpy_rng_state_sha256(),
+            "python_rng_state_sha256": _python_rng_state_sha256(),
+        },
+        "captured_stdout": stdout.getvalue(),
+    }
+
+
+def load_ssa_engineering_archive_objective(
+    archive: Path,
+    problem_id: str,
+) -> tuple[Callable[[np.ndarray], float], str, str]:
+    """Return the untouched SSA chapter engineering objective."""
+
+    try:
+        case = SSA_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown SSA engineering problem_id: {problem_id!r}") from exc
+    objective, member, source_sha256 = _load_archive_function(
+        archive,
+        member_suffix=case.main_member_suffix,
+        function_name="fun",
+    )
+    return objective, member, source_sha256
+
+
+def run_ssa_engineering_archive_oracle(
+    archive: Path,
+    *,
+    problem_id: str,
+    seed: int,
+    max_iterations: int | None = None,
+) -> dict[str, Any]:
+    """Run one complete SSA engineering example from chapter 7."""
+
+    try:
+        case = SSA_ENGINEERING_CASES[problem_id]
+    except KeyError as exc:
+        raise ValueError(f"unknown SSA engineering problem_id: {problem_id!r}") from exc
+    objective, objective_member, objective_source_sha256 = load_ssa_engineering_archive_objective(
+        archive,
+        problem_id,
+    )
+    namespace, algorithm_member, algorithm_source_sha256 = _load_algorithm_namespace(
+        archive,
+        "SSA",
+        member_suffix=case.algorithm_member_suffix,
+    )
+    iteration_count = case.max_iterations if max_iterations is None else int(max_iterations)
+    if iteration_count <= 0:
+        raise ValueError("max_iterations must be > 0")
+
+    evaluation_count = 0
+
+    def counted_objective(candidate: np.ndarray) -> float:
+        nonlocal evaluation_count
+        evaluation_count += 1
+        return objective(candidate)
+
+    lower_bounds = np.asarray(case.lower_bounds, dtype=np.float64)
+    upper_bounds = np.asarray(case.upper_bounds, dtype=np.float64)
+    np.random.seed(seed)
+    random.seed(seed)
+    stdout = io.StringIO()
+    with contextlib.redirect_stdout(stdout):
+        best_score, best_position, curve = namespace["SSA"](
+            case.population_size,
+            case.dimension,
+            lower_bounds,
+            upper_bounds,
+            iteration_count,
+            counted_objective,
+        )
+    return {
+        "schema": "book-continuous-engineering-oracle.v1",
+        "algorithm": "SSA",
+        "problem_id": problem_id,
+        "compatibility_profile": "book_archive_ssa_v1",
         "algorithm_member": algorithm_member,
         "algorithm_source_sha256": algorithm_source_sha256,
         "objective_member": objective_member,
