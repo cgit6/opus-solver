@@ -1,0 +1,44 @@
+{
+  "compatibility_profile": "book_archive_sma_v1",
+  "parameters": {
+    "dimension": 2,
+    "lower_bound": "-0x1.4000000000000p+3",
+    "max_iterations": 3,
+    "objective_id": "sphere",
+    "population_size": 8,
+    "seed": 12345,
+    "upper_bound": "0x1.4000000000000p+3"
+  },
+  "result": {
+    "best_position": {
+      "dtype": "<f8",
+      "float_hex": [
+        "-0x1.12a7eb9322c19p-13",
+        "0x1.35c4fe29f3273p-9"
+      ],
+      "sha256": "2ca6b1b9fef06f62d663664c745d56f1a805e20dd385a31d048c0a6f52396a9c",
+      "shape": [2]
+    },
+    "best_score": {
+      "dtype": "<f8",
+      "float_hex": ["0x1.77fbd109ddb95p-18"],
+      "sha256": "5055a232a59923f503cad2e1f7e1a77b48aba9f5c850f9f3f8a181a3a222401b",
+      "shape": [1]
+    },
+    "curve": {
+      "dtype": "<f8",
+      "float_hex": [
+        "0x1.202594807e5e1p-3",
+        "0x1.a9214b6814dcfp-9",
+        "0x1.77fbd109ddb95p-18"
+      ],
+      "sha256": "d7a967ebcc6451fb482ec11f588027bcb538dcbb516eb685f6ce7c9d6c73c133",
+      "shape": [3, 1]
+    },
+    "numpy_rng_state_sha256": "f9c5b2b09bb821146f40fc3f24d7680380b336f4fe8548bcd6af5f8e5485bce3",
+    "python_rng_state_sha256": "518a9972c9e489bf800b8b5a69a86344b2bebf25e4f86b3b959d369c6331739b"
+  },
+  "schema": "book-continuous-sma-golden.v1",
+  "source_sha256": "c23822a0a92abd1e67cbbea3f42429e69e01b7182ea775392be98bae755bec8d",
+  "trace_sha256": "11788257dc4ca05a02cd50ef10cca1d3514daeed6df2ffdea3eb7b94e78aba4b"
+}

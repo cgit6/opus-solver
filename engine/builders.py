@@ -16,6 +16,7 @@ from ..solver.GSA import GSASolver
 from ..solver.HSMSCA import HSMSCASolver
 from ..solver.MFO import MFOSolver
 from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
+from ..solver.SMA import SMASolver
 
 
 # 註冊新求解
@@ -27,6 +28,7 @@ def solverBuilders() -> dict[str, SolverBuilder]:
         "goa": lambda: GOASolver(),
         "gsa": lambda: GSASolver(),
         "mfo": lambda: MFOSolver(),
+        "sma": lambda: SMASolver(),
         "bsma": lambda: BSMASolver(),
         "bsca": lambda: BSCASolver(),
         "hsmsca": lambda: HSMSCASolver(),
