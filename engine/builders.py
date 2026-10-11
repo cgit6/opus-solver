@@ -19,6 +19,7 @@ from ..solver.registry import SolverBuilder, StubMaxIterationsSolver
 from ..solver.SMA import SMASolver
 from ..solver.SOA import SOASolver
 from ..solver.SSA import SSASolver
+from ..solver.TLBO import TLBOSolver
 from ..solver.WOA import WOASolver
 
 
@@ -34,6 +35,7 @@ def solverBuilders() -> dict[str, SolverBuilder]:
         "sma": lambda: SMASolver(),
         "soa": lambda: SOASolver(),
         "ssa": lambda: SSASolver(),
+        "tlbo": lambda: TLBOSolver(),
         "woa": lambda: WOASolver(),
         "bsma": lambda: BSMASolver(),
         "bsca": lambda: BSCASolver(),
