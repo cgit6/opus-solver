@@ -1,0 +1,13 @@
+solver_id: woa
+solver_class: WOASolver
+capabilities:
+  problem_types: [continuous]
+  encodings: [real_vector]
+  directions: [min]
+stop_condition:
+  type: max_iterations
+  max_iterations: 100
+params:
+  - compatibility_profile: book_archive_woa_v1
+    population_size: 50
+    constraint_penalty: 1.0e33
