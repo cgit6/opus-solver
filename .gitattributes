@@ -1,0 +1,2 @@
+# Conversation transcripts preserve source message bytes, including CRLF.
+note/codex_conversation_transcript_*.md -text
