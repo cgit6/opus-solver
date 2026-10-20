@@ -1,0 +1,1019 @@
+{
+  "archive": {
+    "path": "note/study/populationMetaHeuristic-20261018T082452Z-1-001.zip",
+    "sha256": "7b28b1e7355b65c0c376ca77f6332f2fac84e7ec6e900294e79fe2616501688d",
+    "bytes": 515563030
+  },
+  "organization": {
+    "projects": 6,
+    "fragments": 1,
+    "source_files": 134,
+    "source_bytes": 12233014,
+    "preserved_source_bytes": true,
+    "flattened_directory": "qbso-fs-master/qbso-fs-master -> qbso-fs-master"
+  },
+  "projects": [
+    {
+      "folder": "BPSOGWO-main",
+      "archive_prefix": "populationMetaHeuristic/BPSOGWO-main/",
+      "files": 16,
+      "bytes": 51183
+    },
+    {
+      "folder": "BPSOGWO-with-GA(Feature_select)",
+      "archive_prefix": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/",
+      "files": 46,
+      "bytes": 3847745
+    },
+    {
+      "folder": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master",
+      "archive_prefix": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/",
+      "files": 7,
+      "bytes": 46981
+    },
+    {
+      "folder": "modifiedACO-master",
+      "archive_prefix": "populationMetaHeuristic/modifiedACO-master/",
+      "files": 6,
+      "bytes": 26634
+    },
+    {
+      "folder": "qbso-fs-master",
+      "archive_prefix": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/",
+      "files": 51,
+      "bytes": 7978912
+    },
+    {
+      "folder": "SummerResearchDE-BPSO",
+      "archive_prefix": "populationMetaHeuristic/SummerResearchDE-BPSO/",
+      "files": 7,
+      "bytes": 259129
+    }
+  ],
+  "excluded_artifact_members": [
+    "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/__pycache__/BHPSOGWO.cpython-311.pyc",
+    "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/__pycache__/BHPSOGWO.cpython-37.pyc",
+    "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/__pycache__/HPSOGWO.cpython-37.pyc",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/.name",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/SummerResearchDE-BPSO.iml",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/encodings.xml",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/modules.xml",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/scopes/scope_settings.xml",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/vcs.xml",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/.idea/workspace.xml",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/src/__pycache__/DataManager.cpython-311.pyc",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/src/__pycache__/FileLoader.cpython-311.pyc",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/src/__pycache__/Population.cpython-311.pyc",
+    "populationMetaHeuristic/SummerResearchDE-BPSO/src/__pycache__/SplitTypes.cpython-311.pyc",
+    "populationMetaHeuristic/modifiedACO-master/__pycache__/feature_selection_ga.cpython-311.pyc",
+    "populationMetaHeuristic/modifiedACO-master/__pycache__/plotaco.cpython-311.pyc"
+  ],
+  "files": [
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/README.md",
+      "path": "BPSOGWO-main/README.md",
+      "size": 93,
+      "crc32": "a1e10a13",
+      "sha256": "414f67164add6df6dafa040b7e77ae214d63ff3b510104eb99044d272bd319c6"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/algorithm/BGWO.py",
+      "path": "BPSOGWO-main/algorithm/BGWO.py",
+      "size": 6800,
+      "crc32": "a3c37b1b",
+      "sha256": "1c997d154e2a90dc651e6e6b30d853fbd2ffedcd7c5c693eaed6424a05be53d9"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/algorithm/BGWO2.py",
+      "path": "BPSOGWO-main/algorithm/BGWO2.py",
+      "size": 5726,
+      "crc32": "f5eda327",
+      "sha256": "6fa427cd9cd03572f99d239881431f78d7e95bac7158384daa9de77ca1fa3699"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/algorithm/BPSO.py",
+      "path": "BPSOGWO-main/algorithm/BPSO.py",
+      "size": 4688,
+      "crc32": "7ac46ad9",
+      "sha256": "cf16d1c5f25bb71759b0c6289844cd34de1cffaba79ace20cb16a4355ccd9881"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/algorithm/BPSOGWO.py",
+      "path": "BPSOGWO-main/algorithm/BPSOGWO.py",
+      "size": 7322,
+      "crc32": "deb171e5",
+      "sha256": "1227cf810a19d53de3c3fb3b7deb7b0c9335899e6bb7e0505aad8b2350bc5765"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/breast_cancer.py",
+      "path": "BPSOGWO-main/breast_cancer.py",
+      "size": 2753,
+      "crc32": "5b56559b",
+      "sha256": "1f4fff8539f2eb14201762dd761c254b7274bad142fbcba7d163c42b17475ea3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/breast_cancer_wisconsin.py",
+      "path": "BPSOGWO-main/breast_cancer_wisconsin.py",
+      "size": 2773,
+      "crc32": "8cb0be10",
+      "sha256": "321f366daf50a3308deef506f249eaaa0ae3062a7d855d1b5182cc5aaf9ff1fc"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/connectionist_bench.py",
+      "path": "BPSOGWO-main/connectionist_bench.py",
+      "size": 2360,
+      "crc32": "7ec6f8a6",
+      "sha256": "49e790fe3dcd08dbf5cce305c92f63ab512fd2a9031838539c2f8d02d6c1bd8e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/ionosphere.py",
+      "path": "BPSOGWO-main/ionosphere.py",
+      "size": 2325,
+      "crc32": "f7719f17",
+      "sha256": "18f8bfd56afccc5c2b48c8090484f85b4b797d23917bc2caf5c3f0101ba8ba2d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/lung_cancer.py",
+      "path": "BPSOGWO-main/lung_cancer.py",
+      "size": 2406,
+      "crc32": "b8cd6771",
+      "sha256": "440be43bbee52f7728fe6615b20d3778ffa9456c8fa8217652aba22c9a356571"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/lymphography.py",
+      "path": "BPSOGWO-main/lymphography.py",
+      "size": 2386,
+      "crc32": "73cec21b",
+      "sha256": "a986a8a771bd56c3ed21b59ae4c651fdc6d958f18ee68474e2ce9606f351c0db"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/spect.py",
+      "path": "BPSOGWO-main/spect.py",
+      "size": 2193,
+      "crc32": "73793f75",
+      "sha256": "e03fb3d8488b3a845ad72f3f9842391b4443bff27696d65f883c624014c92272"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/statlog_heart.py",
+      "path": "BPSOGWO-main/statlog_heart.py",
+      "size": 2223,
+      "crc32": "806622d4",
+      "sha256": "65d6905ad07adb0089769b03ff4e74458fd39c78ddfb28a84facf50fab036d7d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/tic_tac_toe.py",
+      "path": "BPSOGWO-main/tic_tac_toe.py",
+      "size": 2381,
+      "crc32": "00c17e9f",
+      "sha256": "e3f36fdb77cba244c3bed286b0914a7e5c56dd4b8713151c0136360031573331"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/voting_records.py",
+      "path": "BPSOGWO-main/voting_records.py",
+      "size": 2540,
+      "crc32": "9a7fe8d7",
+      "sha256": "8b80716f5c850a19c76646b5670427c7bcaf6c33eab614e7f35c1490efb9f7a9"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-main/zoo.py",
+      "path": "BPSOGWO-main/zoo.py",
+      "size": 2214,
+      "crc32": "6b2025c6",
+      "sha256": "3024167df063e81ecd3c20369adebbdb3e239470940fe0486c487201ceac7795"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/BreastCancer.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/BreastCancer.csv",
+      "size": 14563,
+      "crc32": "2ec5baa4",
+      "sha256": "e48e091120dc694d76204ad1f094f3369977bc19a9b2e7ddd8110d97198bfef3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/BreastEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/BreastEW.csv",
+      "size": 119889,
+      "crc32": "3decbaaf",
+      "sha256": "1ffc63bdd1de445d2223d894f23dd0a924c60f577ec141cec657d007f4661373"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Congress.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Congress.csv",
+      "size": 18329,
+      "crc32": "44415811",
+      "sha256": "01b7836ef7d0fab7467bdd39dc7d8bb91af8c8761f9c6d71b31636a92801c944"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Exactly.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Exactly.csv",
+      "size": 28000,
+      "crc32": "51bd07aa",
+      "sha256": "b480dd7bc1f6163c390d9a6a18ef5353aba3e51f2843c885fe775286a370d88d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Exactly2.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Exactly2.csv",
+      "size": 28000,
+      "crc32": "196b9475",
+      "sha256": "d25a06f06e5e6208419d3adf32330b57ac6938b11984f50db817390bca85b3f3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/HeartEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/HeartEW.csv",
+      "size": 9759,
+      "crc32": "e863730c",
+      "sha256": "018b5717cca84982d96c5de78526b38c4a7e6d61cfa2d53e61feff92cd6e59ad"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Ionosphere.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Ionosphere.csv",
+      "size": 75329,
+      "crc32": "2a7bc1b1",
+      "sha256": "9c55e275ab3d288318b754010b4e9353c358f1273eb8739e76355a9f8cf741a4"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/KrVsKpEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/KrVsKpEW.csv",
+      "size": 236504,
+      "crc32": "18dd4ab1",
+      "sha256": "1becfbb94cb7aed7f23a813b52388a6d0bd638fc8b22354efe9f0f8dc690f094"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Lymphography.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Lymphography.csv",
+      "size": 5624,
+      "crc32": "54d088ae",
+      "sha256": "bea21bcdf35a8a365673fef24852999caa67e7c1f88f13d20c3fa5801c25e9b4"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/M-of-n.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/M-of-n.csv",
+      "size": 28000,
+      "crc32": "81e568ae",
+      "sha256": "466bac9caafd1c674909e7591e8fcfbfb9ece1dafb73d7c395cd154a9d776849"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/PenglungEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/PenglungEW.csv",
+      "size": 47596,
+      "crc32": "cfba0dfe",
+      "sha256": "7c121c98472c5e7f772c9a78fc1cf31b78773049580e60a90bb39faf49b263aa"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Sonar.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Sonar.csv",
+      "size": 85876,
+      "crc32": "596005d7",
+      "sha256": "12b176898783571bb5be4c96925904cd8e0deb622c27570a5d3c924e99722fca"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/SpectEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/SpectEW.csv",
+      "size": 12282,
+      "crc32": "ea55b2d0",
+      "sha256": "e0522ddcb6bcdb1630331c269adb5737a9d12caf7cfc037e146aca42e2628215"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Tic-tac-toe.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Tic-tac-toe.csv",
+      "size": 19160,
+      "crc32": "67f5e86f",
+      "sha256": "fada36fb2f0db47a16da1db7ec7d9aa4ab18047ff923f9b5676c1c3cf4ebb9c3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Vote.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Vote.csv",
+      "size": 10200,
+      "crc32": "e138ce4a",
+      "sha256": "0278ea9c92476f74d5be4fad69f3e646d2b2ea2c08dcc4da2f9fdba39c3dec1e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/WaveformEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/WaveformEW.csv",
+      "size": 1053755,
+      "crc32": "cd8875e6",
+      "sha256": "98911aee4ec829536a9884ae8f523a73da3557857a9a2d86ccb95a959c66d1f7"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Wine.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Wine.csv",
+      "size": 11121,
+      "crc32": "c4a0408d",
+      "sha256": "0506bb8cf16d1774b389925eb6e5f654919df300225b4c9b5b5b7f078e76a4c6"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/18_data/Zoo.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/18_data/Zoo.csv",
+      "size": 3434,
+      "crc32": "c888cc99",
+      "sha256": "39b870a4edc8fdc6ebd7ce107c7b26945463a3b83780bebbae8942ffd73733cb"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/BHPSOGWO.py",
+      "path": "BPSOGWO-with-GA(Feature_select)/BHPSOGWO.py",
+      "size": 8186,
+      "crc32": "a607a2ff",
+      "sha256": "fd12d9892a047154da00e4fc660f43f71b09cec148926d482c429c432163a19f"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/BreastEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/BreastEW.csv",
+      "size": 119889,
+      "crc32": "3decbaaf",
+      "sha256": "1ffc63bdd1de445d2223d894f23dd0a924c60f577ec141cec657d007f4661373"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Breastcancer.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Breastcancer.csv",
+      "size": 14563,
+      "crc32": "2ec5baa4",
+      "sha256": "e48e091120dc694d76204ad1f094f3369977bc19a9b2e7ddd8110d97198bfef3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Congress.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Congress.csv",
+      "size": 18329,
+      "crc32": "44415811",
+      "sha256": "01b7836ef7d0fab7467bdd39dc7d8bb91af8c8761f9c6d71b31636a92801c944"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Exactly.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Exactly.csv",
+      "size": 28000,
+      "crc32": "51bd07aa",
+      "sha256": "b480dd7bc1f6163c390d9a6a18ef5353aba3e51f2843c885fe775286a370d88d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Exactly2.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Exactly2.csv",
+      "size": 28000,
+      "crc32": "196b9475",
+      "sha256": "d25a06f06e5e6208419d3adf32330b57ac6938b11984f50db817390bca85b3f3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/HeartEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/HeartEW.csv",
+      "size": 9759,
+      "crc32": "e863730c",
+      "sha256": "018b5717cca84982d96c5de78526b38c4a7e6d61cfa2d53e61feff92cd6e59ad"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Ionosphere.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Ionosphere.csv",
+      "size": 75329,
+      "crc32": "2a7bc1b1",
+      "sha256": "9c55e275ab3d288318b754010b4e9353c358f1273eb8739e76355a9f8cf741a4"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/KrVsKpEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/KrVsKpEW.csv",
+      "size": 236504,
+      "crc32": "18dd4ab1",
+      "sha256": "1becfbb94cb7aed7f23a813b52388a6d0bd638fc8b22354efe9f0f8dc690f094"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/LICENSE",
+      "path": "BPSOGWO-with-GA(Feature_select)/LICENSE",
+      "size": 1070,
+      "crc32": "0881c6eb",
+      "sha256": "bbf70553984bce49159ef3d24d0f14feec42c7f347ed8bc6528768abc1db6fee"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Lymphography.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Lymphography.csv",
+      "size": 5624,
+      "crc32": "54d088ae",
+      "sha256": "bea21bcdf35a8a365673fef24852999caa67e7c1f88f13d20c3fa5801c25e9b4"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/M-of-n.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/M-of-n.csv",
+      "size": 28000,
+      "crc32": "81e568ae",
+      "sha256": "466bac9caafd1c674909e7591e8fcfbfb9ece1dafb73d7c395cd154a9d776849"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/PenglungEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/PenglungEW.csv",
+      "size": 47596,
+      "crc32": "cfba0dfe",
+      "sha256": "7c121c98472c5e7f772c9a78fc1cf31b78773049580e60a90bb39faf49b263aa"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Performance_5050.xlsx",
+      "path": "BPSOGWO-with-GA(Feature_select)/Performance_5050.xlsx",
+      "size": 72083,
+      "crc32": "65aac27c",
+      "sha256": "52662bc76bc9a5d7c58b3dcaa44c9240b117dd6fcde5f31362eacc65f726f3d8"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Performance_9010.xlsx",
+      "path": "BPSOGWO-with-GA(Feature_select)/Performance_9010.xlsx",
+      "size": 71750,
+      "crc32": "fa294a2d",
+      "sha256": "c716797710690ad1f27d7708dc4d6df98bf6ddc15c88b378a730d26b030ad5f6"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/README.md",
+      "path": "BPSOGWO-with-GA(Feature_select)/README.md",
+      "size": 985,
+      "crc32": "3a9787f5",
+      "sha256": "590d6231bd113d81ac7cb47a804009f5a7e564b35b0c2d472ba670e86f71011b"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Result_5050.xlsx",
+      "path": "BPSOGWO-with-GA(Feature_select)/Result_5050.xlsx",
+      "size": 15162,
+      "crc32": "259b83d0",
+      "sha256": "92826eddc4e61d221e72d09ba6f1618c15eaf9b434c4074b439211a8e38c26a7"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Result_9010.xlsx",
+      "path": "BPSOGWO-with-GA(Feature_select)/Result_9010.xlsx",
+      "size": 15973,
+      "crc32": "2acfd414",
+      "sha256": "faf987df725f4cd65d8fa9933885ed226f000265e24eb64a9dbd212e1e0acf91"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Sonar.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Sonar.csv",
+      "size": 85876,
+      "crc32": "596005d7",
+      "sha256": "12b176898783571bb5be4c96925904cd8e0deb622c27570a5d3c924e99722fca"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/SpectEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/SpectEW.csv",
+      "size": 12282,
+      "crc32": "ea55b2d0",
+      "sha256": "e0522ddcb6bcdb1630331c269adb5737a9d12caf7cfc037e146aca42e2628215"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Tic-tac-toe.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Tic-tac-toe.csv",
+      "size": 19160,
+      "crc32": "67f5e86f",
+      "sha256": "fada36fb2f0db47a16da1db7ec7d9aa4ab18047ff923f9b5676c1c3cf4ebb9c3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Vote.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Vote.csv",
+      "size": 10200,
+      "crc32": "e138ce4a",
+      "sha256": "0278ea9c92476f74d5be4fad69f3e646d2b2ea2c08dcc4da2f9fdba39c3dec1e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/WaveformEW.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/WaveformEW.csv",
+      "size": 1053755,
+      "crc32": "cd8875e6",
+      "sha256": "98911aee4ec829536a9884ae8f523a73da3557857a9a2d86ccb95a959c66d1f7"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Wine.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Wine.csv",
+      "size": 11121,
+      "crc32": "c4a0408d",
+      "sha256": "0506bb8cf16d1774b389925eb6e5f654919df300225b4c9b5b5b7f078e76a4c6"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/Zoo.csv",
+      "path": "BPSOGWO-with-GA(Feature_select)/Zoo.csv",
+      "size": 3434,
+      "crc32": "c888cc99",
+      "sha256": "39b870a4edc8fdc6ebd7ce107c7b26945463a3b83780bebbae8942ffd73733cb"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/bGWO.py",
+      "path": "BPSOGWO-with-GA(Feature_select)/bGWO.py",
+      "size": 4890,
+      "crc32": "9c2fe9ba",
+      "sha256": "f05beb46645d9048a2fedc3a5bb6abf86680e60f2fac02dc14347f5a7053f9b1"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/main_5050.py",
+      "path": "BPSOGWO-with-GA(Feature_select)/main_5050.py",
+      "size": 23665,
+      "crc32": "87552749",
+      "sha256": "5cd11ba0b6c737f2a5024e776b602d0bd63247fe2fee8290f1f842c1f992007d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/BPSOGWO-with-GA(Feature_select)/main_9010.py",
+      "path": "BPSOGWO-with-GA(Feature_select)/main_9010.py",
+      "size": 19139,
+      "crc32": "56c67591",
+      "sha256": "7b55f629d73c1ccdca314e470ba4e0975f1b3823b8561327ebd2fccc939f6c8d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/BPSO.m",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/BPSO.m",
+      "size": 2675,
+      "crc32": "f3445f48",
+      "sha256": "7c7c8587f2fcd0e253ef6d52b7ccff06423fb8173386eacffe58a58f7991f3d4"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/ClassificationFunction.m",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/ClassificationFunction.m",
+      "size": 1098,
+      "crc32": "fa17d1c9",
+      "sha256": "1a7736b41d0ede29d8d23e5f409ce5548b172d9ce9c0f77c17147f3ba9a032fe"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/README.md",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/README.md",
+      "size": 1249,
+      "crc32": "3db0c19d",
+      "sha256": "a8b444a39d3ccaa71ed59c5e4337d015b9dfd1d2e278a9bc7159adb390780e53"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/func_plot.m",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/func_plot.m",
+      "size": 3539,
+      "crc32": "4988cdc7",
+      "sha256": "87ef8527ce8bc9a4c42b46916ec97e00190339baafb54bb052a6d26a8d1d0489"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/initialization.m",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/initialization.m",
+      "size": 565,
+      "crc32": "3be68b30",
+      "sha256": "dc16eb8a035abd0643c7a828a49950ff574f9b22c6322ce0ef040d1dda1bfb33"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/main.m",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/main.m",
+      "size": 789,
+      "crc32": "3aed3da1",
+      "sha256": "ca58e07f82bff7862e7b52f65dd7a5d9cda5664b3a4de00c91539be045e9c805"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/wine.xlsx",
+      "path": "Metaheuristic-Binary-Optimizer-for-Feature-Selection---BPSO-master/wine.xlsx",
+      "size": 37066,
+      "crc32": "6775c617",
+      "sha256": "238d47be93298e125f2303d6d9748c5adfe71c86eb3c9071ff588dba7d260d76"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/00-91-Drugs-All-In-One-File.csv",
+      "path": "SummerResearchDE-BPSO/src/00-91-Drugs-All-In-One-File.csv",
+      "size": 255163,
+      "crc32": "821390d6",
+      "sha256": "d1ddf5258fb0521742ac0f5624b5b1a7e06d1f0c4815e8addfca8aca3a4a19b9"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/DataManager.py",
+      "path": "SummerResearchDE-BPSO/src/DataManager.py",
+      "size": 2166,
+      "crc32": "cb785ded",
+      "sha256": "0f73894b9852551e8cbac4956f09069e96095dde466470d49749d71339aacfb2"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/FileLoader.py",
+      "path": "SummerResearchDE-BPSO/src/FileLoader.py",
+      "size": 205,
+      "crc32": "16c2f7f6",
+      "sha256": "c25b53fb7d2878a1dd73632c2237d50a175188f03fcb66a6665c0a3a63bebf60"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/Main.py",
+      "path": "SummerResearchDE-BPSO/src/Main.py",
+      "size": 579,
+      "crc32": "9add14ea",
+      "sha256": "aeccd63e9d6eabf7f2b6136a78341c4dbcc4c4d59bfafc4a60bba165362c263c"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/Population.py",
+      "path": "SummerResearchDE-BPSO/src/Population.py",
+      "size": 629,
+      "crc32": "2c059378",
+      "sha256": "e3c2a7cc7d8913d712318ce890b3277405f5a896a509bcbe6cf0fec27a8b2374"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/SplitTypes.py",
+      "path": "SummerResearchDE-BPSO/src/SplitTypes.py",
+      "size": 387,
+      "crc32": "5f80f12c",
+      "sha256": "6e6867b1fde48e8045cfbeddca95727a3821f7d05f128a393ece2bdf6f48f335"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/SummerResearchDE-BPSO/src/__init__.py",
+      "path": "SummerResearchDE-BPSO/src/__init__.py",
+      "size": 0,
+      "crc32": "00000000",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/DE/mmasdefs.py",
+      "path": "fragments/DE/mmasdefs.py",
+      "size": 22430,
+      "crc32": "6716861c",
+      "sha256": "2e583c29ecfef0b688a343e7a11d0d5513aa036f387f5a9e3590a059d0c1a329"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/modifiedACO-master/README.md",
+      "path": "modifiedACO-master/README.md",
+      "size": 100,
+      "crc32": "1f21757b",
+      "sha256": "51fd2935a777dc10d5a4daefb9961de7e84a2b45a862576451030c6db244ef3a"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/modifiedACO-master/feature_selection_ga.py",
+      "path": "modifiedACO-master/feature_selection_ga.py",
+      "size": 5478,
+      "crc32": "dcf5ed9d",
+      "sha256": "0ef69aa7f1ed11fd1f88976676ecee5cb3dc7be1ef348f108c7112b39ead1d17"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/modifiedACO-master/fitness_function.py",
+      "path": "modifiedACO-master/fitness_function.py",
+      "size": 986,
+      "crc32": "28a66252",
+      "sha256": "4d3f1fccfc9c7ba6f140210d2e5971ff5779204c4dfa69c7b9782a59f9153555"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/modifiedACO-master/heuristics.py",
+      "path": "modifiedACO-master/heuristics.py",
+      "size": 1591,
+      "crc32": "6d7d72d5",
+      "sha256": "4d906f5178c691481fbfa77ddb13af1645dfd25df6a67a803f0a50693a4d2e2c"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/modifiedACO-master/mbaco.py",
+      "path": "modifiedACO-master/mbaco.py",
+      "size": 15655,
+      "crc32": "298e411a",
+      "sha256": "4ffe34e4eaf874c7b610d86f80151097fbe63225e267d320d975d2ec21d65fd1"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/modifiedACO-master/plotaco.py",
+      "path": "modifiedACO-master/plotaco.py",
+      "size": 2824,
+      "crc32": "d76c614f",
+      "sha256": "585d4e9a2400c988614aa012f0b7bf9c7dfba49658a90740bdeff77d80c2a791"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/.github/ISSUE_TEMPLATE/bug_report.md",
+      "path": "qbso-fs-master/.github/ISSUE_TEMPLATE/bug_report.md",
+      "size": 834,
+      "crc32": "49bc6bc0",
+      "sha256": "0c8d64f29fb4536513653bf8c97da30f3340e2041b91c8952db1515d6b23a7b3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/.github/ISSUE_TEMPLATE/feature_request.md",
+      "path": "qbso-fs-master/.github/ISSUE_TEMPLATE/feature_request.md",
+      "size": 595,
+      "crc32": "b42da428",
+      "sha256": "1f48c52f209a971b8e7eae4120144d28fcf8ee38a7778a7b4d8cf1ab356617d2"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/.gitignore",
+      "path": "qbso-fs-master/.gitignore",
+      "size": 1270,
+      "crc32": "fd10f784",
+      "sha256": "1414d34766da41dba805b835d19816c0201149fbc9bbf53a157c07e8d12e8505"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/CODE_OF_CONDUCT.md",
+      "path": "qbso-fs-master/CODE_OF_CONDUCT.md",
+      "size": 3349,
+      "crc32": "feef4d78",
+      "sha256": "8f227ff13770d72d9701762b1d6b9ae71698247436a0a6310e57678aaabcc280"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/CONTRIBUTING.md",
+      "path": "qbso-fs-master/CONTRIBUTING.md",
+      "size": 248,
+      "crc32": "34ddea3e",
+      "sha256": "cf7ddb885878dc3cf25552105860913d864efe1629b22c81d4adaeb501408423"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/LICENSE",
+      "path": "qbso-fs-master/LICENSE",
+      "size": 1075,
+      "crc32": "7bb431cb",
+      "sha256": "b414c07f53a296d1683668259d0c55b4dd19a6d6217224d04bba65139b4461db"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/README.md",
+      "path": "qbso-fs-master/README.md",
+      "size": 1371,
+      "crc32": "b25ac03b",
+      "sha256": "63041ced986bffedfe21849e902055f193799f143aefdde16a456ada0583f9f6"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/bee.py",
+      "path": "qbso-fs-master/bee.py",
+      "size": 4861,
+      "crc32": "b9810928",
+      "sha256": "246b073e248589fd2376e536ebe81018fb827f38b39329b4ef62f94cf1efc346"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Arrhythmia.csv",
+      "path": "qbso-fs-master/datasets/Arrhythmia.csv",
+      "size": 551828,
+      "crc32": "c2e00892",
+      "sha256": "52670c4e229767f9c25c8bb48b44743a19e9120359a69c45d1f6a8cf20840308"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/BreastEW.csv",
+      "path": "qbso-fs-master/datasets/BreastEW.csv",
+      "size": 146626,
+      "crc32": "5a13571d",
+      "sha256": "5aea237586226ae3abf7d4cd989ed0f1e4dddd8d638f867859a98d26c99c638a"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Breastcancer.csv",
+      "path": "qbso-fs-master/datasets/Breastcancer.csv",
+      "size": 19889,
+      "crc32": "901863e6",
+      "sha256": "cbdaa7973f7a0415770ed3e4ee282ec74c90151d97167389b6296ff362598705"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Congress.csv",
+      "path": "qbso-fs-master/datasets/Congress.csv",
+      "size": 21710,
+      "crc32": "46dc291e",
+      "sha256": "10f9f9f8e3eaeed0280ee1d3cc182b595029835dd9cc7117f7fcbd0d1327b8dd"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Diabets.csv",
+      "path": "qbso-fs-master/datasets/Diabets.csv",
+      "size": 23278,
+      "crc32": "7e04ce0a",
+      "sha256": "6bfe5d0f379d17a0e0819b996407e3c09bf80febd4287f2ed212190dfff154af"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/German.csv",
+      "path": "qbso-fs-master/datasets/German.csv",
+      "size": 52792,
+      "crc32": "fee3bda0",
+      "sha256": "37762e91db9b3ffe5b4ce5a9721927bae403594a5b860f27f11c3609498998df"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Glass.csv",
+      "path": "qbso-fs-master/datasets/Glass.csv",
+      "size": 11012,
+      "crc32": "4fe16aba",
+      "sha256": "874970215ddefc715151e8e67bf504f497f7603b67878fc9fefc3b91baa1ee3c"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Heart-C.csv",
+      "path": "qbso-fs-master/datasets/Heart-C.csv",
+      "size": 19165,
+      "crc32": "219337bf",
+      "sha256": "3e0f4f710c6fce3b375d4dc268ff184187d6fc4bd44eb5e66620a30bc25d6642"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Heart-StatLog.csv",
+      "path": "qbso-fs-master/datasets/Heart-StatLog.csv",
+      "size": 11228,
+      "crc32": "08771aa3",
+      "sha256": "5d8bcc95811adf9cf43ca9bc552875cbac59c7a90b12020a6d5a043662cbbcd0"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Hepatitis.csv",
+      "path": "qbso-fs-master/datasets/Hepatitis.csv",
+      "size": 6829,
+      "crc32": "e020d1b3",
+      "sha256": "5265efc37a50564d9a51cd9ef352fba9e5ad1badf0f325690472784d29f49aa8"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Hillvalley.csv",
+      "path": "qbso-fs-master/datasets/Hillvalley.csv",
+      "size": 421982,
+      "crc32": "99d1e4e0",
+      "sha256": "63634e71ee77dccd7110e549cac2eb23351e03bdf0a6f3ca73c5022e33e18928"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Ionosphere.csv",
+      "path": "qbso-fs-master/datasets/Ionosphere.csv",
+      "size": 76466,
+      "crc32": "52ead104",
+      "sha256": "fd6dd7864b55d56dac0a1e6e24af9ccc35bf2555ac79af8ab9f3d1daa065ab83"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Iris.csv",
+      "path": "qbso-fs-master/datasets/Iris.csv",
+      "size": 4549,
+      "crc32": "391b4e54",
+      "sha256": "f5d0c11e5c78a69a20dbb80baf2b24703f59a6687595752abb397d23732647c5"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Lung-Cancer.csv",
+      "path": "qbso-fs-master/datasets/Lung-Cancer.csv",
+      "size": 3648,
+      "crc32": "57ad2fb6",
+      "sha256": "258f2a77bd2c959833f4735a5f23913ad129921fc2d2441662c671aea4ef3b04"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Lung.csv",
+      "path": "qbso-fs-master/datasets/Lung.csv",
+      "size": 102582,
+      "crc32": "37524554",
+      "sha256": "08b02bb07324e6b2c1d45e419fe03adb97b0ee41f7c63c6396388e4624acb72e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Lymphography.csv",
+      "path": "qbso-fs-master/datasets/Lymphography.csv",
+      "size": 5624,
+      "crc32": "a7f8412f",
+      "sha256": "e17d22d071341af08a505a10eb558afc835e302b02c8b381c1fa3dd305731935"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Movementlibras.csv",
+      "path": "qbso-fs-master/datasets/Movementlibras.csv",
+      "size": 256302,
+      "crc32": "521d1d6e",
+      "sha256": "87cb7177e2e1832401a7f7410dbc254fd2f3655d44b04584d8bb0abfd119fd01"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Sonar.csv",
+      "path": "qbso-fs-master/datasets/Sonar.csv",
+      "size": 87775,
+      "crc32": "cc4f1f82",
+      "sha256": "3079c09b5d2789a0f96aff82c28e5164fafe2495c5f8da96c6c256c1bd25763f"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Spect.csv",
+      "path": "qbso-fs-master/datasets/Spect.csv",
+      "size": 12282,
+      "crc32": "1083f665",
+      "sha256": "4b144f7fbfbb80201247ed48d8f3b017981dd73eecb059f7d43f055f97f27cc0"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Vehicule.csv",
+      "path": "qbso-fs-master/datasets/Vehicule.csv",
+      "size": 55099,
+      "crc32": "ab827c78",
+      "sha256": "945cbe3b1b07bb1ff774c5dbaf7e4d0647efdcbc7de7eee88b1ed0d8e189650d"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Vowel.csv",
+      "path": "qbso-fs-master/datasets/Vowel.csv",
+      "size": 59327,
+      "crc32": "9380e984",
+      "sha256": "af18c3d246f45001967574d2f62def6ee036634e1313eed83e9b3bfc6903c131"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/WDBC.csv",
+      "path": "qbso-fs-master/datasets/WDBC.csv",
+      "size": 150841,
+      "crc32": "a1864adc",
+      "sha256": "0856dc7f8570adaf67d2e205d6a2506b8fca798eabaaced927a4fa3c2c000286"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/WaveformEW.csv",
+      "path": "qbso-fs-master/datasets/WaveformEW.csv",
+      "size": 1077986,
+      "crc32": "ea8432c5",
+      "sha256": "b95842ef008156c06fbdebd9b6b1c45b058dfd6592d41f21c73b8c164b9579c6"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Wine.csv",
+      "path": "qbso-fs-master/datasets/Wine.csv",
+      "size": 11394,
+      "crc32": "c65bec9d",
+      "sha256": "c8c6cc14b47d65d80075a90947c77e076b21fedc9af0866a30c0553b30b6b4d0"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/datasets/Zoo.csv",
+      "path": "qbso-fs-master/datasets/Zoo.csv",
+      "size": 3433,
+      "crc32": "50f7691e",
+      "sha256": "ecf369a5b67774c6318986d2b02481fe13b4844afdfe78228b278b11f0290287"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/fs_data.py",
+      "path": "qbso-fs-master/fs_data.py",
+      "size": 3569,
+      "crc32": "00356db4",
+      "sha256": "d1e8759003f7fd92513870236af57b8ef6f57248a2d0133b6825bc2d9ecb7a90"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/fs_problem.py",
+      "path": "qbso-fs-master/fs_problem.py",
+      "size": 2083,
+      "crc32": "51292de6",
+      "sha256": "074621c4b944b9719c72aa53dc3234944dff03e928b33747dfbd417c1d808bf3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/main.py",
+      "path": "qbso-fs-master/main.py",
+      "size": 693,
+      "crc32": "be747ada",
+      "sha256": "b5df14b24a3d17a3c33f63236fb87c4aee0725bea58325bff04dd4d77b6296e3"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/media/bee.ico",
+      "path": "qbso-fs-master/media/bee.ico",
+      "size": 106386,
+      "crc32": "ba337e36",
+      "sha256": "781dcd74b33708e0190a50a17726f6261c7d84570ee2ed8c19a4819b9653596e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/media/comparaison.png",
+      "path": "qbso-fs-master/media/comparaison.png",
+      "size": 75260,
+      "crc32": "03503a06",
+      "sha256": "01f0364d5ebdf6e13150725bf07d34decd418727e214fe4e3674228b2310e41c"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/0-bso_fs_rl.ipynb",
+      "path": "qbso-fs-master/notebooks/0-bso_fs_rl.ipynb",
+      "size": 28649,
+      "crc32": "514f1f73",
+      "sha256": "b81727adac01c3008b17615d1cf6a43ab4ff60ab79ca88ee3465b1af4ff0a052"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/1-bso_fs_timeoptim.ipynb",
+      "path": "qbso-fs-master/notebooks/1-bso_fs_timeoptim.ipynb",
+      "size": 37195,
+      "crc32": "67a0db9f",
+      "sha256": "5253e17b35d1bdb67a22dd6697e544ec0f67375467f04934708d8b35f76cd873"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/2-bso_fs_optmized.ipynb",
+      "path": "qbso-fs-master/notebooks/2-bso_fs_optmized.ipynb",
+      "size": 32325,
+      "crc32": "593c71a2",
+      "sha256": "fa1b83100dcb8a0a15608f4b721f34d85f4046a22102a842f68516bea4b9aae0"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/3-bso_fs_action_reduce.ipynb",
+      "path": "qbso-fs-master/notebooks/3-bso_fs_action_reduce.ipynb",
+      "size": 41686,
+      "crc32": "cb13889f",
+      "sha256": "815ba8d23206b9b23b46b128d1e3f3fc967aa1aa9cefc09471eb1f071017685e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/4-bso-fs_param_tests.ipynb",
+      "path": "qbso-fs-master/notebooks/4-bso-fs_param_tests.ipynb",
+      "size": 34083,
+      "crc32": "5e76dd10",
+      "sha256": "ad38513356490d3ad2e78a1af77efb6123c81a22ca565521fb952afafeec87e2"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/5-bso-fs_qtab_for_each_bee.ipynb",
+      "path": "qbso-fs-master/notebooks/5-bso-fs_qtab_for_each_bee.ipynb",
+      "size": 35823,
+      "crc32": "11ec48f5",
+      "sha256": "82d568b45b5f745a8f3b0ab2a4e98c1ad2fbcb9a29a22fa8726e874ed7f6dcba"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/6-bso-fs_hybridation.ipynb",
+      "path": "qbso-fs-master/notebooks/6-bso-fs_hybridation.ipynb",
+      "size": 51578,
+      "crc32": "ee1e9b4b",
+      "sha256": "28bb40dd1ece1deca4cc077fb01fd85153c3dce6a77485aa47c633c56501cc94"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/notebooks/plot_and_profiling.ipynb",
+      "path": "qbso-fs-master/notebooks/plot_and_profiling.ipynb",
+      "size": 4971,
+      "crc32": "5d95e291",
+      "sha256": "49fe8e9a9e32997c9d24cf6bf6f8492482eedbd834543b9b16f753493a926891"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/requirements.txt",
+      "path": "qbso-fs-master/requirements.txt",
+      "size": 60,
+      "crc32": "9ce7fe7b",
+      "sha256": "b182f9910c8a9fc022c9114ef6f0eb01ff55839fd5540fd40777370fdaac3d4f"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/rl.py",
+      "path": "qbso-fs-master/rl.py",
+      "size": 4161,
+      "crc32": "0b2ec766",
+      "sha256": "9b2a98820b4ade368900262ead99c5c503bef624e92365ddcbacc468a91e9dea"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/solution.py",
+      "path": "qbso-fs-master/solution.py",
+      "size": 3104,
+      "crc32": "5c72d2b2",
+      "sha256": "52bd436956026d613642d6635ded24b54f75214723775091f0cffa0d9fffb25e"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/swarm.py",
+      "path": "qbso-fs-master/swarm.py",
+      "size": 8036,
+      "crc32": "7499a0c4",
+      "sha256": "9e54d7081fadb69abcc72477397f19cc20858b965d06c0e2eb350006e8dcdb95"
+    },
+    {
+      "archive_member": "populationMetaHeuristic/qbso-fs-master/qbso-fs-master/thesis/engineering_grad_thesis.pdf",
+      "path": "qbso-fs-master/thesis/engineering_grad_thesis.pdf",
+      "size": 4302000,
+      "crc32": "4911819b",
+      "sha256": "618ee17ac2e207b3fad4cba5499c4378f5408de3b6aaaf1dce4fee2f9290951a"
+    }
+  ],
+  "verification": {
+    "extracted_files_match_archive": 134,
+    "source_content_check": "ZIP member CRC and SHA-256",
+    "python_syntax_files_checked": 38,
+    "python_syntax_errors": [],
+    "notebook_json_files_checked": 8,
+    "training_or_search_executed": false
+  }
+}

@@ -1,0 +1,53 @@
+import numpy as np
+import pandas as pd
+from sklearn import preprocessing
+
+from algorithm import BGWO
+from algorithm import BGWO2
+from algorithm import BPSOGWO
+from algorithm import BPSO
+
+#导入数据
+data = pd.read_table("data/Breast Cancer Wisconsin/breast-cancer-wisconsin.data", header=None, delimiter=",") #(699,11)
+data.columns=["Sample code number","Clump Thickness","Uniformity of Cell Size","Uniformity of Cell Shape","Marginal Adhesion",
+              "Single Epithelial Cell Size","Bare Nuclei","Bland Chromatin","Normal Nucleoli","Mitoses","Class"]
+data.head()
+data = data.drop(columns=["Sample code number"])
+
+#处理缺失数据
+drop = []
+for i in range(len(data)):
+    for c in data.columns:
+        if data[c][i] == '?':
+            drop.append(i)
+data = data.drop(drop) #683
+
+data = np.array(data, 'float')
+label = data[:,9]
+feature = data[:,:9]
+feature = preprocessing.scale(feature) #标准化
+n_feature = feature.shape[1]
+
+subset = []
+for i in range(n_feature):
+    subset.append(i)
+print("原数据集error：", 1-BGWO.acc_score(subset, fold=2, neighbors=5, feature=feature, label=label))
+
+fitness = np.zeros((10,23))
+error = np.zeros((10,23))
+num = np.zeros((10,23))
+
+fitness[0], error[0], num[0] = BGWO.cal(feature, label, times=20, iter=70, a=0, trans='s', initialization=0, b=0.01) #BGWO
+fitness[1], error[1], num[1] = BGWO.cal(feature, label, times=20, iter=70, a=1, trans='s', initialization=0, b=0.01) #ABGWO
+fitness[2], error[2], num[2] = BGWO.cal(feature, label, times=20, iter=70, a=1, trans='v1a', initialization=0, b=0.01) #ABGWO_V1a
+fitness[3], error[3], num[3] = BGWO.cal(feature, label, times=20, iter=70, a=1, trans='v2a', initialization=0, b=0.01) #ABGWO_V2a
+fitness[4], error[4], num[4] = BGWO2.cal(feature, label, times=20, iter=70, initialization=0, b=0.01) #BGWO2
+fitness[5], error[5], num[5] = BPSO.cal(feature, label, times=20, iter=70, initialization=0, b=0.01) #BPSO
+fitness[6], error[6], num[6] = BPSOGWO.cal(feature, label, times=20, iter=70, a=0, trans='s', initialization=0, b=0.01) #PSO_BGWO
+fitness[7], error[7], num[7] = BPSOGWO.cal(feature, label, times=20, iter=70, a=1, trans='s', initialization=0, b=0.01) #PSO_ABGWO
+fitness[8], error[8], num[8] = BPSOGWO.cal(feature, label, times=20, iter=70, a=1, trans='v1a', initialization=0, b=0.01) #PSO_ABGWO_V1a
+fitness[9], error[9], num[9] = BPSOGWO.cal(feature, label, times=20, iter=70, a=1, trans='v2a', initialization=0, b=0.01) #PSO_ABGWO_V2a
+
+np.savetxt('result/breast_cancer_wisconsin_fitness.csv', fitness.T, fmt='%.4f', delimiter=',')
+np.savetxt('result/breast_cancer_wisconsin_error.csv', error.T, fmt='%.4f', delimiter=',')
+np.savetxt('result/breast_cancer_wisconsin_num.csv', num.T, fmt='%.4f', delimiter=',')
