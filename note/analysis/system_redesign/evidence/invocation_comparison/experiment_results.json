@@ -1,0 +1,2419 @@
+{
+  "correctness": [
+    {
+      "mode": "binding",
+      "checks": 9,
+      "passed": true,
+      "startup_s": 0.06251535681076348
+    },
+    {
+      "mode": "ipc_copy",
+      "checks": 9,
+      "passed": true,
+      "startup_s": 0.05763950617983937
+    },
+    {
+      "mode": "ipc_shared",
+      "checks": 9,
+      "passed": true,
+      "startup_s": 0.05680984701029956
+    }
+  ],
+  "environment": {
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "platform": "linux",
+    "cpu_count": 12,
+    "root": "/tmp/cpp-invocation-comparison-rDTu52",
+    "pss_sample_interval_s": 0.005,
+    "save_policy": "binary, synchronous Python-only writes plus fsync; no compression",
+    "expected_size_known_before_solve": true,
+    "formal_optimizer": false
+  },
+  "benchmarks": [
+    {
+      "event": "result",
+      "task": "m4_r0",
+      "ok": true,
+      "mode": "binding",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m4_r0.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.001585502875968814,
+      "compute_s": 0.001554266,
+      "boundary_s": 3.1236875968814e-05,
+      "save_s": 0.008204570971429348,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        },
+        "native": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        }
+      },
+      "worker_s": 0.010233670007437468,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "summary_message_bytes": 515,
+      "repeat": 0,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "samples": 4,
+      "baseline_pss_kib": 12406,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21384,
+        "pss_kib": 11960
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r0",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m4_r0.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.004083235049620271,
+      "compute_s": 0.001557742,
+      "boundary_s": 0.0025254930496202707,
+      "save_s": 0.007921807933598757,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 25188,
+          "pss_kib": 15908
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.012440899154171348,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25188,
+        "pss_kib": 15908
+      },
+      "summary_message_bytes": 517,
+      "repeat": 0,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 32608,
+        "pss_kib": 20311
+      },
+      "samples": 5,
+      "baseline_pss_kib": 12295,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21656,
+        "pss_kib": 12232
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r0",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m4_r0.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0031048760283738375,
+      "compute_s": 0.002722705,
+      "boundary_s": 0.0003821710283738373,
+      "save_s": 0.007578335935249925,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21340,
+          "pss_kib": 11998
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.011596908094361424,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12002
+      },
+      "summary_message_bytes": 521,
+      "repeat": 0,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 28760,
+        "pss_kib": 16401
+      },
+      "samples": 5,
+      "baseline_pss_kib": 12301,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21660,
+        "pss_kib": 12236
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r1",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m4_r1.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0018308160360902548,
+      "compute_s": 0.000535488,
+      "boundary_s": 0.0012953280360902548,
+      "save_s": 0.007410142105072737,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 25188,
+          "pss_kib": 15908
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.009664219105616212,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25192,
+        "pss_kib": 15912
+      },
+      "summary_message_bytes": 517,
+      "repeat": 1,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 32612,
+        "pss_kib": 20315
+      },
+      "samples": 4,
+      "baseline_pss_kib": 20311,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21660,
+        "pss_kib": 12236
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r1",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m4_r1.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0024921069853007793,
+      "compute_s": 0.002182387,
+      "boundary_s": 0.0003097199853007793,
+      "save_s": 0.006864157039672136,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12002
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.010150013957172632,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12002
+      },
+      "summary_message_bytes": 521,
+      "repeat": 1,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 28760,
+        "pss_kib": 16401
+      },
+      "samples": 4,
+      "baseline_pss_kib": 12305,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21676,
+        "pss_kib": 12252
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r1",
+      "ok": true,
+      "mode": "binding",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m4_r1.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0005685000214725733,
+      "compute_s": 0.000540449,
+      "boundary_s": 2.805102147257325e-05,
+      "save_s": 0.007232269970700145,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        },
+        "native": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        }
+      },
+      "worker_s": 0.008418414043262601,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "summary_message_bytes": 515,
+      "repeat": 1,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "samples": 4,
+      "baseline_pss_kib": 16326,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21680,
+        "pss_kib": 12256
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r2",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m4_r2.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0023597648832947016,
+      "compute_s": 0.002125532,
+      "boundary_s": 0.00023423288329470172,
+      "save_s": 0.0071072319988161325,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12002
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.010142395040020347,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12002
+      },
+      "summary_message_bytes": 521,
+      "repeat": 2,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 28760,
+        "pss_kib": 16401
+      },
+      "samples": 4,
+      "baseline_pss_kib": 12305,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21684,
+        "pss_kib": 12260
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r2",
+      "ok": true,
+      "mode": "binding",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m4_r2.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0005691819824278355,
+      "compute_s": 0.000537535,
+      "boundary_s": 3.1646982427835455e-05,
+      "save_s": 0.007559965131804347,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        },
+        "native": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        }
+      },
+      "worker_s": 0.008701096987351775,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "summary_message_bytes": 515,
+      "repeat": 2,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "samples": 4,
+      "baseline_pss_kib": 16326,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21692,
+        "pss_kib": 12268
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r2",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m4_r2.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0017563579604029655,
+      "compute_s": 0.000589907,
+      "boundary_s": 0.0011664509604029656,
+      "save_s": 0.006904626032337546,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 25192,
+          "pss_kib": 15912
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.009071653010323644,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25192,
+        "pss_kib": 15912
+      },
+      "summary_message_bytes": 517,
+      "repeat": 2,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 32612,
+        "pss_kib": 20315
+      },
+      "samples": 4,
+      "baseline_pss_kib": 20315,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21696,
+        "pss_kib": 12272
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r3",
+      "ok": true,
+      "mode": "binding",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m4_r3.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0005815199110656977,
+      "compute_s": 0.000544583,
+      "boundary_s": 3.693691106569771e-05,
+      "save_s": 0.00730970804579556,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        },
+        "native": {
+          "rss_kib": 27120,
+          "pss_kib": 16326
+        }
+      },
+      "worker_s": 0.008487591985613108,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "summary_message_bytes": 515,
+      "repeat": 3,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 27120,
+        "pss_kib": 16326
+      },
+      "samples": 4,
+      "baseline_pss_kib": 16326,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21704,
+        "pss_kib": 12280
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r3",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m4_r3.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0018185970839112997,
+      "compute_s": 0.000537429,
+      "boundary_s": 0.0012811680839112998,
+      "save_s": 0.007339904084801674,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 25192,
+          "pss_kib": 15913
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.009657950140535831,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25192,
+        "pss_kib": 15914
+      },
+      "summary_message_bytes": 517,
+      "repeat": 3,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 32612,
+        "pss_kib": 20317
+      },
+      "samples": 4,
+      "baseline_pss_kib": 20317,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21712,
+        "pss_kib": 12289
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r3",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m4_r3.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0032351131085306406,
+      "compute_s": 0.002904883,
+      "boundary_s": 0.00033023010853064057,
+      "save_s": 0.00729605695232749,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12003
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.012312655104324222,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12003
+      },
+      "summary_message_bytes": 521,
+      "repeat": 3,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 28760,
+        "pss_kib": 16402
+      },
+      "samples": 5,
+      "baseline_pss_kib": 12306,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21720,
+        "pss_kib": 12297
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r4",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m4_r4.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0030529529321938753,
+      "compute_s": 0.000567056,
+      "boundary_s": 0.0024858969321938755,
+      "save_s": 0.007920993957668543,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 25192,
+          "pss_kib": 15914
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.012067120056599379,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25192,
+        "pss_kib": 15914
+      },
+      "summary_message_bytes": 517,
+      "repeat": 4,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 32612,
+        "pss_kib": 20317
+      },
+      "samples": 5,
+      "baseline_pss_kib": 20317,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21724,
+        "pss_kib": 12301
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r4",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m4_r4.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.002220938913524151,
+      "compute_s": 0.002011882,
+      "boundary_s": 0.00020905691352415086,
+      "save_s": 0.00759667600505054,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12003
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.010530861793085933,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12003
+      },
+      "summary_message_bytes": 521,
+      "repeat": 4,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 28760,
+        "pss_kib": 16402
+      },
+      "samples": 5,
+      "baseline_pss_kib": 12306,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21724,
+        "pss_kib": 12301
+      }
+    },
+    {
+      "event": "result",
+      "task": "m4_r4",
+      "ok": true,
+      "mode": "binding",
+      "size": 4194304,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m4_r4.bin",
+      "rng": 10553348953083478017,
+      "checksum": 8015905150725521408,
+      "solve_and_handoff_s": 0.0006218410562723875,
+      "compute_s": 0.000581974,
+      "boundary_s": 3.986705627238754e-05,
+      "save_s": 0.006747795967385173,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 27120,
+          "pss_kib": 16327
+        },
+        "native": {
+          "rss_kib": 27120,
+          "pss_kib": 16327
+        }
+      },
+      "worker_s": 0.007898470154032111,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16327
+      },
+      "summary_message_bytes": 515,
+      "repeat": 4,
+      "mib": 4,
+      "peak_sampled": {
+        "rss_kib": 27120,
+        "pss_kib": 16327
+      },
+      "samples": 4,
+      "baseline_pss_kib": 16327,
+      "sha256": "0a92ad29cbfa12d6752efa8dd04d3ca3ff3fd59e2d27512755f81aba2afcabab",
+      "controller_memory": {
+        "rss_kib": 21724,
+        "pss_kib": 12301
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r0",
+      "ok": true,
+      "mode": "binding",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m64_r0.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.03404902387410402,
+      "compute_s": 0.033940556,
+      "boundary_s": 0.00010846787410402625,
+      "save_s": 0.14408607804216444,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        },
+        "native": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        }
+      },
+      "worker_s": 0.18227094784379005,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16327
+      },
+      "summary_message_bytes": 525,
+      "repeat": 0,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 92660,
+        "pss_kib": 81867
+      },
+      "samples": 32,
+      "baseline_pss_kib": 16327,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21744,
+        "pss_kib": 12321
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r0",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m64_r0.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.0819550920277834,
+      "compute_s": 0.025870167,
+      "boundary_s": 0.056084925027783394,
+      "save_s": 0.10711949807591736,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 90736,
+          "pss_kib": 81458
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.19277688907459378,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15918
+      },
+      "summary_message_bytes": 523,
+      "repeat": 0,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 163696,
+        "pss_kib": 151401
+      },
+      "samples": 35,
+      "baseline_pss_kib": 20321,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21748,
+        "pss_kib": 12325
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r0",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m64_r0.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.03340943809598684,
+      "compute_s": 0.032337203,
+      "boundary_s": 0.0010722350959868412,
+      "save_s": 0.23579235980287194,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12003
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.2759100191760808,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12003
+      },
+      "summary_message_bytes": 523,
+      "repeat": 0,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 90200,
+        "pss_kib": 77842
+      },
+      "samples": 50,
+      "baseline_pss_kib": 12306,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21756,
+        "pss_kib": 12333
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r1",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m64_r1.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.10765087814070284,
+      "compute_s": 0.030879369,
+      "boundary_s": 0.07677150914070284,
+      "save_s": 0.11893500504083931,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 90736,
+          "pss_kib": 81458
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.2292980740312487,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15918
+      },
+      "summary_message_bytes": 523,
+      "repeat": 1,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 163696,
+        "pss_kib": 151401
+      },
+      "samples": 38,
+      "baseline_pss_kib": 20321,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21760,
+        "pss_kib": 12337
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r1",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m64_r1.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.03630140097811818,
+      "compute_s": 0.035031,
+      "boundary_s": 0.0012704009781181816,
+      "save_s": 0.42467764881439507,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12003
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.467736889841035,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21344,
+        "pss_kib": 12003
+      },
+      "summary_message_bytes": 523,
+      "repeat": 1,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 90200,
+        "pss_kib": 77842
+      },
+      "samples": 79,
+      "baseline_pss_kib": 12306,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21760,
+        "pss_kib": 12337
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r1",
+      "ok": true,
+      "mode": "binding",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m64_r1.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.02603716403245926,
+      "compute_s": 0.025978244,
+      "boundary_s": 5.8920032459258004e-05,
+      "save_s": 0.23551583592779934,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        },
+        "native": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        }
+      },
+      "worker_s": 0.2651590281166136,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16327
+      },
+      "summary_message_bytes": 525,
+      "repeat": 1,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 92660,
+        "pss_kib": 81867
+      },
+      "samples": 48,
+      "baseline_pss_kib": 16327,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21764,
+        "pss_kib": 12341
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r2",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m64_r2.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.03685866016894579,
+      "compute_s": 0.035590921,
+      "boundary_s": 0.0012677391689457918,
+      "save_s": 0.4613096700049937,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21344,
+          "pss_kib": 12001
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.505075239110738,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12007
+      },
+      "summary_message_bytes": 523,
+      "repeat": 2,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 90204,
+        "pss_kib": 77846
+      },
+      "samples": 88,
+      "baseline_pss_kib": 12306,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21772,
+        "pss_kib": 12349
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r2",
+      "ok": true,
+      "mode": "binding",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m64_r2.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.028836297802627087,
+      "compute_s": 0.028796528,
+      "boundary_s": 3.976980262708832e-05,
+      "save_s": 0.22556482697837055,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        },
+        "native": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        }
+      },
+      "worker_s": 0.257104012882337,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16327
+      },
+      "summary_message_bytes": 525,
+      "repeat": 2,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 92660,
+        "pss_kib": 81867
+      },
+      "samples": 46,
+      "baseline_pss_kib": 16327,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21784,
+        "pss_kib": 12361
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r2",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m64_r2.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.08439690014347434,
+      "compute_s": 0.026783155,
+      "boundary_s": 0.05761374514347434,
+      "save_s": 0.11802025907672942,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 90736,
+          "pss_kib": 81458
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.20518470602110028,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15918
+      },
+      "summary_message_bytes": 523,
+      "repeat": 2,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 163696,
+        "pss_kib": 151401
+      },
+      "samples": 35,
+      "baseline_pss_kib": 20321,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21788,
+        "pss_kib": 12365
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r3",
+      "ok": true,
+      "mode": "binding",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m64_r3.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.03067522286437452,
+      "compute_s": 0.030619278,
+      "boundary_s": 5.594486437451862e-05,
+      "save_s": 0.14300711010582745,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        },
+        "native": {
+          "rss_kib": 92660,
+          "pss_kib": 81867
+        }
+      },
+      "worker_s": 0.17689868994057178,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27120,
+        "pss_kib": 16327
+      },
+      "summary_message_bytes": 525,
+      "repeat": 3,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 92660,
+        "pss_kib": 81867
+      },
+      "samples": 30,
+      "baseline_pss_kib": 16327,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21796,
+        "pss_kib": 12373
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r3",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m64_r3.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.10410848911851645,
+      "compute_s": 0.029258687,
+      "boundary_s": 0.07484980211851644,
+      "save_s": 0.11977560701780021,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 90736,
+          "pss_kib": 81458
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.22694913111627102,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15918
+      },
+      "summary_message_bytes": 523,
+      "repeat": 3,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 163696,
+        "pss_kib": 151401
+      },
+      "samples": 37,
+      "baseline_pss_kib": 20321,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21800,
+        "pss_kib": 12377
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r3",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m64_r3.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.037725602043792605,
+      "compute_s": 0.036386778,
+      "boundary_s": 0.0013388240437926038,
+      "save_s": 0.2331591418478638,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12007
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.2802010050509125,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12007
+      },
+      "summary_message_bytes": 523,
+      "repeat": 3,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 90204,
+        "pss_kib": 77846
+      },
+      "samples": 48,
+      "baseline_pss_kib": 12310,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21808,
+        "pss_kib": 12385
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r4",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m64_r4.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.08658969192765653,
+      "compute_s": 0.029251365,
+      "boundary_s": 0.05733832692765653,
+      "save_s": 0.4268611310981214,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 90736,
+          "pss_kib": 81458
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 0.5158953838981688,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15918
+      },
+      "summary_message_bytes": 523,
+      "repeat": 4,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 163696,
+        "pss_kib": 151401
+      },
+      "samples": 88,
+      "baseline_pss_kib": 20321,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21808,
+        "pss_kib": 12385
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r4",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m64_r4.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.03384626004844904,
+      "compute_s": 0.032610497,
+      "boundary_s": 0.0012357630484490373,
+      "save_s": 0.43370691989548504,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12007
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 0.474905424984172,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12007
+      },
+      "summary_message_bytes": 523,
+      "repeat": 4,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 90204,
+        "pss_kib": 77846
+      },
+      "samples": 83,
+      "baseline_pss_kib": 12310,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21812,
+        "pss_kib": 12389
+      }
+    },
+    {
+      "event": "result",
+      "task": "m64_r4",
+      "ok": true,
+      "mode": "binding",
+      "size": 67108864,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m64_r4.bin",
+      "rng": 16030817235354255361,
+      "checksum": 435699471834152960,
+      "solve_and_handoff_s": 0.028900690143927932,
+      "compute_s": 0.028785525,
+      "boundary_s": 0.00011516514392793248,
+      "save_s": 0.47118908702395856,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 92664,
+          "pss_kib": 81871
+        },
+        "native": {
+          "rss_kib": 92664,
+          "pss_kib": 81871
+        }
+      },
+      "worker_s": 0.5038530130404979,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27124,
+        "pss_kib": 16331
+      },
+      "summary_message_bytes": 525,
+      "repeat": 4,
+      "mib": 64,
+      "peak_sampled": {
+        "rss_kib": 92664,
+        "pss_kib": 81871
+      },
+      "samples": 85,
+      "baseline_pss_kib": 16327,
+      "sha256": "173da6f5bbb89babbd10dc4845325c8ffcefe86fbf0f3688281684d7764b45e9",
+      "controller_memory": {
+        "rss_kib": 21820,
+        "pss_kib": 12395
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r0",
+      "ok": true,
+      "mode": "binding",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m256_r0.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.12009244901128113,
+      "compute_s": 0.120021782,
+      "boundary_s": 7.066701128113917e-05,
+      "save_s": 0.7101583888288587,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 289272,
+          "pss_kib": 278479
+        },
+        "native": {
+          "rss_kib": 289272,
+          "pss_kib": 278479
+        }
+      },
+      "worker_s": 0.8439559051766992,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27124,
+        "pss_kib": 16331
+      },
+      "summary_message_bytes": 527,
+      "repeat": 0,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 289272,
+        "pss_kib": 278479
+      },
+      "samples": 124,
+      "baseline_pss_kib": 16331,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21828,
+        "pss_kib": 12405
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r0",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m256_r0.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.42811712995171547,
+      "compute_s": 0.138136239,
+      "boundary_s": 0.2899808909517155,
+      "save_s": 0.6692487869877368,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 287344,
+          "pss_kib": 278066
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 1.1071429229341447,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15918
+      },
+      "summary_message_bytes": 525,
+      "repeat": 0,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 556912,
+        "pss_kib": 544617
+      },
+      "samples": 154,
+      "baseline_pss_kib": 20321,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21828,
+        "pss_kib": 12404
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r0",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m256_r0.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.14589240588247776,
+      "compute_s": 0.141705473,
+      "boundary_s": 0.004186932882477762,
+      "save_s": 1.6150972170289606,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12006
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 1.8096188618801534,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12006
+      },
+      "summary_message_bytes": 525,
+      "repeat": 0,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 286812,
+        "pss_kib": 274453
+      },
+      "samples": 241,
+      "baseline_pss_kib": 12309,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21832,
+        "pss_kib": 12408
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r1",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m256_r1.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.4738252218812704,
+      "compute_s": 0.14429577,
+      "boundary_s": 0.3295294518812704,
+      "save_s": 1.3739654410164803,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 287344,
+          "pss_kib": 278065
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 1.8629489219747484,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15917
+      },
+      "summary_message_bytes": 525,
+      "repeat": 1,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 556912,
+        "pss_kib": 544616
+      },
+      "samples": 217,
+      "baseline_pss_kib": 20320,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21836,
+        "pss_kib": 12412
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r1",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m256_r1.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.19127715285867453,
+      "compute_s": 0.184883041,
+      "boundary_s": 0.006394111858674528,
+      "save_s": 1.5060011139139533,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12006
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 1.7418526250403374,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12005
+      },
+      "summary_message_bytes": 525,
+      "repeat": 1,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 286812,
+        "pss_kib": 274453
+      },
+      "samples": 207,
+      "baseline_pss_kib": 12309,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21836,
+        "pss_kib": 12411
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r1",
+      "ok": true,
+      "mode": "binding",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m256_r1.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.1635395218618214,
+      "compute_s": 0.163483235,
+      "boundary_s": 5.628686182140852e-05,
+      "save_s": 0.7593863201327622,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 289272,
+          "pss_kib": 278477
+        },
+        "native": {
+          "rss_kib": 289272,
+          "pss_kib": 278477
+        }
+      },
+      "worker_s": 0.9438753509894013,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27124,
+        "pss_kib": 16330
+      },
+      "summary_message_bytes": 527,
+      "repeat": 1,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 289272,
+        "pss_kib": 278478
+      },
+      "samples": 103,
+      "baseline_pss_kib": 16329,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21844,
+        "pss_kib": 12420
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r2",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m256_r2.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.3027679140213877,
+      "compute_s": 0.28971212,
+      "boundary_s": 0.013055794021387679,
+      "save_s": 1.0070720398798585,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12006
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 1.3633638531900942,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12006
+      },
+      "summary_message_bytes": 525,
+      "repeat": 2,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 286812,
+        "pss_kib": 274453
+      },
+      "samples": 146,
+      "baseline_pss_kib": 12309,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21852,
+        "pss_kib": 12428
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r2",
+      "ok": true,
+      "mode": "binding",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m256_r2.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.20471331104636192,
+      "compute_s": 0.204655401,
+      "boundary_s": 5.791004636193642e-05,
+      "save_s": 2.4341095900163054,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 289272,
+          "pss_kib": 278477
+        },
+        "native": {
+          "rss_kib": 289272,
+          "pss_kib": 278477
+        }
+      },
+      "worker_s": 2.664445403032005,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27124,
+        "pss_kib": 16330
+      },
+      "summary_message_bytes": 527,
+      "repeat": 2,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 289272,
+        "pss_kib": 278478
+      },
+      "samples": 294,
+      "baseline_pss_kib": 16330,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21852,
+        "pss_kib": 12428
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r2",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m256_r2.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.5548988510854542,
+      "compute_s": 0.1367502,
+      "boundary_s": 0.41814865108545424,
+      "save_s": 1.4573321798816323,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 287344,
+          "pss_kib": 278065
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 2.0278744131792337,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15917
+      },
+      "summary_message_bytes": 525,
+      "repeat": 2,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 556912,
+        "pss_kib": 544616
+      },
+      "samples": 228,
+      "baseline_pss_kib": 20320,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21856,
+        "pss_kib": 12432
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r3",
+      "ok": true,
+      "mode": "binding",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m256_r3.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.19925508019514382,
+      "compute_s": 0.199178481,
+      "boundary_s": 7.659919514382829e-05,
+      "save_s": 1.0918730918783695,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 289272,
+          "pss_kib": 278478
+        },
+        "native": {
+          "rss_kib": 289272,
+          "pss_kib": 278478
+        }
+      },
+      "worker_s": 1.3176568301860243,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27124,
+        "pss_kib": 16330
+      },
+      "summary_message_bytes": 527,
+      "repeat": 3,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 289272,
+        "pss_kib": 278478
+      },
+      "samples": 150,
+      "baseline_pss_kib": 16330,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21856,
+        "pss_kib": 12431
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r3",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m256_r3.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.4986519869416952,
+      "compute_s": 0.155493639,
+      "boundary_s": 0.3431583479416952,
+      "save_s": 1.7073354909662157,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 287344,
+          "pss_kib": 278062
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4402
+        }
+      },
+      "worker_s": 2.2264296929351985,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15916
+      },
+      "summary_message_bytes": 525,
+      "repeat": 3,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 556912,
+        "pss_kib": 544612
+      },
+      "samples": 251,
+      "baseline_pss_kib": 20316,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21864,
+        "pss_kib": 12439
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r3",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m256_r3.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.2598500419408083,
+      "compute_s": 0.253395932,
+      "boundary_s": 0.006454109940808306,
+      "save_s": 1.257728500990197,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12005
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 302
+        }
+      },
+      "worker_s": 1.563482993049547,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12006
+      },
+      "summary_message_bytes": 525,
+      "repeat": 3,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 286812,
+        "pss_kib": 274453
+      },
+      "samples": 182,
+      "baseline_pss_kib": 12307,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21864,
+        "pss_kib": 12440
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r4",
+      "ok": true,
+      "mode": "ipc_copy",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_copy_m256_r4.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.578558434965089,
+      "compute_s": 0.172564684,
+      "boundary_s": 0.40599375096508894,
+      "save_s": 2.2792628949973732,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 287344,
+          "pss_kib": 278065
+        },
+        "native": {
+          "rss_kib": 7420,
+          "pss_kib": 4403
+        }
+      },
+      "worker_s": 2.874121356057003,
+      "live_bytes": 0,
+      "pid": 3685813,
+      "native_pid": 3685815,
+      "after_release_mem": {
+        "rss_kib": 25196,
+        "pss_kib": 15917
+      },
+      "summary_message_bytes": 525,
+      "repeat": 4,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 556912,
+        "pss_kib": 544616
+      },
+      "samples": 310,
+      "baseline_pss_kib": 20320,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21868,
+        "pss_kib": 12444
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r4",
+      "ok": true,
+      "mode": "ipc_shared",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_ipc_shared_m256_r4.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.20181586197577417,
+      "compute_s": 0.193410984,
+      "boundary_s": 0.008404877975774161,
+      "save_s": 1.509642159100622,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 21348,
+          "pss_kib": 12006
+        },
+        "native": {
+          "rss_kib": 3320,
+          "pss_kib": 303
+        }
+      },
+      "worker_s": 1.766696095932275,
+      "live_bytes": 0,
+      "pid": 3685818,
+      "native_pid": 3685819,
+      "after_release_mem": {
+        "rss_kib": 21348,
+        "pss_kib": 12006
+      },
+      "summary_message_bytes": 525,
+      "repeat": 4,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 286812,
+        "pss_kib": 274453
+      },
+      "samples": 203,
+      "baseline_pss_kib": 12309,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21876,
+        "pss_kib": 12452
+      }
+    },
+    {
+      "event": "result",
+      "task": "m256_r4",
+      "ok": true,
+      "mode": "binding",
+      "size": 268435456,
+      "seed": 1,
+      "path": "/tmp/cpp-invocation-comparison-rDTu52/results/bench_binding_m256_r4.bin",
+      "rng": 4317154739797098497,
+      "checksum": 17952093848763105280,
+      "solve_and_handoff_s": 0.17229197989217937,
+      "compute_s": 0.172194792,
+      "boundary_s": 9.718789217935675e-05,
+      "save_s": 2.143898790003732,
+      "before_save_mem": {
+        "python": {
+          "rss_kib": 289272,
+          "pss_kib": 278478
+        },
+        "native": {
+          "rss_kib": 289272,
+          "pss_kib": 278478
+        }
+      },
+      "worker_s": 2.3333984229248017,
+      "live_bytes": 0,
+      "pid": 3685812,
+      "native_pid": 3685812,
+      "after_release_mem": {
+        "rss_kib": 27124,
+        "pss_kib": 16328
+      },
+      "summary_message_bytes": 527,
+      "repeat": 4,
+      "mib": 256,
+      "peak_sampled": {
+        "rss_kib": 289272,
+        "pss_kib": 278478
+      },
+      "samples": 262,
+      "baseline_pss_kib": 16330,
+      "sha256": "4a9d328ccc2e44eb811240406d4d37adf738ec59053d70ac95ce3469359ec450",
+      "controller_memory": {
+        "rss_kib": 21880,
+        "pss_kib": 12454
+      }
+    }
+  ],
+  "faults": [
+    {
+      "mode": "binding",
+      "concurrent": 8,
+      "unaffected": 7,
+      "new_tasks": 8,
+      "failed_result": {
+        "ok": false,
+        "task": "overlap",
+        "stage": "worker_exit",
+        "exitcode": -6,
+        "input": {
+          "op": "run",
+          "task": "overlap",
+          "size": 16777216,
+          "seed": 17,
+          "action": 2,
+          "path": "/tmp/cpp-invocation-comparison-rDTu52/results/fault_binding_3_overlap.bin",
+          "sync": true
+        },
+        "pid": 3688184
+      },
+      "passed": true
+    },
+    {
+      "mode": "ipc_copy",
+      "concurrent": 8,
+      "unaffected": 7,
+      "new_tasks": 8,
+      "failed_result": {
+        "event": "result",
+        "task": "overlap",
+        "ok": false,
+        "stage": "solve",
+        "error_type": "RuntimeError",
+        "error": "native process exited: -6",
+        "path": "/tmp/cpp-invocation-comparison-rDTu52/results/fault_ipc_copy_3_overlap.bin",
+        "input": {
+          "op": "run",
+          "task": "overlap",
+          "size": 16777216,
+          "seed": 17,
+          "action": 2,
+          "path": "/tmp/cpp-invocation-comparison-rDTu52/results/fault_ipc_copy_3_overlap.bin",
+          "sync": true
+        },
+        "native_exit": -6,
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 226, in worker\n    payload = backend.solve(command[\"size\"], command[\"seed\"], command.get(\"action\", 0))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 155, in solve\n    status, nbytes, compute_ns, rng, checksum = self.read_header()\n                                                ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 133, in read_header\n    self.receive(memoryview(header))\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 128, in receive\n    raise RuntimeError(f\"native process exited: {self.native.returncode}\")\nRuntimeError: native process exited: -6\n",
+        "worker_s": 0.07083217892795801,
+        "live_bytes": 0,
+        "pid": 3688258,
+        "native_pid": 3688279,
+        "after_release_mem": {
+          "rss_kib": 21552,
+          "pss_kib": 11532
+        },
+        "summary_message_bytes": 1282
+      },
+      "passed": true
+    },
+    {
+      "mode": "ipc_shared",
+      "concurrent": 8,
+      "unaffected": 7,
+      "new_tasks": 8,
+      "failed_result": {
+        "event": "result",
+        "task": "overlap",
+        "ok": false,
+        "stage": "solve",
+        "error_type": "RuntimeError",
+        "error": "native process exited: -6",
+        "path": "/tmp/cpp-invocation-comparison-rDTu52/results/fault_ipc_shared_3_overlap.bin",
+        "input": {
+          "op": "run",
+          "task": "overlap",
+          "size": 16777216,
+          "seed": 17,
+          "action": 2,
+          "path": "/tmp/cpp-invocation-comparison-rDTu52/results/fault_ipc_shared_3_overlap.bin",
+          "sync": true
+        },
+        "native_exit": -6,
+        "traceback": "Traceback (most recent call last):\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 226, in worker\n    payload = backend.solve(command[\"size\"], command[\"seed\"], command.get(\"action\", 0))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 155, in solve\n    status, nbytes, compute_ns, rng, checksum = self.read_header()\n                                                ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 133, in read_header\n    self.receive(memoryview(header))\n  File \"/tmp/cpp-invocation-comparison-rDTu52/experiment.py\", line 128, in receive\n    raise RuntimeError(f\"native process exited: {self.native.returncode}\")\nRuntimeError: native process exited: -6\n",
+        "worker_s": 0.05407422920688987,
+        "live_bytes": 0,
+        "pid": 3688319,
+        "native_pid": 3688343,
+        "after_release_mem": {
+          "rss_kib": 21524,
+          "pss_kib": 11537
+        },
+        "summary_message_bytes": 1284
+      },
+      "passed": true
+    }
+  ],
+  "parallel": [
+    {
+      "mode": "binding",
+      "repeat": 0,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 2.807145340135321,
+      "peak_sampled": {
+        "rss_kib": 701264,
+        "pss_kib": 607854
+      },
+      "baseline_pss_kib": 91682,
+      "compute_sum_s": 2.29697835,
+      "save_sum_s": 10.259701546048746,
+      "controller_memory": {
+        "rss_kib": 22000,
+        "pss_kib": 11918
+      },
+      "max_summary_message_bytes": 530
+    },
+    {
+      "mode": "ipc_copy",
+      "repeat": 0,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 3.877400075085461,
+      "peak_sampled": {
+        "rss_kib": 1106120,
+        "pss_kib": 1002514
+      },
+      "baseline_pss_kib": 92410,
+      "compute_sum_s": 10.471597296,
+      "save_sum_s": 4.406880630878732,
+      "controller_memory": {
+        "rss_kib": 22024,
+        "pss_kib": 11965
+      },
+      "max_summary_message_bytes": 528
+    },
+    {
+      "mode": "ipc_shared",
+      "repeat": 0,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 3.7363635499496013,
+      "peak_sampled": {
+        "rss_kib": 655216,
+        "pss_kib": 551223
+      },
+      "baseline_pss_kib": 92407,
+      "compute_sum_s": 1.861800015,
+      "save_sum_s": 21.613926626276225,
+      "controller_memory": {
+        "rss_kib": 22040,
+        "pss_kib": 11975
+      },
+      "max_summary_message_bytes": 528
+    },
+    {
+      "mode": "ipc_copy",
+      "repeat": 1,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 2.6609505941160023,
+      "peak_sampled": {
+        "rss_kib": 1092168,
+        "pss_kib": 988328
+      },
+      "baseline_pss_kib": 92395,
+      "compute_sum_s": 1.181905598,
+      "save_sum_s": 8.322302799904719,
+      "controller_memory": {
+        "rss_kib": 22048,
+        "pss_kib": 11986
+      },
+      "max_summary_message_bytes": 528
+    },
+    {
+      "mode": "ipc_shared",
+      "repeat": 1,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 2.3693709690123796,
+      "peak_sampled": {
+        "rss_kib": 655028,
+        "pss_kib": 551193
+      },
+      "baseline_pss_kib": 92413,
+      "compute_sum_s": 0.944531225,
+      "save_sum_s": 12.94096824596636,
+      "controller_memory": {
+        "rss_kib": 22056,
+        "pss_kib": 11992
+      },
+      "max_summary_message_bytes": 528
+    },
+    {
+      "mode": "binding",
+      "repeat": 1,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 0.769561525201425,
+      "peak_sampled": {
+        "rss_kib": 709056,
+        "pss_kib": 616013
+      },
+      "baseline_pss_kib": 91660,
+      "compute_sum_s": 0.811914802,
+      "save_sum_s": 4.998155611334369,
+      "controller_memory": {
+        "rss_kib": 22060,
+        "pss_kib": 12002
+      },
+      "max_summary_message_bytes": 530
+    },
+    {
+      "mode": "ipc_shared",
+      "repeat": 2,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 2.2107188547961414,
+      "peak_sampled": {
+        "rss_kib": 649816,
+        "pss_kib": 545861
+      },
+      "baseline_pss_kib": 92426,
+      "compute_sum_s": 1.108992146,
+      "save_sum_s": 11.201767796650529,
+      "controller_memory": {
+        "rss_kib": 22068,
+        "pss_kib": 11980
+      },
+      "max_summary_message_bytes": 528
+    },
+    {
+      "mode": "binding",
+      "repeat": 2,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 2.3217648391146213,
+      "peak_sampled": {
+        "rss_kib": 709208,
+        "pss_kib": 615815
+      },
+      "baseline_pss_kib": 91463,
+      "compute_sum_s": 0.967123695,
+      "save_sum_s": 10.22009002766572,
+      "controller_memory": {
+        "rss_kib": 22072,
+        "pss_kib": 12011
+      },
+      "max_summary_message_bytes": 530
+    },
+    {
+      "mode": "ipc_copy",
+      "repeat": 2,
+      "workers": 8,
+      "mib_per_task": 64,
+      "batch_s": 2.3395937900058925,
+      "peak_sampled": {
+        "rss_kib": 941228,
+        "pss_kib": 837369
+      },
+      "baseline_pss_kib": 92390,
+      "compute_sum_s": 0.928726072,
+      "save_sum_s": 8.506835614331067,
+      "controller_memory": {
+        "rss_kib": 22076,
+        "pss_kib": 12013
+      },
+      "max_summary_message_bytes": 528
+    }
+  ]
+}
