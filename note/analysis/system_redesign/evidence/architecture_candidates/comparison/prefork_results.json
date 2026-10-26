@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "points": 2000,
+  "workers": 4,
+  "matrix_bytes": 32000000,
+  "matrix_mapping_pss_sum_kib": 31250,
+  "matrix_mapping_memory": {
+    "1455651": {
+      "Rss": 31252,
+      "Pss": 6250,
+      "Shared_Clean": 0,
+      "Shared_Dirty": 31252,
+      "Private_Clean": 0,
+      "Private_Dirty": 0
+    },
+    "1455660": {
+      "Rss": 31252,
+      "Pss": 6250,
+      "Shared_Clean": 0,
+      "Shared_Dirty": 31252,
+      "Private_Clean": 0,
+      "Private_Dirty": 0
+    },
+    "1455661": {
+      "Rss": 31252,
+      "Pss": 6250,
+      "Shared_Clean": 0,
+      "Shared_Dirty": 31252,
+      "Private_Clean": 0,
+      "Private_Dirty": 0
+    },
+    "1455662": {
+      "Rss": 31252,
+      "Pss": 6250,
+      "Shared_Clean": 0,
+      "Shared_Dirty": 31252,
+      "Private_Clean": 0,
+      "Private_Dirty": 0
+    },
+    "1455663": {
+      "Rss": 31252,
+      "Pss": 6250,
+      "Shared_Clean": 0,
+      "Shared_Dirty": 31252,
+      "Private_Clean": 0,
+      "Private_Dirty": 0
+    }
+  },
+  "new_worker_reused_prepared_native_bank": true,
+  "complete_reference_matches": 5,
+  "single_threaded_before_every_fork": true,
+  "formal_architecture_selected": false,
+  "limitations": [
+    "Linux-only, clean single-threaded lab, no NumPy/ML runtime",
+    "Does not establish safe fork after arbitrary third-party library initialization",
+    "Lab supervisor executes preprocessing; a production design still needs external management isolation",
+    "Only planned worker retirement; not continuation after algorithm failure",
+    "No timing ranking against other topologies"
+  ]
+}

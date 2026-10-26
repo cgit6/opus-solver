@@ -1,0 +1,204 @@
+{
+  "passed": true,
+  "case_count": 6,
+  "saved_tasks": 288,
+  "snapshots": 4896,
+  "output_bytes": 1062324,
+  "retained_result_rechecks": 1028,
+  "overlap_waves": 36,
+  "unique_inputs": 16,
+  "same_complete_bytes_across_all_candidates": true,
+  "no_histories_in_management_messages": true,
+  "actual_inputs_recorded": true,
+  "source_sha256": {
+    "kernel.cpp": "9ddad27f63076a6f4dbb9300685e62054924c4665d415fb89e6ef21eea02fdd2",
+    "reference.py": "1d891ca848bd276311bfa9176d369f62c41aabcae0a13bf0cc00da065a0ddc11",
+    "build.py": "9e661b5ed4e301de57ab87d99298cc7f3bb1b29ff9d2844427e4b293515f68a6",
+    "smoke.py": "61eb8d5a98e19dc68e9541625954f9b1f08f6194f33b17fce954aa7a1077f147",
+    "experiment.py": "c1fbd1a13bbbc8ae4dbfe894f239fe66bcca3153fbdbeb937571bb2ea0667645",
+    "audit.py": "42ca749b5eec1c57bedfa836022d8a1aa087eb89fac8d87c0bd691d7ff2533c3",
+    "README.md": "b6e775de4665f44d7a0f22663dd7651af8856a4a470bc44bc71ddaa253339d6e"
+  },
+  "baseline_smoke": {
+    "passed": true,
+    "native_calls": 16,
+    "snapshots_compared": 272,
+    "comparator_negative_controls": 24,
+    "result_lifetime_and_readonly_contents_passed": true,
+    "native_counts_after_release": {
+      "bank_address": 572933296,
+      "problem_addresses": {
+        "tiny4": 572263536,
+        "tiny5": 572115552
+      },
+      "prepared_problems": 2,
+      "active": 0,
+      "peak_active": 1,
+      "live_results": 0,
+      "runs": 16,
+      "history_fitness_checks": 272
+    },
+    "cases": [
+      {
+        "problem_id": "tiny4",
+        "seed": 1,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 2,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 3,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 4,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 1,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 2,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 3,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 4,
+        "iterations": 0,
+        "snapshots": 1
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 1,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 2,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 3,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny4",
+        "seed": 4,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 1,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 2,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 3,
+        "iterations": 32,
+        "snapshots": 33
+      },
+      {
+        "problem_id": "tiny5",
+        "seed": 4,
+        "iterations": 32,
+        "snapshots": 33
+      }
+    ]
+  },
+  "cases": [
+    {
+      "mode": "threads",
+      "workers": 1,
+      "saved_tasks": 48,
+      "snapshots": 816,
+      "native_banks": 1,
+      "native_problem_objects": 2,
+      "parallel_update_overlap_waves": 0,
+      "live_native_results_after_release": 0
+    },
+    {
+      "mode": "processes",
+      "workers": 1,
+      "saved_tasks": 48,
+      "snapshots": 816,
+      "native_banks": 1,
+      "native_problem_objects": 2,
+      "parallel_update_overlap_waves": 0,
+      "live_native_results_after_release": 0
+    },
+    {
+      "mode": "threads",
+      "workers": 2,
+      "saved_tasks": 48,
+      "snapshots": 816,
+      "native_banks": 1,
+      "native_problem_objects": 2,
+      "parallel_update_overlap_waves": 12,
+      "live_native_results_after_release": 0
+    },
+    {
+      "mode": "processes",
+      "workers": 2,
+      "saved_tasks": 48,
+      "snapshots": 816,
+      "native_banks": 2,
+      "native_problem_objects": 4,
+      "parallel_update_overlap_waves": 12,
+      "live_native_results_after_release": 0
+    },
+    {
+      "mode": "threads",
+      "workers": 4,
+      "saved_tasks": 48,
+      "snapshots": 816,
+      "native_banks": 1,
+      "native_problem_objects": 2,
+      "parallel_update_overlap_waves": 6,
+      "live_native_results_after_release": 0
+    },
+    {
+      "mode": "processes",
+      "workers": 4,
+      "saved_tasks": 48,
+      "snapshots": 816,
+      "native_banks": 4,
+      "native_problem_objects": 8,
+      "parallel_update_overlap_waves": 6,
+      "live_native_results_after_release": 0
+    }
+  ],
+  "performance_claim": null,
+  "limits": "No fault injection, actual CDELS, large-instance memory or OS readonly validation"
+}

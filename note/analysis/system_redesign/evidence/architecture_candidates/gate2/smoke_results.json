@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "native_calls": 16,
+  "snapshots_compared": 272,
+  "comparator_negative_controls": 24,
+  "result_lifetime_and_readonly_contents_passed": true,
+  "native_counts_after_release": {
+    "bank_address": 339936432,
+    "problem_addresses": {
+      "tiny4": 339266672,
+      "tiny5": 339118688
+    },
+    "prepared_problems": 2,
+    "active": 0,
+    "peak_active": 1,
+    "live_results": 0,
+    "runs": 16,
+    "history_fitness_checks": 272
+  },
+  "cases": [
+    {
+      "problem_id": "tiny4",
+      "seed": 1,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 2,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 3,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 4,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 1,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 2,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 3,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 4,
+      "iterations": 0,
+      "snapshots": 1
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 1,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 2,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 3,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny4",
+      "seed": 4,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 1,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 2,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 3,
+      "iterations": 32,
+      "snapshots": 33
+    },
+    {
+      "problem_id": "tiny5",
+      "seed": 4,
+      "iterations": 32,
+      "snapshots": 33
+    }
+  ]
+}

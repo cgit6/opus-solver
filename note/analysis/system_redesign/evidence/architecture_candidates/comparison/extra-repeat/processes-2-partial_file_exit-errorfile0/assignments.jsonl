@@ -1,0 +1,2 @@
+{"actual_input":{"behavior":"partial_file_exit","iterations":32,"path":"/tmp/solver-architecture-comparison-F5nHlQ/extra-repeat/processes-2-partial_file_exit-errorfile0/results/target.json","problem_id":"tiny4","seed":1,"task_id":"target"},"lane":0,"pid":1459978}
+{"actual_input":{"behavior":"normal","iterations":32,"path":"/tmp/solver-architecture-comparison-F5nHlQ/extra-repeat/processes-2-partial_file_exit-errorfile0/results/peer-1.json","problem_id":"tiny4","seed":2,"task_id":"peer-1"},"lane":1,"pid":1459979}

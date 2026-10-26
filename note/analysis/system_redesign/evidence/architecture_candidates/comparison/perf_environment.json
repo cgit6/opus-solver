@@ -1,0 +1,25 @@
+{
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "pybind11": "3.1.0",
+  "command": [
+    "g++",
+    "-std=c++17",
+    "-O2",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-pthread",
+    "-shared",
+    "-fPIC",
+    "-fvisibility=hidden",
+    "-I/tmp/solver-architecture-comparison-F5nHlQ/pydeps/pybind11/include",
+    "-I/usr/include/python3.12",
+    "/tmp/solver-architecture-comparison-F5nHlQ/perf_kernel.cpp",
+    "-o",
+    "/tmp/solver-architecture-comparison-F5nHlQ/perf_kernel.cpython-312-x86_64-linux-gnu.so"
+  ],
+  "assertions_enabled": true
+}

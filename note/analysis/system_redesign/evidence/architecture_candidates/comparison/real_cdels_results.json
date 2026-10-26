@@ -1,0 +1,197 @@
+{
+  "passed": true,
+  "problem_id": "P-n16-k8-routecap2-transfer1",
+  "cases": [
+    {
+      "seed": 1,
+      "iterations": 0,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 1,
+      "rng_state": 2577192729,
+      "rng_draw_count": 14456,
+      "process_trace_sha256": "773468a3a4cd3115a7b8c8e34e4ee98dda3b8e95e5c6b98d2e5d3376a36d4eff"
+    },
+    {
+      "seed": 2,
+      "iterations": 0,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 1,
+      "rng_state": 2889753993,
+      "rng_draw_count": 14301,
+      "process_trace_sha256": "50799b4bf50cdbc8c1ca2fd74d11eb484a6dda00b18d32a02adc9e7c32045432"
+    },
+    {
+      "seed": 1,
+      "iterations": 3,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 4,
+      "rng_state": 751816879,
+      "rng_draw_count": 18718,
+      "process_trace_sha256": "8c02c2c890a7472c97cafb75c6492dd5dcccc6ed56547c29dc49bc1b9dba1ff7"
+    },
+    {
+      "seed": 2,
+      "iterations": 3,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 4,
+      "rng_state": 9264594,
+      "rng_draw_count": 18640,
+      "process_trace_sha256": "725c85e165b401023f95f2955af839bb403e949544996859a3624806bf4f5bf0"
+    },
+    {
+      "seed": 1,
+      "iterations": 111,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 112,
+      "rng_state": 3707418197,
+      "rng_draw_count": 117316,
+      "process_trace_sha256": "adc1821855fc998578e1cd04666d76536212d03d1620e7530b781f8cc0acc6d3"
+    },
+    {
+      "seed": 2,
+      "iterations": 111,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 112,
+      "rng_state": 3863784306,
+      "rng_draw_count": 118896,
+      "process_trace_sha256": "5f6dcaca1e5c66545250c1d90ca445a1349e12cbb152d56211750a16e6b7611c"
+    },
+    {
+      "seed": 2,
+      "iterations": 3,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 4,
+      "rng_state": 9264594,
+      "rng_draw_count": 18640,
+      "process_trace_sha256": "725c85e165b401023f95f2955af839bb403e949544996859a3624806bf4f5bf0"
+    },
+    {
+      "seed": 1,
+      "iterations": 3,
+      "passed": true,
+      "checks": [
+        "termination",
+        "stop_cause",
+        "generation_count",
+        "transition_count",
+        "temperature_stagnation",
+        "final_temperature_ieee754",
+        "rng_state",
+        "rng_draw_count",
+        "result",
+        "process_trace_sha256",
+        "process_generation_digests",
+        "process_rng_checkpoints"
+      ],
+      "generation_count": 4,
+      "rng_state": 751816879,
+      "rng_draw_count": 18718,
+      "process_trace_sha256": "8c02c2c890a7472c97cafb75c6492dd5dcccc6ed56547c29dc49bc1b9dba1ff7"
+    }
+  ],
+  "cpp_parallel_thread_port_verified": false,
+  "limitations": [
+    "One selected small instance, not all 112 configurations",
+    "Original C++ oracle launches a fresh process per request",
+    "Global RNG, NP and generation id still require task-private redesign",
+    "No C++/Numba performance ranking is derived from this check"
+  ]
+}

@@ -103,7 +103,7 @@ Problab 的 AddAct 同時更新分數累計與 act／step／round 狀態；本�
 
 這次參考是原始碼閱讀，沒有修改 Problab 或執行其模擬測試。本機外部路徑不隨本 repository 一起分發。
 
-後續借用的是「計算 → 結果 DTO → 外層輸出」的分工，可將 HTTP 輸出改為 Python 文本輸出；不是把 Problab 的同程序 goroutine 當成本系統跨程序交付的性能證據。worker／主程序保存與異常規則另見 [15](15_task_failures_and_result_storage.md)。
+後續借用的是「計算 → 結果 DTO → 外層輸出」的分工；舊保存基線將外層改為 Python 文本輸出，候選語言與 D18 返回邊界差異依 [07](07_history_return_and_storage.md#已確認交付需求與保存基線) 待確認。這不是把 Problab 同程序 goroutine 當成本系統跨程序交付的性能證據，也不重開主程序收全量保存；異常規則另見 [15](15_task_failures_and_result_storage.md)。
 
 ## 10. Redis／背景寫入討論
 
@@ -126,3 +126,11 @@ Benchopt／第三方框架曾作參考；目前沒有決定整個專案遷移到
 Git 大檔被拒絕、清理提交與推送，以及逐字稿匯出，屬於 repository／研究資料維護，不是本輪要設計的新求解行為。
 
 原始對話保留在 [逐字稿](../../codex_conversation_transcript_2026-10-14.md)；本次只讀其相關內容，不重新匯出、不更改完整性宣告、不操作 Git 提交。
+
+## 13. D79–D80 後的架構候選證據
+
+[19](19_architecture_candidate_experiments.md) 接續前期 16／17，整理正常控制、歷史故障控制、48 配置效能矩陣、補充故障、真 CDELS fresh-process oracle、原始 global RNG 負例、clean prefork 及唯讀頁面探針。三批原暫存來源及逐檔原始路徑／SHA 見 [歸檔說明](evidence/architecture_candidates/README.md) 與 [manifest](evidence/architecture_candidates/manifest.json)；原 README／REPORT／raw 原樣保留，不以摘要替代原口徑。
+
+本次只封存輕量原型、JSON、環境與稽核摘要；大型完整輸出及生成物不進 Git，原研究不動。8 份刻意截斷負例以 base64 保留原始位元，解碼後核對 SHA，不冒稱有效 JSON。原腳本會寫檔，不能原位重跑；只讀核對與未來複製到全新 tmp 的重跑限制見歸檔說明。
+
+有候選證據不等於選架構、修改 D18／D19／D34 或 D74–D77、通過正式 G2／G3，亦不代表真 CDELS 已完成 thread-safe port。cleanup 退休及 worker-first 留因提案仍未定，不能當新政策。

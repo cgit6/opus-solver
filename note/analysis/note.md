@@ -11,7 +11,8 @@
 - [文件索引與分類](system_redesign/README.md)
 - [設計決策紀錄](system_redesign/design_decisions.md)
 - [Python 如何呼叫 C++ 與失敗 task 的單獨重跑](system_redesign/14_python_cpp_invocation_and_failure_replay.md)
-- [task 異常紀錄、不中斷實驗與結果保存](system_redesign/15_task_failures_and_result_storage.md)
+- [算法錯誤停止整場、異常紀錄與結果保存](system_redesign/15_task_failures_and_result_storage.md)
 - [待議清單](system_redesign/13_open_questions.md)
+- [架構候選實驗、原始證據與限制](system_redesign/19_architecture_candidate_experiments.md)
 
-整理日期：2026-10-21。這是文件整理，不表示已修改系統或完成新架構驗證。
+整理日期：2026-10-24。算法錯誤停止整場依 D79–D80；正常不可行不是算法錯誤，Python 保存錯誤依 D40 分開處理。候選實驗已由 19 封存，本次只讀核對來源與文件，不表示已修改正式系統、選定架構或通過正式驗收。

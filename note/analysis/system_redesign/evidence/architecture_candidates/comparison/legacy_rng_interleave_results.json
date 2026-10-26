@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "negative_control_detected": true,
+  "baseline_task_A_seed1": [
+    41,
+    18467
+  ],
+  "baseline_task_B_seed2": [
+    45,
+    29216
+  ],
+  "interleaved_task_A": [
+    41,
+    29216
+  ],
+  "finding": "Per-task seeding alone does not isolate the original process-global RNG",
+  "not_a_current_solver_bug": "Original oracle uses fresh processes; this tests an invalid shared-task wiring",
+  "limits": "Sequential interleaving only, no undefined C++ concurrent access and no algorithm modification"
+}

@@ -1,0 +1,270 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 2,
+      "behavior": "partial_saved_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-partial_saved_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 2,
+      "behavior": "partial_file_exit",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-partial_file_exit-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 2,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-partial_error_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 2,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": true,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": true,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-partial_error_frame-errorfile1/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "threads",
+      "workers": 2,
+      "TEST_POLICY": "retire_host_now",
+      "other_tasks_lost": 1,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-cleanup-retire_host_now/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "threads",
+      "workers": 2,
+      "TEST_POLICY": "finish_peers_then_retire",
+      "other_tasks_lost": 0,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-cleanup-finish_peers_then_retire/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 4,
+      "behavior": "partial_saved_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-4-partial_saved_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 4,
+      "behavior": "partial_file_exit",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-4-partial_file_exit-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 4,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-4-partial_error_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "threads",
+      "workers": 4,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": true,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": true,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-4-partial_error_frame-errorfile1/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "threads",
+      "workers": 4,
+      "TEST_POLICY": "retire_host_now",
+      "other_tasks_lost": 3,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-4-cleanup-retire_host_now/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "threads",
+      "workers": 4,
+      "TEST_POLICY": "finish_peers_then_retire",
+      "other_tasks_lost": 0,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-4-cleanup-finish_peers_then_retire/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 2,
+      "behavior": "partial_saved_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-2-partial_saved_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 2,
+      "behavior": "partial_file_exit",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-2-partial_file_exit-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 2,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-2-partial_error_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 2,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": true,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": true,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-2-partial_error_frame-errorfile1/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "processes",
+      "workers": 2,
+      "TEST_POLICY": "retire_host_now",
+      "other_tasks_lost": 0,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-2-cleanup-retire_host_now/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "processes",
+      "workers": 2,
+      "TEST_POLICY": "finish_peers_then_retire",
+      "other_tasks_lost": 0,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-2-cleanup-finish_peers_then_retire/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 4,
+      "behavior": "partial_saved_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-4-partial_saved_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 4,
+      "behavior": "partial_file_exit",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-4-partial_file_exit-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 4,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": false,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-4-partial_error_frame-errorfile0/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "partial_delivery",
+      "mode": "processes",
+      "workers": 4,
+      "behavior": "partial_error_frame",
+      "worker_saved_error_first": true,
+      "manager_status": "delivery_unconfirmed",
+      "error_detail_available_after_lost_notification": true,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-4-partial_error_frame-errorfile1/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "processes",
+      "workers": 4,
+      "TEST_POLICY": "retire_host_now",
+      "other_tasks_lost": 0,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-4-cleanup-retire_host_now/controller_report.json"
+    },
+    {
+      "passed": true,
+      "kind": "cleanup_policy_comparison",
+      "mode": "processes",
+      "workers": 4,
+      "TEST_POLICY": "finish_peers_then_retire",
+      "other_tasks_lost": 0,
+      "new_host_reconstructed_problem_bank": true,
+      "formal_policy_selected": false,
+      "controller_report": "/tmp/solver-architecture-comparison-F5nHlQ/extra-first/processes-4-cleanup-finish_peers_then_retire/controller_report.json"
+    }
+  ],
+  "note": "Competing proposals tested; no formal policy selected"
+}

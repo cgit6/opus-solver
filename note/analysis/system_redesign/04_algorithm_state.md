@@ -44,7 +44,9 @@ D29 已確認健康求解程序繼續接新 task；每題仍有獨立的 RNG、�
 
 工作緩存在同一次求解的迭代間可以持續重用；任務交接完成後，按資料生命週期結束不再需要的本題狀態。這不批准跨任務保留一份可變算法緩存池，也不要求每代重新配置。配置器可能保留已釋放空間供下次使用，不能只看 RSS 就判定任務狀態尚未清理。
 
-結果或歷史若仍由接收／保存方引用，必須維持有效性，不得為了開始下一題就釋放或覆寫。D34–D35 已選同程序 C++ 返回該 Python worker，由它同步保存；不要求公開逐步算法物件。正式 C++ 所有權與布局仍待定，控制證據見 [16](16_process_lifecycle_experiment.md)、[17](17_invocation_comparison_experiment.md)，不等於正式外部結構已驗收。
+結果或歷史仍被引用時須維持有效，不得為接下一題而釋放／覆寫。D34 約束同一邏輯工作鏈同步保存／交接及清理後才接新題，不等於同 host 所有 threads 停等，層級見 [14 名詞表](14_python_cpp_invocation_and_failure_replay.md#執行名詞與替換範圍)。D35 的 Python worker 程序內同程序 C++ 呼叫是重新評估基線，不選新拓撲或公開逐步算法 API。正式所有權／布局仍待定；[16](16_process_lifecycle_experiment.md)、[17](17_invocation_comparison_experiment.md) 不等於正式外部結構已驗收。
+
+輸出器語言與相對 D18 完整返回 Python 的差異依 [07](07_history_return_and_storage.md#已確認交付需求與保存基線) 比較待確認；C++ 獨立輸出候選不等於把文件 I/O 放進算法或 addAct，也不能因減少 Python 物件轉換就提前釋放仍被使用的結果。
 
 ## 外部結構：算法選擇暴露的狀態
 

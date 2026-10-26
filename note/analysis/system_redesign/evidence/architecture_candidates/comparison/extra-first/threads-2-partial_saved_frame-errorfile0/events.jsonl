@@ -1,0 +1,19 @@
+{"kind":"worker_message","lane":0,"message":{"bank":{"active":0,"bank_address":897119760,"history_fitness_checks":0,"live_results":0,"peak_active":0,"prepared_problems":2,"problem_addresses":{"tiny4":895206480,"tiny5":896771744},"runs":0},"bank_digest":"1653e13492f7ec6298f7358d1c4f6b7ff4b21c532f73a04144a89ad22aa44453","kind":"ready","lane":0,"pid":1447276},"sequence":0}
+{"kind":"worker_message","lane":1,"message":{"bank":{"active":0,"bank_address":897119760,"history_fitness_checks":0,"live_results":0,"peak_active":0,"prepared_problems":2,"problem_addresses":{"tiny4":895206480,"tiny5":896771744},"runs":0},"bank_digest":"1653e13492f7ec6298f7358d1c4f6b7ff4b21c532f73a04144a89ad22aa44453","kind":"ready","lane":1,"pid":1447276},"sequence":1}
+{"kind":"task_assigned","lane":0,"pid":1447276,"sequence":2,"task_id":"target"}
+{"kind":"task_assigned","lane":1,"pid":1447276,"sequence":3,"task_id":"peer-1"}
+{"kind":"worker_message","lane":0,"message":{"kind":"received","lane":0,"pid":1447276,"task_id":"target"},"sequence":4}
+{"kind":"native_test_checkpoint","lane":0,"phase":0,"sequence":5,"task_id":"target"}
+{"kind":"worker_message","lane":1,"message":{"kind":"received","lane":1,"pid":1447276,"task_id":"peer-1"},"sequence":6}
+{"kind":"native_test_checkpoint","lane":1,"phase":0,"sequence":7,"task_id":"peer-1"}
+{"kind":"native_test_checkpoint","lane":0,"phase":1,"sequence":8,"task_id":"target"}
+{"kind":"native_test_checkpoint","lane":1,"phase":1,"sequence":9,"task_id":"peer-1"}
+{"kind":"native_test_checkpoint","lane":0,"phase":2,"sequence":10,"task_id":"target"}
+{"kind":"native_test_checkpoint","lane":1,"phase":2,"sequence":11,"task_id":"peer-1"}
+{"kind":"worker_message","lane":0,"message":{"kind":"cpp_returned","lane":0,"pid":1447276,"task_id":"target"},"sequence":12}
+{"errno":null,"exception_type":"OSError","kind":"connection_closed","lane":0,"message":"got end of file during message","sequence":13}
+{"errno":null,"exception_type":"EOFError","kind":"connection_closed","lane":1,"message":"","sequence":14}
+{"exitcode":0,"kind":"process_exit_observed","pid":1447276,"sequence":15}
+{"exitcode":0,"kind":"process_exit_recorded_after_drain","pid":1447276,"root_cause":"not_determined","sequence":16,"signal":null,"unconfirmed_task_inputs":[{"behavior":"partial_saved_frame","iterations":32,"path":"/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-partial_saved_frame-errorfile0/results/target.json","problem_id":"tiny4","seed":1,"task_id":"target"},{"behavior":"normal","iterations":32,"path":"/tmp/solver-architecture-comparison-F5nHlQ/extra-first/threads-2-partial_saved_frame-errorfile0/results/peer-1.json","problem_id":"tiny4","seed":2,"task_id":"peer-1"}]}
+{"kind":"whole_experiment_stop_requested","reason":{"exitcode":0,"kind":"unexpected_execution_process_exit","pid":1447276,"root_cause":"not_determined"},"sequence":17}
+{"kind":"controller_finalized","sequence":18,"statuses":{"peer-1":"delivery_unconfirmed","target":"delivery_unconfirmed"}}
